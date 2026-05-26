@@ -8,5 +8,6 @@ export default defineCliConfig({
     projectId,
     dataset,
   },
+  studioHost: 'edutoolshub',
   autoUpdates: true,
 })
