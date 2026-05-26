@@ -18,8 +18,43 @@ import process from "node:process";
 import { fileURLToPath } from "node:url";
 
 import { createClient } from "@sanity/client";
-import puppeteer from "puppeteer";
 import { loadEnv, preview } from "vite";
+
+// Puppeteer runs in two different ways:
+//   - Local dev (Windows / macOS): plain `puppeteer` with its bundled Chromium.
+//   - Vercel / Lambda (Amazon Linux 2): the bundled Chromium is missing
+//     system libs (libnspr4, libnss3, etc), so we use @sparticuz/chromium
+//     which ships a self-contained Chromium with all libs baked in.
+const isServerless =
+  !!process.env.VERCEL ||
+  !!process.env.AWS_LAMBDA_FUNCTION_NAME ||
+  !!process.env.NETLIFY;
+
+async function loadPuppeteer() {
+  if (isServerless) {
+    const [{ default: puppeteer }, { default: chromium }] = await Promise.all([
+      import("puppeteer-core"),
+      import("@sparticuz/chromium"),
+    ]);
+    return {
+      puppeteer,
+      launchOptions: {
+        headless: true,
+        args: chromium.args,
+        defaultViewport: chromium.defaultViewport,
+        executablePath: await chromium.executablePath(),
+      },
+    };
+  }
+  const { default: puppeteer } = await import("puppeteer");
+  return {
+    puppeteer,
+    launchOptions: {
+      headless: true,
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    },
+  };
+}
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const projectRoot = resolve(__dirname, "..");
@@ -195,11 +230,11 @@ async function main() {
   let browser;
 
   try {
-    console.log("[prerender] Launching headless Chromium…");
-    browser = await puppeteer.launch({
-      headless: true,
-      args: ["--no-sandbox", "--disable-setuid-sandbox"],
-    });
+    console.log(
+      `[prerender] Launching headless Chromium (${isServerless ? "serverless / @sparticuz/chromium" : "local / puppeteer"})…`
+    );
+    const { puppeteer, launchOptions } = await loadPuppeteer();
+    browser = await puppeteer.launch(launchOptions);
     const page = await browser.newPage();
     await page.setViewport({ width: 1280, height: 800 });
 
