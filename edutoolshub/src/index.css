@@ -1,0 +1,293 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #2563eb;
+  --color-primary-dark: #1d4ed8;
+  --color-accent: #10b981;
+  --color-accent-dark: #059669;
+  --color-surface: #ffffff;
+  --color-surface-muted: #f8fafc;
+  --color-border: #e2e8f0;
+  --color-text: #0f172a;
+  --color-text-muted: #64748b;
+  --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply antialiased text-text bg-surface font-sans;
+    margin: 0;
+  }
+
+  #root {
+    @apply min-h-screen w-full;
+  }
+
+  /* Prevent inline SVGs from stretching in flex layouts */
+  svg {
+    flex-shrink: 0;
+  }
+}
+
+/* ----------------------------------------------------------- */
+/* Attendance Sheet — on-screen helpers                        */
+/* ----------------------------------------------------------- */
+
+/* Classic vertical, upside-down "SUNDAY" label used in attendance
+   registers across South Asia, the Middle East, and parts of the
+   UK/Commonwealth. Vertical writing-mode + 180° rotation gives the
+   bottom-to-top, flipped reading direction teachers expect. */
+.attendance-sunday-label,
+.attendance-holiday-label {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-size: 10px;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  /* In vertical writing-mode, max-height controls how much of the
+     glyph run fits inside the cell before being clipped. */
+  max-height: 70px;
+  text-overflow: clip;
+}
+
+.attendance-holiday-label {
+  font-size: 9px;
+  letter-spacing: 0.1em;
+}
+
+@media print {
+  header,
+  footer,
+  .print\:hidden {
+    display: none !important;
+  }
+
+  /* The global rule above hides every <header>/<footer>, but the GPA
+     report itself uses those semantic elements for the institution
+     header and the disclaimer. Re-enable the ones nested inside the
+     report so they print correctly. */
+  #gpa-report-print header,
+  #gpa-report-print footer {
+    display: block !important;
+  }
+
+  body {
+    background: white;
+  }
+
+  /* ----------------------------------------------------------- */
+  /* Attendance Sheet — wide, ink-efficient print layout         */
+  /* ----------------------------------------------------------- */
+  /* The actual landscape @page rule is injected at runtime by the
+     print button so it doesn't conflict with the portrait @page
+     used by the GPA report. Everything below assumes landscape A4. */
+
+  #attendance-print,
+  .attendance-sheet {
+    border: 0 !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    font-size: 9pt;
+    line-height: 1.2;
+  }
+
+  /* The table container's overflow-x-auto is meaningless in print and
+     can clip wide tables — force it visible. */
+  #attendance-print .attendance-sheet__table-wrap {
+    overflow: visible !important;
+  }
+
+  /* Honor Sunday / Holiday color tints in print so the visual
+     language of the sheet survives onto paper. */
+  #attendance-print .attendance-sheet__sunday,
+  #attendance-print .attendance-sheet__holiday {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  #attendance-print .attendance-sheet__sunday {
+    background-color: #fee2e2 !important; /* red-100 */
+    color: #991b1b !important; /* red-800 */
+  }
+
+  #attendance-print .attendance-sheet__holiday {
+    background-color: #fde68a !important; /* amber-200 */
+    color: #78350f !important; /* amber-900 */
+  }
+
+  /* Crisp, thin, ink-friendly borders for every cell. */
+  #attendance-print .attendance-sheet__table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    table-layout: fixed !important;
+  }
+
+  #attendance-print .attendance-sheet__table th,
+  #attendance-print .attendance-sheet__table td {
+    border: 0.5pt solid #000 !important;
+    padding: 2pt 1pt !important;
+    vertical-align: middle;
+  }
+
+  /* Repeat the header on every printed page when the table breaks
+     across pages. */
+  #attendance-print .attendance-sheet__table thead {
+    display: table-header-group;
+  }
+
+  #attendance-print .attendance-sheet__row {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  #attendance-print .attendance-sheet__header {
+    border-bottom: 1pt solid #000 !important;
+    padding-bottom: 6pt !important;
+  }
+
+  #attendance-print .attendance-sheet__footer {
+    margin-top: 8pt !important;
+    border-top: 0.5pt solid #000 !important;
+    padding-top: 4pt !important;
+  }
+
+  /* "Sticky" left columns are only useful on screen; turn off in
+     print so they flow normally. */
+  #attendance-print .attendance-sheet__td,
+  #attendance-print .attendance-sheet__th {
+    position: static !important;
+  }
+
+  /* ----------------------------------------------------------- */
+  /* GPA Report — formal, ink-friendly print layout              */
+  /* ----------------------------------------------------------- */
+
+  @page {
+    size: A4;
+    margin: 16mm 14mm;
+  }
+
+  html,
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Strip the page chrome around the report so it spans the full
+     printable area of the page. */
+  #gpa-report-print,
+  .gpa-report {
+    position: static !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    font-size: 11pt;
+    line-height: 1.45;
+  }
+
+  /* Lift the report out of any constrained parent containers
+     so it can use the full page width. */
+  .gpa-report__actions {
+    display: none !important;
+  }
+
+  /* Ink-saving: force every descendant of the report to render in
+     pure black on white, regardless of Tailwind utility classes. */
+  #gpa-report-print,
+  #gpa-report-print * {
+    background: transparent !important;
+    background-color: transparent !important;
+    color: #000000 !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  /* Keep structural borders crisp. */
+  #gpa-report-print .gpa-report__header {
+    border-bottom: 2pt solid #000 !important;
+    padding-bottom: 8pt !important;
+  }
+
+  #gpa-report-print .gpa-report__gpa {
+    border-top: 2pt solid #000 !important;
+    border-bottom: 2pt solid #000 !important;
+    padding: 14pt 0 !important;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  #gpa-report-print .gpa-report__meta dt {
+    color: #444 !important;
+  }
+
+  /* Course table */
+  #gpa-report-print .gpa-report__table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+  }
+
+  #gpa-report-print .gpa-report__table thead {
+    display: table-header-group; /* repeat header on each printed page */
+  }
+
+  #gpa-report-print .gpa-report__table tfoot {
+    display: table-row-group;
+  }
+
+  #gpa-report-print .gpa-report__table thead tr {
+    border-bottom: 1.5pt solid #000 !important;
+  }
+
+  #gpa-report-print .gpa-report__table tfoot tr {
+    border-top: 1.5pt solid #000 !important;
+  }
+
+  #gpa-report-print .gpa-report__row {
+    border-bottom: 0.5pt solid #999 !important;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  #gpa-report-print .gpa-report__table th,
+  #gpa-report-print .gpa-report__table td {
+    padding: 6pt 4pt !important;
+    vertical-align: top;
+  }
+
+  /* Honors badge: keep visible without filling ink. */
+  #gpa-report-print .gpa-report__row span {
+    border: 0.5pt solid #000 !important;
+    padding: 0 4pt !important;
+  }
+
+  /* Disclaimer footer */
+  #gpa-report-print .gpa-report__disclaimer {
+    margin-top: 18pt !important;
+    border-top: 0.5pt solid #999 !important;
+    padding-top: 8pt !important;
+    font-size: 9pt;
+    color: #333 !important;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+}
