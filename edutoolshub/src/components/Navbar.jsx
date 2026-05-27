@@ -77,6 +77,7 @@ export default function Navbar() {
             className="h-9 w-9 shrink-0 rounded-xl object-contain transition-transform group-hover:scale-105"
             loading="eager"
             decoding="async"
+            fetchPriority="low"
           />
           <span className="text-lg font-bold tracking-tight text-text">
             EduTools<span className="text-primary">Hub</span>

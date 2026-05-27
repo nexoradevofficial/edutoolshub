@@ -1,15 +1,17 @@
+import { lazy } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import MainLayout from "./layouts/MainLayout";
 import Home from "./pages/Home";
-import Tools from "./pages/Tools";
-import Blog from "./pages/Blog";
-import BlogPost from "./pages/BlogPost";
-import GpaCalculatorPage from "./pages/GpaCalculatorPage";
-import AttendancePage from "./pages/AttendancePage";
-import PrivacyPolicy from "./pages/PrivacyPolicy";
-import About from "./pages/About";
-import Contact from "./pages/Contact";
-import NotFound from "./pages/NotFound";
+
+const Tools = lazy(() => import("./pages/Tools"));
+const Blog = lazy(() => import("./pages/Blog"));
+const BlogPost = lazy(() => import("./pages/BlogPost"));
+const GpaCalculatorPage = lazy(() => import("./pages/GpaCalculatorPage"));
+const AttendancePage = lazy(() => import("./pages/AttendancePage"));
+const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
+const About = lazy(() => import("./pages/About"));
+const Contact = lazy(() => import("./pages/Contact"));
+const NotFound = lazy(() => import("./pages/NotFound"));
 
 export default function App() {
   return (
