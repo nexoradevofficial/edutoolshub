@@ -19,6 +19,20 @@
       bootstrap <title> here so the browser tab has something before JS runs.
     -->
     <title>EduToolsHub</title>
+
+    <!-- Google tag (gtag.js) -->
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-XNQCBXCEJL"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+      gtag("config", "G-XNQCBXCEJL");
+    </script>
   </head>
   <body>
     <div id="root"></div>
