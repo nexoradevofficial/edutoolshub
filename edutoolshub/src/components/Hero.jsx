@@ -30,13 +30,13 @@ export default function Hero() {
         </h1>
 
         <p className="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-text-muted">
-          Free GPA calculator, attendance tools, and educational utilities for
-          modern learners and educators.
+          Free GPA calculator, college GPA requirement checker, attendance sheets,
+          and educational utilities for modern learners and educators.
         </p>
 
         <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-          <Button to="/tools/gpa-calculator" size="lg">
-            Try GPA Calculator
+          <Button to="/tools/gpa-requirement-checker" size="lg">
+            College GPA Requirement Checker
             <IconArrowRight />
           </Button>
           <Button to="/tools" variant="secondary" size="lg">

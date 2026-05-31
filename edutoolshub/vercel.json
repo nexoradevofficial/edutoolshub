@@ -2,6 +2,12 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "cleanUrls": true,
   "trailingSlash": false,
+  "crons": [
+    {
+      "path": "/api/admin/refresh-universities",
+      "schedule": "0 0 1 * *"
+    }
+  ],
   "rewrites": [
     {
       "source": "/(.*)",

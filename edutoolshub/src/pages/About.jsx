@@ -6,8 +6,6 @@ import {
   IconShield,
   IconUser,
   IconZap,
-  IconGpa,
-  IconAttendance,
 } from "../components/icons/ToolIcons";
 import { activeTools } from "../data/tools";
 
@@ -136,9 +134,10 @@ export default function About() {
             </div>
             <div className="space-y-5 text-base leading-relaxed text-text-muted lg:col-span-7">
               <p>
-                Calculating a GPA, building a fair attendance sheet, planning a
-                seating chart — these are small tasks that quietly eat hours
-                out of every week for students and teachers.
+                Calculating a GPA, comparing university admission requirements,
+                building a fair attendance sheet, planning a seating chart — these
+                are small tasks that quietly eat hours out of every week for
+                students and teachers.
               </p>
               <p>
                 We started {SITE_NAME} to fix that. Our goal is simple: ship
@@ -229,45 +228,32 @@ export default function About() {
             </p>
           </div>
 
-          <div className="mt-12 grid gap-6 md:grid-cols-2">
-            <div className="rounded-2xl border border-border bg-white p-6 shadow-sm">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
-                <IconGpa className="h-6 w-6" />
-              </div>
-              <h3 className="mt-4 text-lg font-semibold text-text">
-                GPA Calculator
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-text-muted">
-                Weighted &amp; unweighted GPA with country presets and a fully
-                customizable scale — works with any school’s grading system,
-                anywhere in the world.
-              </p>
-              <div className="mt-4">
-                <Button to="/tools/gpa-calculator" size="sm" variant="secondary">
-                  Open tool
-                  <IconArrowRight />
-                </Button>
-              </div>
-            </div>
-
-            <div className="rounded-2xl border border-border bg-white p-6 shadow-sm">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-accent/10 text-accent">
-                <IconAttendance className="h-6 w-6" />
-              </div>
-              <h3 className="mt-4 text-lg font-semibold text-text">
-                Attendance Sheet Generator
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-text-muted">
-                Create printable class attendance sheets in seconds — perfect
-                for substitutes, clubs, and one-off events.
-              </p>
-              <div className="mt-4">
-                <Button to="/tools/attendance-sheet" size="sm" variant="secondary">
-                  Open tool
-                  <IconArrowRight />
-                </Button>
-              </div>
-            </div>
+          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {activeTools.map((tool) => {
+              const Icon = tool.icon;
+              return (
+                <div
+                  key={tool.id}
+                  className="rounded-2xl border border-border bg-white p-6 shadow-sm"
+                >
+                  <div
+                    className={`flex h-12 w-12 items-center justify-center rounded-xl ${tool.color}`}
+                  >
+                    <Icon className="h-6 w-6" />
+                  </div>
+                  <h3 className="mt-4 text-lg font-semibold text-text">{tool.name}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-text-muted">
+                    {tool.description}
+                  </p>
+                  <div className="mt-4">
+                    <Button to={tool.path} size="sm" variant="secondary">
+                      Open tool
+                      <IconArrowRight />
+                    </Button>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>

@@ -213,7 +213,8 @@ function PostFooter() {
         Found this useful?
       </h2>
       <p className="mx-auto mt-2 max-w-md text-sm text-text-muted">
-        Try our free tools — calculate your GPA or generate an attendance sheet in seconds.
+        Try our free tools — calculate your GPA, check college GPA requirements,
+        or generate an attendance sheet in seconds.
       </p>
       <div className="mt-5 flex flex-col items-center justify-center gap-3 sm:flex-row">
         <Button to="/tools" size="md">

@@ -125,7 +125,8 @@ export default function PrivacyPolicy() {
               <SectionHeading id="introduction">1. Introduction</SectionHeading>
               <P>
                 {SITE_NAME} provides free, browser-based education tools — such
-                as a GPA calculator, attendance sheet generator, timetable
+                as a GPA calculator, college GPA requirement checker, attendance
+                sheet generator, timetable
                 builder, and related utilities — for students, teachers, and
                 schools worldwide. We are committed to handling your
                 information transparently and only collecting what is necessary

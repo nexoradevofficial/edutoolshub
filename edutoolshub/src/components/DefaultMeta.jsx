@@ -13,9 +13,9 @@ const SITE_URL = "https://edutoolshub.com";
 const SITE_NAME = "EduToolsHub";
 const DEFAULT_TITLE = "EduToolsHub — Smart Tools for Students & Teachers";
 const DEFAULT_DESCRIPTION =
-  "Free smart tools for students and teachers — GPA calculator, attendance sheets, timetables, seating plans, and more.";
+  "Free smart tools for students and teachers — GPA calculator, college GPA requirement checker, attendance sheets, timetables, seating plans, and more.";
 const DEFAULT_KEYWORDS =
-  "education tools, GPA calculator, attendance sheet, timetable builder, seating plan, report card generator, students, teachers";
+  "education tools, GPA calculator, university GPA requirements, college admission GPA, attendance sheet, timetable builder, seating plan, report card generator, students, teachers";
 const DEFAULT_OG_IMAGE = `${SITE_URL}/logo.png`;
 
 export default function DefaultMeta() {

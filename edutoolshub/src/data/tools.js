@@ -1,4 +1,4 @@
-import { IconAttendance, IconGpa } from "../components/icons/ToolIcons";
+import { IconAttendance, IconGpa, IconGpaChecker } from "../components/icons/ToolIcons";
 
 export const tools = [
   {
@@ -10,6 +10,16 @@ export const tools = [
     status: "active",
     path: "/tools/gpa-calculator",
     color: "bg-primary/10 text-primary",
+  },
+  {
+    id: "gpa-requirement-checker",
+    name: "College GPA Requirement Checker",
+    description:
+      "Search universities by GPA requirements across the US, Canada, UK, Australia, and Germany. Enter your GPA to see match results instantly.",
+    icon: IconGpaChecker,
+    status: "active",
+    path: "/tools/gpa-requirement-checker",
+    color: "bg-primary/10 text-primary-dark",
   },
   {
     id: "attendance-sheet",

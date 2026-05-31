@@ -65,7 +65,8 @@ export default function Blog() {
               While you read, try our tools
             </h2>
             <p className="mx-auto mt-2 max-w-md text-sm text-text-muted">
-              Calculate your GPA or generate an attendance sheet — instantly, free, no signup.
+              Calculate your GPA, check university requirements, or generate an
+              attendance sheet — instantly, free, no signup.
             </p>
             <div className="mt-5 flex flex-col items-center justify-center gap-3 sm:flex-row">
               <Button to="/tools" size="md">
@@ -73,10 +74,10 @@ export default function Blog() {
                 <IconArrowRight />
               </Button>
               <Link
-                to="/tools/gpa-calculator"
+                to="/tools/gpa-requirement-checker"
                 className="text-sm font-semibold text-primary hover:underline"
               >
-                Or jump to GPA Calculator →
+                Or try GPA Requirement Checker →
               </Link>
             </div>
           </div>

@@ -8,6 +8,7 @@
     "build": "vite build",
     "build:prerender": "vite build && node scripts/prerender.mjs",
     "prerender": "node scripts/prerender.mjs",
+    "seed:universities": "node scripts/seed-universities.mjs",
     "lint": "eslint .",
     "preview": "vite preview"
   },
@@ -16,6 +17,7 @@
     "@portabletext/react": "^6.2.0",
     "@sanity/client": "^7.22.0",
     "@sanity/image-url": "^2.1.1",
+    "@supabase/supabase-js": "^2.106.2",
     "date-fns": "^4.3.0",
     "embla-carousel-autoplay": "^8.6.0",
     "embla-carousel-react": "^8.6.0",

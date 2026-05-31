@@ -2,17 +2,20 @@ const steps = [
   {
     step: "01",
     title: "Select Tool",
-    description: "Pick GPA Calculator or Attendance Sheet from our tools grid.",
+    description:
+      "Pick from our tools grid — GPA calculator, university GPA checker, attendance sheets, and more.",
   },
   {
     step: "02",
     title: "Enter Data",
-    description: "Add your courses, grades, or class details — all in your browser.",
+    description:
+      "Add your GPA, search universities, or fill in class details — all in your browser.",
   },
   {
     step: "03",
     title: "Get Results Instantly",
-    description: "See your GPA or print your attendance sheet right away.",
+    description:
+      "See your GPA, match scores for colleges, or print your attendance sheet right away.",
   },
 ];
 
