@@ -1,5 +1,14 @@
 import { supabase } from "../../supabase/client";
 
+/** Countries shown in the filter dropdown (order matches primary traffic). */
+export const SUPPORTED_COUNTRIES = [
+  "United States",
+  "Canada",
+  "United Kingdom",
+  "Australia",
+  "Germany",
+];
+
 const UNIVERSITY_COLUMNS =
   "id,name,slug,country,state_province,city,type,qs_ranking,min_gpa,avg_gpa,gpa_scale,acceptance_rate,sat_range,act_range,popular_programs,admission_policy,admission_notes,website_url,source_url,last_fetched_at,data_year,created_at,updated_at";
 
@@ -12,6 +21,23 @@ export async function fetchAllUniversities() {
     .order("qs_ranking", { ascending: true, nullsFirst: false });
 
   return { data: data ?? [], error };
+}
+
+/** Load universities — Supabase direct (works in Vite dev and production). */
+export async function loadUniversitiesForClient() {
+  const { data, error } = await fetchAllUniversities();
+  if (error) return { data: [], error };
+
+  if ((data ?? []).length === 0) {
+    return {
+      data: [],
+      error: new Error(
+        "No universities in the database yet. Run `npm run seed:universities` after applying the Supabase migration."
+      ),
+    };
+  }
+
+  return { data, error: null };
 }
 
 export async function fetchUniversityBySlug(slug) {
@@ -82,8 +108,15 @@ export async function fetchSimilarUniversities(university, limit = 4) {
   return { data: merged, error: fallbackError };
 }
 
-export function filterUniversities(universities, { search, country, type, sortBy }) {
+export function filterUniversities(
+  universities,
+  { search, country, type, sortBy, universitySlug }
+) {
   let result = [...universities];
+
+  if (universitySlug) {
+    result = result.filter((u) => u.slug === universitySlug);
+  }
 
   if (search?.trim()) {
     const q = search.trim().toLowerCase();
@@ -95,7 +128,7 @@ export function filterUniversities(universities, { search, country, type, sortBy
     );
   }
 
-  if (country && country !== "all") {
+  if (country) {
     result = result.filter((u) => u.country === country);
   }
 
@@ -129,5 +162,23 @@ export function filterUniversities(universities, { search, country, type, sortBy
 }
 
 export function getUniqueCountries(universities) {
-  return [...new Set(universities.map((u) => u.country))].sort();
+  const fromData = [...new Set(universities.map((u) => u.country).filter(Boolean))];
+  if (fromData.length === 0) return SUPPORTED_COUNTRIES;
+  return SUPPORTED_COUNTRIES.filter(
+    (country) => fromData.includes(country)
+  ).concat(fromData.filter((c) => !SUPPORTED_COUNTRIES.includes(c)).sort());
+}
+
+export function countByCountry(universities) {
+  return universities.reduce((acc, u) => {
+    if (u.country) acc[u.country] = (acc[u.country] ?? 0) + 1;
+    return acc;
+  }, {});
+}
+
+/** Universities in a country, sorted alphabetically for dropdowns. */
+export function getUniversitiesByCountry(universities, country) {
+  return universities
+    .filter((u) => u.country === country)
+    .sort((a, b) => a.name.localeCompare(b.name));
 }

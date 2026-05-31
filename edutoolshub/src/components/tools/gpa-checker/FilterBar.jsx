@@ -1,15 +1,16 @@
-const inputClass =
-  "w-full rounded-lg border border-border bg-white px-3 py-2 text-sm text-text outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-primary/20";
+import { Link } from "react-router-dom";
 
 const selectClass =
   "w-full rounded-lg border border-border bg-white px-3 py-2 text-sm text-text outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-primary/20";
 
 export default function FilterBar({
-  search,
-  onSearchChange,
   country,
   onCountryChange,
   countries,
+  countryCounts = {},
+  universitiesInCountry = [],
+  selectedUniversitySlug,
+  onUniversityChange,
   type,
   onTypeChange,
   sortBy,
@@ -20,40 +21,65 @@ export default function FilterBar({
 }) {
   return (
     <section className="rounded-2xl border border-border bg-white p-4 shadow-sm sm:p-6">
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <div className="sm:col-span-2">
-          <label htmlFor="uni-search" className="mb-1 block text-sm font-medium text-text">
-            Search
-          </label>
-          <input
-            id="uni-search"
-            type="search"
-            value={search}
-            onChange={(e) => onSearchChange(e.target.value)}
-            placeholder="University name or city…"
-            className={inputClass}
-          />
-        </div>
-
-        <div>
-          <label htmlFor="uni-country" className="mb-1 block text-sm font-medium text-text">
-            Country
-          </label>
-          <select
-            id="uni-country"
-            value={country}
-            onChange={(e) => onCountryChange(e.target.value)}
-            className={selectClass}
-          >
-            <option value="all">All Countries</option>
-            {countries.map((c) => (
+      <div className="mb-4 rounded-xl border border-primary/15 bg-primary/5 p-4">
+        <label htmlFor="uni-country" className="mb-1 block text-sm font-semibold text-text">
+          Step 1 — Select your country
+        </label>
+        <p className="mb-3 text-xs text-text-muted">
+          Choose a country to load its universities and GPA requirements.
+        </p>
+        <select
+          id="uni-country"
+          value={country}
+          onChange={(e) => onCountryChange(e.target.value)}
+          className={selectClass}
+        >
+          {countries.map((c) => {
+            const count = countryCounts[c];
+            return (
               <option key={c} value={c}>
-                {c}
+                {count != null ? `${c} (${count} universities)` : c}
               </option>
-            ))}
-          </select>
-        </div>
+            );
+          })}
+        </select>
+      </div>
 
+      <div className="mb-4 rounded-xl border border-accent/20 bg-accent/5 p-4">
+        <label htmlFor="uni-name" className="mb-1 block text-sm font-semibold text-text">
+          Step 2 — Select a university
+        </label>
+        <p className="mb-3 text-xs text-text-muted">
+          {universitiesInCountry.length > 0
+            ? `${universitiesInCountry.length} universities loaded for ${country}. Pick one or browse all below.`
+            : `Loading universities for ${country}…`}
+        </p>
+        <select
+          id="uni-name"
+          value={selectedUniversitySlug}
+          onChange={(e) => onUniversityChange(e.target.value)}
+          className={selectClass}
+          disabled={universitiesInCountry.length === 0}
+        >
+          <option value="">All universities in {country}</option>
+          {universitiesInCountry.map((u) => (
+            <option key={u.slug} value={u.slug}>
+              {u.name}
+              {u.city ? ` — ${u.city}` : ""}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <p className="mb-4 rounded-lg border border-border bg-surface-muted/80 px-3 py-2.5 text-xs leading-relaxed text-text-muted">
+        More countries and universities will be added soon.{" "}
+        <Link to="/contact" className="font-semibold text-primary hover:underline">
+          Contact us
+        </Link>{" "}
+        to request your country or a specific university.
+      </p>
+
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <div>
           <label htmlFor="uni-type" className="mb-1 block text-sm font-medium text-text">
             Type
@@ -87,11 +113,11 @@ export default function FilterBar({
           </select>
         </div>
 
-        <div className="flex items-end sm:col-span-2 lg:col-span-3">
+        <div className="flex items-end">
           <div className="flex w-full flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-sm text-text-muted">
               <span className="font-semibold text-text">{matchCount}</span>{" "}
-              {matchCount === 1 ? "university" : "universities"} match your filters
+              {matchCount === 1 ? "university" : "universities"} shown
             </p>
 
             <div

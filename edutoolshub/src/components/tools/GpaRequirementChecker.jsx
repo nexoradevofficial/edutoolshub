@@ -1,13 +1,17 @@
 import { useEffect, useMemo, useState } from "react";
 import {
-  fetchAllUniversities,
+  SUPPORTED_COUNTRIES,
+  countByCountry,
   filterUniversities,
-  getUniqueCountries,
+  getUniversitiesByCountry,
+  loadUniversitiesForClient,
 } from "../../services/universities";
 import FilterBar from "./gpa-checker/FilterBar";
 import GpaInputBanner from "./gpa-checker/GpaInputBanner";
 import UniversityCard from "./gpa-checker/UniversityCard";
 import UniversityTable from "./gpa-checker/UniversityTable";
+
+const DEFAULT_COUNTRY = SUPPORTED_COUNTRIES[0];
 
 export default function GpaRequirementChecker() {
   const [universities, setUniversities] = useState([]);
@@ -15,8 +19,8 @@ export default function GpaRequirementChecker() {
   const [error, setError] = useState(null);
 
   const [studentGpa, setStudentGpa] = useState("");
-  const [search, setSearch] = useState("");
-  const [country, setCountry] = useState("all");
+  const [country, setCountry] = useState(DEFAULT_COUNTRY);
+  const [selectedUniversitySlug, setSelectedUniversitySlug] = useState("");
   const [type, setType] = useState("all");
   const [sortBy, setSortBy] = useState("qs_ranking");
   const [viewMode, setViewMode] = useState("grid");
@@ -27,26 +31,17 @@ export default function GpaRequirementChecker() {
     async function load() {
       setLoading(true);
       setError(null);
-      try {
-        const res = await fetch("/api/universities");
-        if (res.ok) {
-          const json = await res.json();
-          if (!cancelled) setUniversities(json.data ?? []);
-        } else {
-          const { data, error: supaError } = await fetchAllUniversities();
-          if (supaError) throw supaError;
-          if (!cancelled) setUniversities(data);
-        }
-      } catch (err) {
-        const { data, error: supaError } = await fetchAllUniversities();
-        if (!supaError && data.length) {
-          if (!cancelled) setUniversities(data);
-        } else if (!cancelled) {
-          setError(err?.message || supaError?.message || "Failed to load universities");
-        }
-      } finally {
-        if (!cancelled) setLoading(false);
+
+      const { data, error: loadError } = await loadUniversitiesForClient();
+      if (cancelled) return;
+
+      if (loadError) {
+        setError(loadError.message);
+        setUniversities([]);
+      } else {
+        setUniversities(data);
       }
+      setLoading(false);
     }
 
     load();
@@ -55,11 +50,27 @@ export default function GpaRequirementChecker() {
     };
   }, []);
 
-  const countries = useMemo(() => getUniqueCountries(universities), [universities]);
+  useEffect(() => {
+    setSelectedUniversitySlug("");
+    setType("all");
+  }, [country]);
+
+  const countryCounts = useMemo(() => countByCountry(universities), [universities]);
+
+  const universitiesInCountry = useMemo(
+    () => getUniversitiesByCountry(universities, country),
+    [universities, country]
+  );
 
   const filtered = useMemo(
-    () => filterUniversities(universities, { search, country, type, sortBy }),
-    [universities, search, country, type, sortBy]
+    () =>
+      filterUniversities(universities, {
+        country,
+        universitySlug: selectedUniversitySlug,
+        type,
+        sortBy,
+      }),
+    [universities, country, selectedUniversitySlug, type, sortBy]
   );
 
   if (loading) {
@@ -92,14 +103,14 @@ export default function GpaRequirementChecker() {
         </span>
       </div>
 
-      <GpaInputBanner value={studentGpa} onChange={setStudentGpa} />
-
       <FilterBar
-        search={search}
-        onSearchChange={setSearch}
         country={country}
         onCountryChange={setCountry}
-        countries={countries}
+        countries={SUPPORTED_COUNTRIES}
+        countryCounts={countryCounts}
+        universitiesInCountry={universitiesInCountry}
+        selectedUniversitySlug={selectedUniversitySlug}
+        onUniversityChange={setSelectedUniversitySlug}
         type={type}
         onTypeChange={setType}
         sortBy={sortBy}
@@ -109,9 +120,12 @@ export default function GpaRequirementChecker() {
         matchCount={filtered.length}
       />
 
+      <GpaInputBanner value={studentGpa} onChange={setStudentGpa} />
+
       {filtered.length === 0 ? (
         <div className="rounded-2xl border border-border bg-white p-8 text-center text-sm text-text-muted">
-          No universities match your filters. Try adjusting your search or filters.
+          No universities match your filters in {country}. Try selecting a different country
+          or university.
         </div>
       ) : viewMode === "grid" ? (
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
