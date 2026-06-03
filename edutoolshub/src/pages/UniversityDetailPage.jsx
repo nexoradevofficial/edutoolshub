@@ -71,7 +71,7 @@ export default function UniversityDetailPage() {
             We could not find GPA data for &ldquo;{slug}&rdquo;.
           </p>
           <Link
-            to="/tools/gpa-requirement-checker"
+            to="/tools/college-university-gpa-requirement-checker"
             className="mt-4 inline-block text-sm font-medium text-primary hover:underline"
           >
             ← Back to GPA Checker
@@ -91,13 +91,13 @@ export default function UniversityDetailPage() {
         <meta name="description" content={seoDescription} />
         <link
           rel="canonical"
-          href={`${SITE_URL}/tools/gpa-requirement-checker/${university.slug}`}
+          href={`${SITE_URL}/tools/college-university-gpa-requirement-checker/${university.slug}`}
         />
         <meta property="og:title" content={seoTitle} />
         <meta property="og:description" content={seoDescription} />
         <meta
           property="og:url"
-          content={`${SITE_URL}/tools/gpa-requirement-checker/${university.slug}`}
+          content={`${SITE_URL}/tools/college-university-gpa-requirement-checker/${university.slug}`}
         />
       </Helmet>
 

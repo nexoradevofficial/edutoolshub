@@ -75,7 +75,7 @@ export default function Blog() {
                 <IconArrowRight />
               </Button>
               <Link
-                to="/tools/gpa-requirement-checker"
+                to="/tools/college-university-gpa-requirement-checker"
                 className="text-sm font-semibold text-primary hover:underline"
               >
                 Or try College / University GPA Requirement Checker →

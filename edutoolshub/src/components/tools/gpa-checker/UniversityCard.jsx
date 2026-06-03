@@ -35,7 +35,7 @@ export default function UniversityCard({ university, studentGpa }) {
       <div className="flex items-start justify-between gap-3">
         <div>
           <Link
-            to={`/tools/gpa-requirement-checker/${university.slug}`}
+            to={`/tools/college-university-gpa-requirement-checker/${university.slug}`}
             className="text-base font-semibold text-text transition-colors hover:text-primary"
           >
             {university.name}

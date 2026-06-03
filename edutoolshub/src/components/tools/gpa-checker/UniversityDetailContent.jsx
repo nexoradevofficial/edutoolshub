@@ -54,7 +54,10 @@ export default function UniversityDetailContent({ university, similar = [] }) {
           </li>
           <li aria-hidden>/</li>
           <li>
-            <Link to="/tools/gpa-requirement-checker" className="hover:text-primary">
+            <Link
+              to="/tools/college-university-gpa-requirement-checker"
+              className="hover:text-primary"
+            >
               GPA Checker
             </Link>
           </li>
@@ -201,7 +204,10 @@ export default function UniversityDetailContent({ university, similar = [] }) {
       )}
 
       <div className="rounded-xl border border-primary/15 bg-primary/5 p-4 text-sm">
-        <Link to="/tools/gpa-requirement-checker" className="font-medium text-primary hover:underline">
+        <Link
+          to="/tools/college-university-gpa-requirement-checker"
+          className="font-medium text-primary hover:underline"
+        >
           ← Back to College / University GPA Requirement Checker
         </Link>
       </div>

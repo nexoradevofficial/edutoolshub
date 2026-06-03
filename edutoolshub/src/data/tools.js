@@ -34,7 +34,7 @@ export const tools = [
       "Search universities by GPA requirements across the US, Canada, UK, Australia, and Germany. Enter your GPA to see match results instantly.",
     icon: IconGpaChecker,
     status: "active",
-    path: "/tools/gpa-requirement-checker",
+    path: "/tools/college-university-gpa-requirement-checker",
     color: "bg-primary/10 text-primary-dark",
   },
   {
@@ -48,12 +48,12 @@ export const tools = [
   },
   {
     id: "exam-marks-needed",
-    name: "Exam Marks Needed Calculator",
+    name: "Final Grade Calculator",
     description:
       "See how many marks you need on your final exam to hit your target percentage — updates instantly as you type.",
     icon: IconExamMarks,
     status: "active",
-    path: "/tools/exam-marks-needed",
+    path: "/tools/final-grade-calculator",
     color: "bg-primary/10 text-primary-dark",
   },
 ];

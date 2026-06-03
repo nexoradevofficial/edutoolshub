@@ -1,5 +1,5 @@
 import { lazy } from "react";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes, useParams } from "react-router-dom";
 import MainLayout from "./layouts/MainLayout";
 import Home from "./pages/Home";
 
@@ -18,6 +18,16 @@ const About = lazy(() => import("./pages/About"));
 const Contact = lazy(() => import("./pages/Contact"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
+function RedirectUniversityDetail() {
+  const { slug } = useParams();
+  return (
+    <Navigate
+      to={`/tools/college-university-gpa-requirement-checker/${slug}`}
+      replace
+    />
+  );
+}
+
 export default function App() {
   return (
     <BrowserRouter>
@@ -28,10 +38,30 @@ export default function App() {
           <Route path="blog" element={<Blog />} />
           <Route path="blog/:slug" element={<BlogPost />} />
           <Route path="tools/gpa-calculator" element={<GpaCalculatorPage />} />
-          <Route path="tools/gpa-requirement-checker" element={<GpaRequirementCheckerPage />} />
-          <Route path="tools/gpa-requirement-checker/:slug" element={<UniversityDetailPage />} />
+          <Route
+            path="tools/college-university-gpa-requirement-checker"
+            element={<GpaRequirementCheckerPage />}
+          />
+          <Route
+            path="tools/college-university-gpa-requirement-checker/:slug"
+            element={<UniversityDetailPage />}
+          />
           <Route path="tools/attendance-sheet" element={<AttendancePage />} />
-          <Route path="tools/exam-marks-needed" element={<ExamMarksNeededPage />} />
+          <Route path="tools/final-grade-calculator" element={<ExamMarksNeededPage />} />
+          <Route
+            path="tools/gpa-requirement-checker"
+            element={
+              <Navigate to="/tools/college-university-gpa-requirement-checker" replace />
+            }
+          />
+          <Route
+            path="tools/gpa-requirement-checker/:slug"
+            element={<RedirectUniversityDetail />}
+          />
+          <Route
+            path="tools/exam-marks-needed"
+            element={<Navigate to="/tools/final-grade-calculator" replace />}
+          />
           <Route path="tools/gpa-to-percentage" element={<GpaToPercentagePage />} />
           <Route path="admin/universities" element={<AdminUniversitiesPage />} />
           <Route path="about" element={<About />} />

@@ -13,10 +13,16 @@ export default function GpaRequirementCheckerPage() {
       <Helmet>
         <title>{TITLE} | EduToolsHub</title>
         <meta name="description" content={DESCRIPTION} />
-        <link rel="canonical" href={`${SITE_URL}/tools/gpa-requirement-checker`} />
+        <link
+          rel="canonical"
+          href={`${SITE_URL}/tools/college-university-gpa-requirement-checker`}
+        />
         <meta property="og:title" content={`${TITLE} | EduToolsHub`} />
         <meta property="og:description" content={DESCRIPTION} />
-        <meta property="og:url" content={`${SITE_URL}/tools/gpa-requirement-checker`} />
+        <meta
+          property="og:url"
+          content={`${SITE_URL}/tools/college-university-gpa-requirement-checker`}
+        />
       </Helmet>
 
       <ToolPageLayout

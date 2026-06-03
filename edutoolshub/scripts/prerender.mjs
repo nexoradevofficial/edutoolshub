@@ -72,9 +72,9 @@ const STATIC_ROUTES = [
   "/tools",
   "/blog",
   "/tools/gpa-calculator",
-  "/tools/gpa-requirement-checker",
+  "/tools/college-university-gpa-requirement-checker",
   "/tools/attendance-sheet",
-  "/tools/exam-marks-needed",
+  "/tools/final-grade-calculator",
   "/tools/gpa-to-percentage",
   "/about",
   "/contact",
@@ -158,8 +158,13 @@ function generateSitemap(routes) {
 }
 
 function generateRedirects() {
-  // Netlify / Cloudflare Pages SPA fallback for any route we did not prerender
-  return `/*  /index.html  200\n`;
+  // Permanent redirects for renamed tool URLs, then SPA fallback
+  return [
+    "/tools/exam-marks-needed  /tools/final-grade-calculator  301",
+    "/tools/gpa-requirement-checker  /tools/college-university-gpa-requirement-checker  301",
+    "/tools/gpa-requirement-checker/*  /tools/college-university-gpa-requirement-checker/:splat  301",
+    "/*  /index.html  200",
+  ].join("\n") + "\n";
 }
 
 function generateRobotsTxt() {
@@ -257,7 +262,7 @@ async function main() {
   const routes = [
     ...STATIC_ROUTES,
     ...slugs.map((s) => `/blog/${s}`),
-    ...uniSlugs.map((s) => `/tools/gpa-requirement-checker/${s}`),
+    ...uniSlugs.map((s) => `/tools/college-university-gpa-requirement-checker/${s}`),
   ];
   const uniqueRoutes = Array.from(new Set(routes));
 
