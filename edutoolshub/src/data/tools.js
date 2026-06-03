@@ -3,9 +3,20 @@ import {
   IconExamMarks,
   IconGpa,
   IconGpaChecker,
+  IconGpaPercent,
 } from "../components/icons/ToolIcons";
 
 export const tools = [
+  {
+    id: "gpa-to-percentage",
+    name: "GPA to Percentage Converter",
+    description:
+      "Convert GPA to percentage on 4.0, 5.0, or 10.0 scales with letter grades, descriptors, and a visual score indicator.",
+    icon: IconGpaPercent,
+    status: "active",
+    path: "/tools/gpa-to-percentage",
+    color: "bg-accent/10 text-accent-dark",
+  },
   {
     id: "gpa-calculator",
     name: "GPA Calculator",

@@ -11,6 +11,7 @@ const GpaRequirementCheckerPage = lazy(() => import("./pages/GpaRequirementCheck
 const UniversityDetailPage = lazy(() => import("./pages/UniversityDetailPage"));
 const AttendancePage = lazy(() => import("./pages/AttendancePage"));
 const ExamMarksNeededPage = lazy(() => import("./pages/ExamMarksNeededPage"));
+const GpaToPercentagePage = lazy(() => import("./pages/GpaToPercentagePage"));
 const AdminUniversitiesPage = lazy(() => import("./pages/AdminUniversitiesPage"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 const About = lazy(() => import("./pages/About"));
@@ -31,6 +32,7 @@ export default function App() {
           <Route path="tools/gpa-requirement-checker/:slug" element={<UniversityDetailPage />} />
           <Route path="tools/attendance-sheet" element={<AttendancePage />} />
           <Route path="tools/exam-marks-needed" element={<ExamMarksNeededPage />} />
+          <Route path="tools/gpa-to-percentage" element={<GpaToPercentagePage />} />
           <Route path="admin/universities" element={<AdminUniversitiesPage />} />
           <Route path="about" element={<About />} />
           <Route path="contact" element={<Contact />} />

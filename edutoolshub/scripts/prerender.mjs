@@ -75,6 +75,7 @@ const STATIC_ROUTES = [
   "/tools/gpa-requirement-checker",
   "/tools/attendance-sheet",
   "/tools/exam-marks-needed",
+  "/tools/gpa-to-percentage",
   "/about",
   "/contact",
   "/privacy",

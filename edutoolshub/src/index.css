@@ -27,6 +27,21 @@
     @apply min-h-screen w-full;
   }
 
+  @keyframes gpa-result-enter {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .gpa-result-enter {
+    animation: gpa-result-enter 0.35s ease-out;
+  }
+
   /* Prevent inline SVGs from stretching in flex layouts */
   svg {
     flex-shrink: 0;
