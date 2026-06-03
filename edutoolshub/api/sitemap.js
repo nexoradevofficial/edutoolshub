@@ -4,6 +4,11 @@
  */
 
 import { createClient } from "@sanity/client";
+
+function normalizeSlug(slug) {
+  if (slug == null || slug === "") return "";
+  return String(slug).replace(/^\/+|\/+$/g, "").trim();
+}
 import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 
 const SITE_URL = process.env.SITE_URL || "https://edutoolshub.com";
@@ -34,12 +39,16 @@ async function fetchBlogSlugs() {
     useCdn: false,
   });
 
-  const slugs = await client.fetch(
+  const rows = await client.fetch(
     `*[_type == "post" && defined(slug.current) && defined(publishedAt) && publishedAt <= now()]{
-      "slug": select(slug.current match "/*" => string::split(slug.current, "/")[1], slug.current)
-    }.slug`
+      "slug": slug.current
+    }`
   );
-  return Array.isArray(slugs) ? slugs.filter(Boolean) : [];
+  return Array.isArray(rows)
+    ? rows
+        .map((r) => normalizeSlug(r.slug))
+        .filter(Boolean)
+    : [];
 }
 
 async function fetchUniversitySlugs() {

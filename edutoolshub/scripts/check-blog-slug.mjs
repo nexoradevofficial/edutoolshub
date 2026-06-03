@@ -54,3 +54,4 @@ const all = await createClient({
   perspective: "raw",
 }).fetch(`*[_type == "post"]{title,"slug":slug.current,publishedAt,_id}`);
 console.log("all posts:", all);
+

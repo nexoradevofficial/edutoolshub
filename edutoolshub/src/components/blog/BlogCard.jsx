@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { format, parseISO } from "date-fns";
 import { urlFor } from "../../sanity/image";
+import { blogPostHref } from "../../sanity/normalizeSlug";
 import { IconArrowRight } from "../icons/ToolIcons";
 
 function formatDate(iso) {
@@ -16,7 +17,8 @@ export default function BlogCard({ post, priority = false }) {
   if (!post) return null;
 
   const { title, slug, mainImage, excerpt, publishedAt } = post;
-  const href = `/blog/${slug}`;
+  const href = blogPostHref(slug);
+  if (!href) return null;
 
   const imageSrc = mainImage
     ? urlFor(mainImage).width(800).height(500).fit("crop").auto("format").url()

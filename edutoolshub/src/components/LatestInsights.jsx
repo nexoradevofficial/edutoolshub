@@ -1,8 +1,9 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import useEmblaCarousel from "embla-carousel-react";
 import InsightSlide from "./blog/InsightSlide";
 import { useSanityQuery } from "../sanity/useSanityQuery";
+import { normalizePosts } from "../sanity/normalizeSlug";
 import { recentPostsQuery } from "../sanity/queries";
 
 function ChevronIcon({ direction = "right", className = "" }) {
@@ -25,7 +26,8 @@ function ChevronIcon({ direction = "right", className = "" }) {
 }
 
 export default function LatestInsights() {
-  const { data: posts, error, isLoading } = useSanityQuery(recentPostsQuery);
+  const { data: rawPosts, error, isLoading } = useSanityQuery(recentPostsQuery);
+  const posts = useMemo(() => normalizePosts(rawPosts), [rawPosts]);
 
   const [emblaRef, emblaApi] = useEmblaCarousel({
     align: "start",

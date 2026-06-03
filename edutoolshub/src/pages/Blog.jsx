@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
 import Button from "../components/ui/Button";
@@ -5,6 +6,7 @@ import BlogCard from "../components/blog/BlogCard";
 import BlogCardSkeleton from "../components/blog/BlogCardSkeleton";
 import { IconArrowRight } from "../components/icons/ToolIcons";
 import { useSanityQuery } from "../sanity/useSanityQuery";
+import { normalizePosts } from "../sanity/normalizeSlug";
 import { allPostsQuery } from "../sanity/queries";
 
 const SITE_URL = "https://edutoolshub.com";
@@ -13,7 +15,8 @@ const PAGE_DESCRIPTION =
   "Free expert guides on GPA calculations, attendance tracking, exam prep, and university admissions for students and teachers worldwide.";
 
 export default function Blog() {
-  const { data: posts, error, isLoading } = useSanityQuery(allPostsQuery);
+  const { data: rawPosts, error, isLoading } = useSanityQuery(allPostsQuery);
+  const posts = useMemo(() => normalizePosts(rawPosts), [rawPosts]);
 
   return (
     <>

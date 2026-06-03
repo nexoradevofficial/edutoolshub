@@ -100,12 +100,18 @@ async function fetchBlogSlugs(env) {
   });
 
   try {
-    const slugs = await client.fetch(
+    const rows = await client.fetch(
       `*[_type == "post" && defined(slug.current) && defined(publishedAt) && publishedAt <= now()]{
-        "slug": select(slug.current match "/*" => string::split(slug.current, "/")[1], slug.current)
-      }.slug`
+        "slug": slug.current
+      }`
     );
-    return Array.isArray(slugs) ? slugs.filter(Boolean) : [];
+    if (!Array.isArray(rows)) return [];
+    return rows
+      .map((r) => {
+        const s = String(r.slug ?? "").replace(/^\/+|\/+$/g, "").trim();
+        return s && s !== "null" ? s : "";
+      })
+      .filter(Boolean);
   } catch (err) {
     console.warn(
       `[prerender] Could not fetch blog slugs from Sanity (${err.message}). Static routes only.`
@@ -162,6 +168,7 @@ function generateSitemap(routes) {
 function generateRedirects() {
   // Permanent redirects for renamed tool URLs, then SPA fallback
   return [
+    "/blog/null  /blog  302",
     "/tools/exam-marks-needed  /tools/final-grade-calculator  301",
     "/tools/gpa-requirement-checker  /tools/college-university-gpa-requirement-checker  301",
     "/tools/gpa-requirement-checker/*  /tools/college-university-gpa-requirement-checker/:splat  301",

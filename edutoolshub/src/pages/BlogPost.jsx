@@ -1,10 +1,11 @@
-import { Link, useParams } from "react-router-dom";
+import { useEffect, useMemo } from "react";
+import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { PortableText } from "@portabletext/react";
 import { format, parseISO } from "date-fns";
 import { useSanityQuery } from "../sanity/useSanityQuery";
 import { postBySlugQuery } from "../sanity/queries";
-import { normalizePostSlug } from "../sanity/normalizeSlug";
+import { normalizePost, normalizePostSlug } from "../sanity/normalizeSlug";
 import { urlFor } from "../sanity/image";
 import { portableTextComponents } from "../sanity/portableTextComponents";
 import { estimateReadingTime } from "../sanity/readingTime";
@@ -24,9 +25,25 @@ function formatDate(iso) {
 }
 
 export default function BlogPost() {
+  const navigate = useNavigate();
   const { slug: rawSlug } = useParams();
   const slug = normalizePostSlug(rawSlug);
-  const { data: post, error, isLoading } = useSanityQuery(postBySlugQuery, { slug });
+  const { data: rawPost, error, isLoading } = useSanityQuery(postBySlugQuery, { slug });
+  const post = useMemo(() => normalizePost(rawPost), [rawPost]);
+
+  const canonicalSlug = post?.slug || slug;
+
+  // Fix broken /blog/null URLs and sync the bar when Sanity slug differs from the path.
+  useEffect(() => {
+    if (!post || !canonicalSlug) return;
+    if (rawSlug !== canonicalSlug) {
+      navigate(`/blog/${canonicalSlug}`, { replace: true });
+    }
+  }, [post, canonicalSlug, rawSlug, navigate]);
+
+  if (!slug || slug === "null") {
+    return <Navigate to="/blog" replace />;
+  }
 
   if (isLoading) return <PostSkeleton />;
   if (error) return <PostError error={error} />;
@@ -35,7 +52,7 @@ export default function BlogPost() {
   const seoTitle = post.seoTitle || post.title;
   const seoDescription = post.metaDescription || post.excerpt || "";
   const fullTitle = `${seoTitle} | ${SITE_NAME}`;
-  const canonicalUrl = `${SITE_URL}/blog/${post.slug}`;
+  const canonicalUrl = `${SITE_URL}/blog/${canonicalSlug}`;
 
   const heroImageUrl = post.mainImage
     ? urlFor(post.mainImage).width(1600).height(900).fit("crop").auto("format").url()

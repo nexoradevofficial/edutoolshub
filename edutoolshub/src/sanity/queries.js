@@ -1,9 +1,9 @@
-import { SLUG_MATCH_FILTER, SLUG_NORMALIZE_GROQ } from "./normalizeSlug.js";
+import { SLUG_MATCH_FILTER } from "./normalizeSlug.js";
 
 const POST_CARD_PROJECTION = `
   _id,
   title,
-  "slug": ${SLUG_NORMALIZE_GROQ},
+  "slug": slug.current,
   mainImage{
     ...,
     asset->{
@@ -20,7 +20,7 @@ const POST_CARD_PROJECTION = `
 const POST_FULL_PROJECTION = `
   _id,
   title,
-  "slug": ${SLUG_NORMALIZE_GROQ},
+  "slug": slug.current,
   mainImage{
     ...,
     asset->{
@@ -57,4 +57,4 @@ export const allPostsQuery = `*[_type == "post" && defined(slug.current) && defi
 
 export const postBySlugQuery = `*[_type == "post" && ${SLUG_MATCH_FILTER} && defined(publishedAt) && publishedAt <= now()][0]{${POST_FULL_PROJECTION}}`;
 
-export const allPostSlugsQuery = `*[_type == "post" && defined(slug.current)]{"slug": ${SLUG_NORMALIZE_GROQ}}.slug`;
+export const allPostSlugsQuery = `*[_type == "post" && defined(slug.current)]{"slug": slug.current}.slug`;
