@@ -53,6 +53,6 @@ export const recentPostsQuery = `*[_type == "post" && defined(slug.current) && d
 export const allPostsQuery = `*[_type == "post" && defined(slug.current) && defined(publishedAt) && publishedAt <= now()]
   | order(publishedAt desc){${POST_CARD_PROJECTION}}`;
 
-export const postBySlugQuery = `*[_type == "post" && slug.current == $slug][0]{${POST_FULL_PROJECTION}}`;
+export const postBySlugQuery = `*[_type == "post" && slug.current == $slug && defined(publishedAt) && publishedAt <= now()][0]{${POST_FULL_PROJECTION}}`;
 
 export const allPostSlugsQuery = `*[_type == "post" && defined(slug.current)][].slug.current`;

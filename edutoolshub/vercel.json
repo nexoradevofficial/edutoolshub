@@ -27,8 +27,16 @@
   ],
   "rewrites": [
     {
-      "source": "/(.*)",
-      "destination": "/index"
+      "source": "/sitemap.xml",
+      "destination": "/api/sitemap"
+    },
+    {
+      "source": "/blog/:slug",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/((?!api/).*)",
+      "destination": "/index.html"
     }
   ]
 }

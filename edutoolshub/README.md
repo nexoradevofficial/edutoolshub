@@ -114,8 +114,9 @@ vercel --prod
 ```
 
 You also need to set `VITE_SANITY_PROJECT_ID` and `VITE_SANITY_DATASET` as
-Vercel project env vars (and re-deploy after content changes — or set up
-a Sanity webhook to trigger redeploys).
+Vercel project env vars. **Blog posts load from Sanity at runtime** — you do
+not need to redeploy when publishing a new article. The dynamic `/api/sitemap`
+handler keeps `sitemap.xml` up to date automatically.
 
 ### Netlify / Cloudflare Pages
 

@@ -103,7 +103,7 @@ export default function BlogPost() {
         </script>
       </Helmet>
 
-      <article>
+      <article data-blog-status="ready">
         <PostHero
           title={post.title}
           excerpt={post.excerpt}
@@ -267,7 +267,7 @@ function PostNotFound({ slug }) {
         <title>Article not found | {SITE_NAME}</title>
         <meta name="robots" content="noindex,follow" />
       </Helmet>
-      <section className="py-24 sm:py-32">
+      <section className="py-24 sm:py-32" data-blog-status="not-found">
         <div className="mx-auto max-w-lg px-4 text-center sm:px-6 lg:px-8">
           <p className="text-sm font-semibold uppercase tracking-wider text-primary">
             404

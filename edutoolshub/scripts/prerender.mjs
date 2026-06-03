@@ -247,6 +247,17 @@ async function renderRoute(page, baseUrl, route) {
   return page.content();
 }
 
+/** True when the React app rendered a blog 404 or global NotFound page. */
+function isNotFoundHtml(html, route) {
+  if (route.startsWith("/blog/")) {
+    return (
+      html.includes("Article not found") ||
+      html.includes('data-blog-status="not-found"')
+    );
+  }
+  return html.includes("Lost in the") && html.includes("404 · Not Found");
+}
+
 async function main() {
   console.log("[prerender] Loading env from .env.local");
   const env = loadEnv("production", projectRoot, "");
@@ -259,12 +270,15 @@ async function main() {
   const uniSlugs = await fetchUniversitySlugs(env);
   console.log(`[prerender] Found ${uniSlugs.length} university detail page(s).`);
 
-  const routes = [
+  // Blog posts are loaded client-side from Sanity so new publishes work without
+  // redeploying. Only static/tool/university routes are snapshotted to HTML.
+  const blogRoutes = slugs.map((s) => `/blog/${s}`);
+  const prerenderRoutes = [
     ...STATIC_ROUTES,
-    ...slugs.map((s) => `/blog/${s}`),
     ...uniSlugs.map((s) => `/tools/college-university-gpa-requirement-checker/${s}`),
   ];
-  const uniqueRoutes = Array.from(new Set(routes));
+  const uniquePrerenderRoutes = Array.from(new Set(prerenderRoutes));
+  const sitemapRoutes = Array.from(new Set([...uniquePrerenderRoutes, ...blogRoutes]));
 
   console.log("[prerender] Starting `vite preview` server…");
   const previewServer = await preview({
@@ -287,9 +301,14 @@ async function main() {
     let successCount = 0;
     let failCount = 0;
 
-    for (const route of uniqueRoutes) {
+    for (const route of uniquePrerenderRoutes) {
       try {
         const html = await renderRoute(page, baseUrl, route);
+        if (isNotFoundHtml(html, route)) {
+          failCount++;
+          console.warn(`  ✗ ${route} — rendered 404, skipped writing HTML`);
+          continue;
+        }
         const outPath = outputPathForRoute(route);
         mkdirSync(dirname(outPath), { recursive: true });
         writeFileSync(outPath, html, "utf-8");
@@ -301,13 +320,17 @@ async function main() {
       }
     }
 
+    console.log(
+      `[prerender] Blog posts (${blogRoutes.length}) use client-side rendering — no HTML snapshot.`
+    );
+
     console.log("[prerender] Writing sitemap.xml, robots.txt, _redirects…");
-    writeFileSync(resolve(distDir, "sitemap.xml"), generateSitemap(uniqueRoutes), "utf-8");
+    writeFileSync(resolve(distDir, "sitemap.xml"), generateSitemap(sitemapRoutes), "utf-8");
     writeFileSync(resolve(distDir, "robots.txt"), generateRobotsTxt(), "utf-8");
     writeFileSync(resolve(distDir, "_redirects"), generateRedirects(), "utf-8");
 
     console.log(
-      `[prerender] Done. ${successCount} rendered, ${failCount} failed, ${uniqueRoutes.length} total.`
+      `[prerender] Done. ${successCount} rendered, ${failCount} failed, ${uniquePrerenderRoutes.length} prerendered (+ ${blogRoutes.length} blog URLs in sitemap only).`
     );
     if (failCount > 0) process.exitCode = 1;
   } finally {
