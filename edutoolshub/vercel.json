@@ -36,9 +36,6 @@
       "destination": "/api/sitemap"
     },
     {
-      "handle": "filesystem"
-    },
-    {
       "source": "/((?!api/).*)",
       "destination": "/index"
     }
