@@ -1,4 +1,9 @@
-import { IconAttendance, IconGpa, IconGpaChecker } from "../components/icons/ToolIcons";
+import {
+  IconAttendance,
+  IconExamMarks,
+  IconGpa,
+  IconGpaChecker,
+} from "../components/icons/ToolIcons";
 
 export const tools = [
   {
@@ -29,6 +34,16 @@ export const tools = [
     status: "active",
     path: "/tools/attendance-sheet",
     color: "bg-accent/10 text-accent",
+  },
+  {
+    id: "exam-marks-needed",
+    name: "Exam Marks Needed Calculator",
+    description:
+      "See how many marks you need on your final exam to hit your target percentage — updates instantly as you type.",
+    icon: IconExamMarks,
+    status: "active",
+    path: "/tools/exam-marks-needed",
+    color: "bg-primary/10 text-primary-dark",
   },
 ];
 

@@ -26,6 +26,18 @@ export function IconAttendance({ className = "w-6 h-6" }) {
   );
 }
 
+export function IconExamMarks({ className = "w-6 h-6" }) {
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M15.75 15V18.75M15.75 9V12.75M15.75 3v1.5M8.25 15V18.75M8.25 9V12.75M8.25 3v1.5M4.5 9h15M4.5 15h15M19.5 9v10.125c0 .621-.504 1.125-1.125 1.125H5.625c-.621 0-1.125-.504-1.125-1.125V9c0-.621.504-1.125 1.125-1.125h12.75c.621 0 1.125.504 1.125 1.125Z"
+      />
+    </svg>
+  );
+}
+
 export function IconTimetable({ className = "w-6 h-6" }) {
   return (
     <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
