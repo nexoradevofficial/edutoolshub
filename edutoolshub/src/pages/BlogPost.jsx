@@ -4,6 +4,7 @@ import { PortableText } from "@portabletext/react";
 import { format, parseISO } from "date-fns";
 import { useSanityQuery } from "../sanity/useSanityQuery";
 import { postBySlugQuery } from "../sanity/queries";
+import { normalizePostSlug } from "../sanity/normalizeSlug";
 import { urlFor } from "../sanity/image";
 import { portableTextComponents } from "../sanity/portableTextComponents";
 import { estimateReadingTime } from "../sanity/readingTime";
@@ -23,7 +24,8 @@ function formatDate(iso) {
 }
 
 export default function BlogPost() {
-  const { slug } = useParams();
+  const { slug: rawSlug } = useParams();
+  const slug = normalizePostSlug(rawSlug);
   const { data: post, error, isLoading } = useSanityQuery(postBySlugQuery, { slug });
 
   if (isLoading) return <PostSkeleton />;

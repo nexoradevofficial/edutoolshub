@@ -14,6 +14,7 @@ export const sanityClient = createClient({
   projectId: projectId || "missing-project-id",
   dataset,
   apiVersion: "2025-01-01",
-  useCdn: true,
+  // API (not CDN) so newly published posts are visible immediately
+  useCdn: false,
   perspective: "published",
 });

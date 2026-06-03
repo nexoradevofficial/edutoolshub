@@ -35,7 +35,15 @@ export default {
             .replace(/\s+/g, '-')
             .slice(0, 96),
       },
-      validation: (Rule) => Rule.required(),
+      validation: (Rule) =>
+        Rule.required().custom((field) => {
+          const value = field?.current
+          if (!value) return true
+          if (value.startsWith('/') || value.endsWith('/')) {
+            return 'Remove leading or trailing slashes from the slug (use "my-post", not "/my-post").'
+          }
+          return true
+        }),
     },
     {
       name: 'mainImage',

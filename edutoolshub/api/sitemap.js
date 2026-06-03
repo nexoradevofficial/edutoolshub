@@ -35,7 +35,9 @@ async function fetchBlogSlugs() {
   });
 
   const slugs = await client.fetch(
-    `*[_type == "post" && defined(slug.current) && defined(publishedAt) && publishedAt <= now()].slug.current`
+    `*[_type == "post" && defined(slug.current) && defined(publishedAt) && publishedAt <= now()]{
+      "slug": select(slug.current match "/*" => string::split(slug.current, "/")[1], slug.current)
+    }.slug`
   );
   return Array.isArray(slugs) ? slugs.filter(Boolean) : [];
 }

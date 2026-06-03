@@ -12,7 +12,7 @@
  * Run via: `npm run build:prerender`
  */
 
-import { mkdirSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import process from "node:process";
 import { fileURLToPath } from "node:url";
@@ -101,7 +101,9 @@ async function fetchBlogSlugs(env) {
 
   try {
     const slugs = await client.fetch(
-      `*[_type == "post" && defined(slug.current) && defined(publishedAt) && publishedAt <= now()][].slug.current`
+      `*[_type == "post" && defined(slug.current) && defined(publishedAt) && publishedAt <= now()]{
+        "slug": select(slug.current match "/*" => string::split(slug.current, "/")[1], slug.current)
+      }.slug`
     );
     return Array.isArray(slugs) ? slugs.filter(Boolean) : [];
   } catch (err) {
@@ -323,6 +325,12 @@ async function main() {
     console.log(
       `[prerender] Blog posts (${blogRoutes.length}) use client-side rendering — no HTML snapshot.`
     );
+
+    const staleBlogDir = resolve(distDir, "blog");
+    if (existsSync(staleBlogDir)) {
+      rmSync(staleBlogDir, { recursive: true, force: true });
+      console.log("[prerender] Removed stale dist/blog/ HTML (blog routes are client-rendered).");
+    }
 
     console.log("[prerender] Writing sitemap.xml, robots.txt, _redirects…");
     writeFileSync(resolve(distDir, "sitemap.xml"), generateSitemap(sitemapRoutes), "utf-8");
