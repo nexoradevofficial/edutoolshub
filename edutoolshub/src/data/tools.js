@@ -19,9 +19,9 @@ export const tools = [
   },
   {
     id: "gpa-calculator",
-    name: "GPA Calculator",
+    name: "GPA / CGPA Calculator",
     description:
-      "Weighted & unweighted GPA with country presets and a fully customizable scale — works with any school's grading system worldwide.",
+      "Weighted & unweighted GPA and CGPA with country presets and a fully customizable scale — works with any college or university grading system worldwide.",
     icon: IconGpa,
     status: "active",
     path: "/tools/gpa-calculator",
