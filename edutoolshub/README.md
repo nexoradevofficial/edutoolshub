@@ -103,15 +103,18 @@ be deployed to any host. The script also generates:
 - `dist/sitemap.xml` — listed in `robots.txt`; submit it to Search Console
 - `dist/robots.txt` — points to the sitemap
 - `dist/_redirects` — SPA fallback for **Netlify** and **Cloudflare Pages**
-- `vercel.json` (root) — equivalent SPA fallback for **Vercel**
+- `vercel.json` (root) — SPA fallback for **Vercel** (`filesystem` handle + `/index.html` rewrites for `/blog` and all routes)
 
 ### Vercel
 
 ```bash
 vercel --prod
-# Build command: npm run build:prerender
-# Output dir:    dist
+# Root directory: edutoolshub  (folder that contains vercel.json + package.json)
+# Build command:  npm run build:prerender
+# Output dir:     dist
 ```
+
+Blog listing (`/blog`) and posts (`/blog/:slug`) are **not** prerendered to `dist/blog/` — Vercel serves them via SPA fallback so new Sanity posts work without redeploying.
 
 You also need to set `VITE_SANITY_PROJECT_ID` and `VITE_SANITY_DATASET` as
 Vercel project env vars. **Blog posts load from Sanity at runtime** — you do

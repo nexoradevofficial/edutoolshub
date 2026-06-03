@@ -36,12 +36,11 @@
       "destination": "/api/sitemap"
     },
     {
-      "source": "/blog/:slug",
-      "destination": "/index.html"
+      "handle": "filesystem"
     },
     {
       "source": "/((?!api/).*)",
-      "destination": "/index.html"
+      "destination": "/index"
     }
   ]
 }

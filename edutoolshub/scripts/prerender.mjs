@@ -70,7 +70,7 @@ const SETTLE_MS = 400;
 const STATIC_ROUTES = [
   "/",
   "/tools",
-  "/blog",
+  // /blog is client-rendered only — do not create dist/blog/ or /blog/:slug 404s on Vercel
   "/tools/gpa-calculator",
   "/tools/college-university-gpa-requirement-checker",
   "/tools/attendance-sheet",
@@ -79,6 +79,14 @@ const STATIC_ROUTES = [
   "/about",
   "/contact",
   "/privacy",
+];
+
+/** Pages listed in sitemap.xml — static pages + blog posts (no university detail URLs). */
+const SITEMAP_ROUTES = [
+  "/",
+  "/tools",
+  "/blog",
+  ...STATIC_ROUTES.filter((r) => r !== "/" && r !== "/tools"),
 ];
 
 async function fetchBlogSlugs(env) {
@@ -166,12 +174,14 @@ function generateSitemap(routes) {
 }
 
 function generateRedirects() {
-  // Permanent redirects for renamed tool URLs, then SPA fallback
+  // Netlify / Cloudflare: explicit blog SPA fallbacks, then global fallback
   return [
     "/blog/null  /blog  302",
     "/tools/exam-marks-needed  /tools/final-grade-calculator  301",
     "/tools/gpa-requirement-checker  /tools/college-university-gpa-requirement-checker  301",
     "/tools/gpa-requirement-checker/*  /tools/college-university-gpa-requirement-checker/:splat  301",
+    "/blog/*  /index.html  200",
+    "/blog  /index.html  200",
     "/*  /index.html  200",
   ].join("\n") + "\n";
 }
@@ -287,7 +297,7 @@ async function main() {
     ...uniSlugs.map((s) => `/tools/college-university-gpa-requirement-checker/${s}`),
   ];
   const uniquePrerenderRoutes = Array.from(new Set(prerenderRoutes));
-  const sitemapRoutes = Array.from(new Set([...uniquePrerenderRoutes, ...blogRoutes]));
+  const sitemapRoutes = Array.from(new Set([...SITEMAP_ROUTES, ...blogRoutes]));
 
   console.log("[prerender] Starting `vite preview` server…");
   const previewServer = await preview({
@@ -330,7 +340,7 @@ async function main() {
     }
 
     console.log(
-      `[prerender] Blog posts (${blogRoutes.length}) use client-side rendering — no HTML snapshot.`
+      `[prerender] ${slugs.length} blog post(s) are client-rendered and listed in sitemap.`
     );
 
     const staleBlogDir = resolve(distDir, "blog");
@@ -345,7 +355,7 @@ async function main() {
     writeFileSync(resolve(distDir, "_redirects"), generateRedirects(), "utf-8");
 
     console.log(
-      `[prerender] Done. ${successCount} rendered, ${failCount} failed, ${uniquePrerenderRoutes.length} prerendered (+ ${blogRoutes.length} blog URLs in sitemap only).`
+      `[prerender] Done. ${successCount} rendered, ${failCount} failed, ${uniquePrerenderRoutes.length} prerendered, ${sitemapRoutes.length} URL(s) in sitemap (${blogRoutes.length} blog post(s)).`
     );
     if (failCount > 0) process.exitCode = 1;
   } finally {

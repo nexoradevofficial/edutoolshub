@@ -1,15 +1,9 @@
 /**
- * Dynamic sitemap — always includes the latest published blog slugs from Sanity.
+ * Dynamic sitemap — core site pages plus published blog posts (no university detail URLs).
  * Vercel rewrites /sitemap.xml → this handler (see vercel.json).
  */
 
 import { createClient } from "@sanity/client";
-
-function normalizeSlug(slug) {
-  if (slug == null || slug === "") return "";
-  return String(slug).replace(/^\/+|\/+$/g, "").trim();
-}
-import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 
 const SITE_URL = process.env.SITE_URL || "https://edutoolshub.com";
 
@@ -26,6 +20,11 @@ const STATIC_ROUTES = [
   "/contact",
   "/privacy",
 ];
+
+function normalizeSlug(slug) {
+  if (slug == null || slug === "") return "";
+  return String(slug).replace(/^\/+|\/+$/g, "").trim();
+}
 
 async function fetchBlogSlugs() {
   const projectId = process.env.VITE_SANITY_PROJECT_ID;
@@ -45,25 +44,8 @@ async function fetchBlogSlugs() {
     }`
   );
   return Array.isArray(rows)
-    ? rows
-        .map((r) => normalizeSlug(r.slug))
-        .filter(Boolean)
+    ? rows.map((r) => normalizeSlug(r.slug)).filter(Boolean)
     : [];
-}
-
-async function fetchUniversitySlugs() {
-  const url = process.env.VITE_SUPABASE_URL;
-  const key = process.env.VITE_SUPABASE_ANON_KEY;
-  if (!url || !key) return [];
-
-  const client = createSupabaseClient(url, key);
-  const { data, error } = await client
-    .from("universities")
-    .select("slug")
-    .order("qs_ranking", { ascending: true, nullsFirst: false });
-
-  if (error) throw error;
-  return Array.isArray(data) ? data.map((r) => r.slug).filter(Boolean) : [];
 }
 
 function buildSitemapXml(routes) {
@@ -71,7 +53,7 @@ function buildSitemapXml(routes) {
   const items = routes
     .map(
       (route) =>
-        `  <url>\n    <loc>${SITE_URL}${route === "/" ? "" : route}</loc>\n    <lastmod>${now}</lastmod>\n    <changefreq>${route.startsWith("/blog") ? "weekly" : "monthly"}</changefreq>\n  </url>`
+        `  <url>\n    <loc>${SITE_URL}${route === "/" ? "" : route}</loc>\n    <lastmod>${now}</lastmod>\n    <changefreq>${route.startsWith("/blog/") ? "weekly" : route === "/blog" ? "weekly" : "monthly"}</changefreq>\n  </url>`
     )
     .join("\n");
   return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${items}\n</urlset>\n`;
@@ -84,15 +66,10 @@ export default async function handler(req, res) {
   }
 
   try {
-    const [blogSlugs, uniSlugs] = await Promise.all([
-      fetchBlogSlugs(),
-      fetchUniversitySlugs(),
-    ]);
-
+    const blogSlugs = await fetchBlogSlugs();
     const routes = [
       ...STATIC_ROUTES,
       ...blogSlugs.map((s) => `/blog/${s}`),
-      ...uniSlugs.map((s) => `/tools/college-university-gpa-requirement-checker/${s}`),
     ];
     const uniqueRoutes = Array.from(new Set(routes));
 
