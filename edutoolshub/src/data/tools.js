@@ -29,7 +29,7 @@ export const tools = [
   },
   {
     id: "gpa-requirement-checker",
-    name: "College GPA Requirement Checker",
+    name: "College / University GPA Requirement Checker",
     description:
       "Search universities by GPA requirements across the US, Canada, UK, Australia, and Germany. Enter your GPA to see match results instantly.",
     icon: IconGpaChecker,

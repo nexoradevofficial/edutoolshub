@@ -10,7 +10,7 @@ import { allPostsQuery } from "../sanity/queries";
 const SITE_URL = "https://edutoolshub.com";
 const PAGE_TITLE = "Blog — Guides for Students & Teachers | EduToolsHub";
 const PAGE_DESCRIPTION =
-  "Practical, no-fluff guides on GPA calculations, attendance tracking, school workflows, and study tips for students and teachers worldwide.";
+  "Free expert guides on GPA calculations, attendance tracking, exam prep, and university admissions for students and teachers worldwide.";
 
 export default function Blog() {
   const { data: posts, error, isLoading } = useSanityQuery(allPostsQuery);
@@ -40,7 +40,8 @@ export default function Blog() {
               Practical guides for students & teachers
             </h1>
             <p className="mt-4 text-lg text-text-muted">
-              Honest, no-fluff articles on grades, attendance, and school workflows.
+              Honest, actionable articles on GPA, grades, attendance, exam prep, and college
+              admissions.
             </p>
           </header>
 
@@ -77,7 +78,7 @@ export default function Blog() {
                 to="/tools/gpa-requirement-checker"
                 className="text-sm font-semibold text-primary hover:underline"
               >
-                Or try GPA Requirement Checker →
+                Or try College / University GPA Requirement Checker →
               </Link>
             </div>
           </div>

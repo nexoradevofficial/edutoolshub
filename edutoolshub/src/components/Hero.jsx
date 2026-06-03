@@ -36,7 +36,7 @@ export default function Hero() {
 
         <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
           <Button to="/tools/gpa-requirement-checker" size="lg">
-            College GPA Requirement Checker
+            College / University GPA Requirement Checker
             <IconArrowRight />
           </Button>
           <Button to="/tools" variant="secondary" size="lg">

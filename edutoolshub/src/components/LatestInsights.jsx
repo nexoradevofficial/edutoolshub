@@ -80,7 +80,8 @@ export default function LatestInsights() {
               Latest Insights
             </h2>
             <p className="mt-3 text-base text-text-muted sm:text-lg">
-              Practical guides on grades, attendance, and school workflows — from our editors.
+              Free expert guides on GPA calculations, attendance tracking, exam prep, and
+              university admissions—for students and teachers worldwide.
             </p>
           </div>
 
