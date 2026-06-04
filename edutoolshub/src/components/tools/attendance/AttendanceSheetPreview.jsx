@@ -379,12 +379,14 @@ export default function AttendanceSheetPreview({
                     {col.title}
                   </th>
                 ))}
-                <th
-                  rowSpan={2}
-                  className="attendance-sheet__th attendance-sheet__th-percent min-w-[72px] border border-border bg-surface-muted px-2 py-2 text-center font-semibold text-text"
-                >
-                  Attendance&nbsp;%
-                </th>
+                {liveMarking && (
+                  <th
+                    rowSpan={2}
+                    className="attendance-sheet__th attendance-sheet__th-percent min-w-[72px] border border-border bg-surface-muted px-2 py-2 text-center font-semibold text-text"
+                  >
+                    Attendance&nbsp;%
+                  </th>
+                )}
               </tr>
               <tr>
                 {days.map((d) => {
@@ -429,20 +431,14 @@ export default function AttendanceSheetPreview({
                       </td>
                     )}
                     <td className="attendance-sheet__td attendance-sheet__name border border-border px-3 py-2 text-text">
-                      {student.name ? (
-                        student.name
-                      ) : (
-                        <span className="text-text-muted/40">
-                          ____________________
-                        </span>
-                      )}
+                      {student.name || null}
                     </td>
                     {beforeColumns.map((col) => (
                       <td
                         key={`bef-${col.id}-${i}`}
                         className="attendance-sheet__td attendance-sheet__td-custom border border-border px-2 py-2 text-center text-text-muted/40"
                       >
-                        ____
+                        {liveMarking ? "____" : null}
                       </td>
                     ))}
                     {days.map((d) => {
@@ -513,12 +509,14 @@ export default function AttendanceSheetPreview({
                         key={`aft-${col.id}-${i}`}
                         className="attendance-sheet__td attendance-sheet__td-custom border border-border px-2 py-2 text-center text-text-muted/40"
                       >
-                        ____
+                        {liveMarking ? "____" : null}
                       </td>
                     ))}
-                    <td className="attendance-sheet__td attendance-sheet__td-percent border border-border px-2 py-2 text-center font-semibold tabular-nums text-text">
-                      {liveMarking ? formatAttendancePercent(percent) : "—"}
-                    </td>
+                    {liveMarking && (
+                      <td className="attendance-sheet__td attendance-sheet__td-percent border border-border px-2 py-2 text-center font-semibold tabular-nums text-text">
+                        {formatAttendancePercent(percent)}
+                      </td>
+                    )}
                   </tr>
                 );
               })}
