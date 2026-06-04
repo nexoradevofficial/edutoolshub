@@ -242,6 +242,71 @@ export const DEFAULT_HOLIDAY_REASON = "Holiday";
  * holidays worldwide. The dialog renders these as one-click chips,
  * and the input still accepts any free-form text for local holidays.
  */
+/** Attendance marks used on the live sheet and exports. */
+export const ATTENDANCE_MARKS = {
+  PRESENT: "P",
+  ABSENT: "A",
+  HOLIDAY: "H",
+  LEAVE: "L",
+};
+
+/** Cycle order for clickable day cells (H comes from column holidays only). */
+export const ATTENDANCE_MARK_CYCLE = [
+  "",
+  ATTENDANCE_MARKS.PRESENT,
+  ATTENDANCE_MARKS.ABSENT,
+  ATTENDANCE_MARKS.LEAVE,
+];
+
+export function attendanceMarkKey(rowIndex, dateISO) {
+  return `${rowIndex}-${dateISO}`;
+}
+
+export function cycleAttendanceMark(current) {
+  const idx = ATTENDANCE_MARK_CYCLE.indexOf(current ?? "");
+  const next = idx < 0 ? 0 : (idx + 1) % ATTENDANCE_MARK_CYCLE.length;
+  return ATTENDANCE_MARK_CYCLE[next];
+}
+
+/**
+ * Resolve the mark shown in a day cell.
+ * Column holidays always render as H; user marks apply on working days.
+ */
+export function resolveAttendanceMark({
+  rowIndex,
+  dateISO,
+  marks,
+  holidayMap,
+  day,
+}) {
+  if (holidayMap.has(dateISO)) return ATTENDANCE_MARKS.HOLIDAY;
+  if (day?.isSunday) return "";
+  return marks[attendanceMarkKey(rowIndex, dateISO)] ?? "";
+}
+
+/**
+ * Attendance % for a student row when marking live.
+ * Denominator = present + absent on working days (Sundays, holidays, and leave excluded).
+ */
+export function calculateRowAttendancePercent({ rowIndex, days, holidayMap, marks }) {
+  let present = 0;
+  let absent = 0;
+  for (const d of days) {
+    if (d.isSunday || holidayMap.has(d.dateISO)) continue;
+    const mark = marks[attendanceMarkKey(rowIndex, d.dateISO)] ?? "";
+    if (mark === ATTENDANCE_MARKS.PRESENT) present++;
+    else if (mark === ATTENDANCE_MARKS.ABSENT) absent++;
+  }
+  const counted = present + absent;
+  if (counted === 0) return null;
+  return Math.round((present / counted) * 100);
+}
+
+export function formatAttendancePercent(value) {
+  if (value === null || value === undefined) return "—";
+  return `${value}%`;
+}
+
 export const HOLIDAY_REASON_PRESETS = [
   "Public Holiday",
   "Christmas",

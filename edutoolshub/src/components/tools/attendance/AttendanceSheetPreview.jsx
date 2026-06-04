@@ -1,13 +1,25 @@
-import { useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import Button from "../../ui/Button";
 import { IconPrint } from "../../icons/ToolIcons";
 import {
   WEEKDAY_LONG,
+  ATTENDANCE_MARKS,
+  attendanceMarkKey,
+  calculateRowAttendancePercent,
+  cycleAttendanceMark,
+  formatAttendancePercent,
   formatMonthYear,
   formatRollNumber,
   partitionCustomColumns,
+  resolveAttendanceMark,
   summarizeMonth,
 } from "../../../utils/attendance";
+import {
+  buildAttendanceExportFilename,
+  buildAttendanceExportTable,
+  exportAttendanceCsv,
+  exportAttendanceExcel,
+} from "../../../utils/attendanceExport";
 
 /**
  * Injects a one-shot landscape @page rule so the wide attendance grid
@@ -32,11 +44,17 @@ function printAttendanceSheet() {
     window.removeEventListener("afterprint", cleanup);
   };
   window.addEventListener("afterprint", cleanup);
-  // Safety net for browsers that don't fire afterprint reliably.
   setTimeout(cleanup, 60_000);
 
   window.print();
 }
+
+const MARK_CELL_CLASS = {
+  [ATTENDANCE_MARKS.PRESENT]: "font-bold text-emerald-700",
+  [ATTENDANCE_MARKS.ABSENT]: "font-bold text-red-700",
+  [ATTENDANCE_MARKS.LEAVE]: "font-bold text-blue-700",
+  [ATTENDANCE_MARKS.HOLIDAY]: "font-bold text-amber-900",
+};
 
 export default function AttendanceSheetPreview({
   institute,
@@ -52,6 +70,11 @@ export default function AttendanceSheetPreview({
   rollNumberPadding,
   customColumns,
   onRequestHoliday,
+  liveMarking,
+  onLiveMarkingChange,
+  marks,
+  onSetMark,
+  onClearMarks,
 }) {
   const summary = useMemo(
     () => summarizeMonth(days, holidayMap),
@@ -83,7 +106,64 @@ export default function AttendanceSheetPreview({
     { label: "Period", value: monthLabel },
   ].filter(Boolean);
 
-  // Re-attach the afterprint cleanup on unmount as a safety net.
+  const exportContext = useMemo(
+    () => ({
+      roster,
+      days,
+      holidayMap,
+      marks,
+      showRollNumberColumn,
+      rollOptions,
+      customColumns,
+      includePercent: liveMarking,
+    }),
+    [
+      roster,
+      days,
+      holidayMap,
+      marks,
+      showRollNumberColumn,
+      rollOptions,
+      customColumns,
+      liveMarking,
+    ]
+  );
+
+  const handleExportCsv = useCallback(() => {
+    const table = buildAttendanceExportTable(exportContext);
+    const filename = buildAttendanceExportFilename({
+      instituteName: institute.name,
+      className: classInfo.className,
+      year,
+      monthIndex,
+      extension: "csv",
+    });
+    exportAttendanceCsv(table, filename);
+  }, [exportContext, institute.name, classInfo.className, year, monthIndex]);
+
+  const handleExportExcel = useCallback(() => {
+    const table = buildAttendanceExportTable(exportContext);
+    const filename = buildAttendanceExportFilename({
+      instituteName: institute.name,
+      className: classInfo.className,
+      year,
+      monthIndex,
+      extension: "xls",
+    });
+    exportAttendanceExcel(table, filename, monthLabel);
+  }, [exportContext, institute.name, classInfo.className, year, monthIndex, monthLabel]);
+
+  const handleDayCellClick = useCallback(
+    (rowIndex, day, isEditable) => {
+      if (!liveMarking || !isEditable) return;
+      const key = attendanceMarkKey(rowIndex, day.dateISO);
+      const current = marks[key] ?? "";
+      const next = cycleAttendanceMark(current);
+      onSetMark(rowIndex, day.dateISO, next);
+    },
+    [liveMarking, marks, onSetMark]
+  );
+
   useEffect(() => {
     return () => {
       document.getElementById("attendance-print-page-rule")?.remove();
@@ -92,14 +172,80 @@ export default function AttendanceSheetPreview({
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-wrap items-center justify-between gap-3 print:hidden">
-        <p className="text-sm text-text-muted">
-          Tip: click a date in the table header to toggle it as a holiday.
-        </p>
-        <Button onClick={printAttendanceSheet}>
-          <IconPrint />
-          Print attendance sheet
-        </Button>
+      <div className="space-y-3 print:hidden">
+        <div className="flex flex-col gap-3 rounded-2xl border border-border bg-surface-muted/50 p-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="text-sm font-semibold text-text">Sheet mode</p>
+            <p className="mt-0.5 text-xs text-text-muted">
+              Blank sheet: empty day cells for handwriting. Live marking: click
+              cells to set P, A, or L — holidays stay H.
+            </p>
+          </div>
+          <div
+            className="inline-flex rounded-xl border border-border bg-white p-1 shadow-sm"
+            role="group"
+            aria-label="Attendance sheet mode"
+          >
+            <button
+              type="button"
+              onClick={() => onLiveMarkingChange(false)}
+              className={`rounded-lg px-4 py-2 text-sm font-semibold transition-colors ${
+                !liveMarking
+                  ? "bg-primary text-white shadow-sm"
+                  : "text-text-muted hover:text-text"
+              }`}
+            >
+              Blank sheet
+            </button>
+            <button
+              type="button"
+              onClick={() => onLiveMarkingChange(true)}
+              className={`rounded-lg px-4 py-2 text-sm font-semibold transition-colors ${
+                liveMarking
+                  ? "bg-primary text-white shadow-sm"
+                  : "text-text-muted hover:text-text"
+              }`}
+            >
+              Mark live
+            </button>
+          </div>
+        </div>
+
+        {liveMarking && (
+          <p className="text-xs text-text-muted">
+            Click a day cell to cycle: empty → P (Present) → A (Absent) → L
+            (Leave). Column holidays are always H.{" "}
+            <button
+              type="button"
+              onClick={onClearMarks}
+              className="font-semibold text-primary underline-offset-2 hover:underline"
+            >
+              Clear all marks
+            </button>
+          </p>
+        )}
+
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <p className="text-sm text-text-muted">
+            Tip: click a date in the table header to toggle it as a holiday.
+          </p>
+          <div className="flex flex-wrap gap-2">
+            <Button variant="secondary" size="sm" onClick={handleExportCsv}>
+              Export CSV
+            </Button>
+            <Button variant="secondary" size="sm" onClick={handleExportExcel}>
+              Export Excel
+            </Button>
+            <Button variant="secondary" size="sm" onClick={printAttendanceSheet}>
+              <IconPrint />
+              Save as PDF
+            </Button>
+            <Button size="sm" onClick={printAttendanceSheet}>
+              <IconPrint />
+              Print sheet
+            </Button>
+          </div>
+        </div>
       </div>
 
       <article
@@ -233,6 +379,12 @@ export default function AttendanceSheetPreview({
                     {col.title}
                   </th>
                 ))}
+                <th
+                  rowSpan={2}
+                  className="attendance-sheet__th attendance-sheet__th-percent min-w-[72px] border border-border bg-surface-muted px-2 py-2 text-center font-semibold text-text"
+                >
+                  Attendance&nbsp;%
+                </th>
               </tr>
               <tr>
                 {days.map((d) => {
@@ -256,11 +408,20 @@ export default function AttendanceSheetPreview({
             </thead>
             <tbody>
               {roster.map((student, i) => {
-                const rowIndex = i + 1;
+                const rowIndex = i;
+                const rowNum = i + 1;
+                const percent = liveMarking
+                  ? calculateRowAttendancePercent({
+                      rowIndex,
+                      days,
+                      holidayMap,
+                      marks,
+                    })
+                  : null;
                 return (
                   <tr key={i} className="attendance-sheet__row">
                     <td className="attendance-sheet__td sticky left-0 z-10 border border-border bg-white px-1 py-2 text-center text-text-muted">
-                      {rowIndex}
+                      {rowNum}
                     </td>
                     {showRollNumberColumn && (
                       <td className="attendance-sheet__td border border-border px-2 py-2 text-center font-mono text-text">
@@ -286,19 +447,64 @@ export default function AttendanceSheetPreview({
                     ))}
                     {days.map((d) => {
                       const isHoliday = holidayMap.has(d.dateISO);
+                      const isSunday = d.isSunday;
+                      const isEditable = liveMarking && !isHoliday && !isSunday;
+                      const mark = liveMarking
+                        ? resolveAttendanceMark({
+                            rowIndex,
+                            dateISO: d.dateISO,
+                            marks,
+                            holidayMap,
+                            day: d,
+                          })
+                        : isHoliday
+                          ? ATTENDANCE_MARKS.HOLIDAY
+                          : "";
                       const cellClass = [
                         "attendance-sheet__td-day",
                         "h-7 border border-border px-0 py-2 text-center align-middle",
-                        d.isSunday && !isHoliday
+                        isSunday && !isHoliday
                           ? "attendance-sheet__sunday bg-red-50/60"
                           : "",
                         isHoliday
-                          ? "attendance-sheet__holiday bg-amber-100/80 font-semibold text-amber-900"
+                          ? "attendance-sheet__holiday bg-amber-100/80"
+                          : "",
+                        isEditable
+                          ? "cursor-pointer hover:bg-primary/5 print:cursor-default"
                           : "",
                       ].join(" ");
                       return (
-                        <td key={d.dateISO} className={cellClass}>
-                          {isHoliday ? "H" : ""}
+                        <td
+                          key={d.dateISO}
+                          className={cellClass}
+                          onClick={() => handleDayCellClick(rowIndex, d, isEditable)}
+                          title={
+                            isEditable
+                              ? "Click to cycle: P → A → L → clear"
+                              : undefined
+                          }
+                          role={isEditable ? "button" : undefined}
+                          tabIndex={isEditable ? 0 : undefined}
+                          onKeyDown={
+                            isEditable
+                              ? (e) => {
+                                  if (e.key === "Enter" || e.key === " ") {
+                                    e.preventDefault();
+                                    handleDayCellClick(rowIndex, d, isEditable);
+                                  }
+                                }
+                              : undefined
+                          }
+                        >
+                          {mark ? (
+                            <span
+                              className={
+                                MARK_CELL_CLASS[mark] ?? "font-bold text-text"
+                              }
+                            >
+                              {mark}
+                            </span>
+                          ) : null}
                         </td>
                       );
                     })}
@@ -310,6 +516,9 @@ export default function AttendanceSheetPreview({
                         ____
                       </td>
                     ))}
+                    <td className="attendance-sheet__td attendance-sheet__td-percent border border-border px-2 py-2 text-center font-semibold tabular-nums text-text">
+                      {liveMarking ? formatAttendancePercent(percent) : "—"}
+                    </td>
                   </tr>
                 );
               })}
@@ -331,12 +540,18 @@ export default function AttendanceSheetPreview({
                   <span className="font-mono font-bold">A</span> — Absent
                 </li>
                 <li>
-                  <span className="font-mono font-bold">L</span> — Late
+                  <span className="font-mono font-bold">L</span> — Leave
                 </li>
                 <li>
                   <span className="font-mono font-bold">H</span> — Holiday
                 </li>
               </ul>
+              {liveMarking && (
+                <p className="mt-2 text-[10px] text-text-muted">
+                  Attendance % = Present ÷ (Present + Absent) on working days
+                  only. Leave, Sunday, and holidays are excluded.
+                </p>
+              )}
             </div>
             <div>
               <p className="font-semibold uppercase tracking-wider text-text-muted">

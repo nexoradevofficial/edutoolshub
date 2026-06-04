@@ -57,8 +57,23 @@ export default function AttendanceGenerator() {
   // printed vertically inside the column header.
   const [holidayMap, setHolidayMap] = useState(() => new Map());
 
+  /** When true, day cells are clickable (P / A / L) and % column is calculated. */
+  const [liveMarking, setLiveMarking] = useState(false);
+  /** Map keyed by `${rowIndex}-${dateISO}` → P | A | L */
+  const [marks, setMarks] = useState(() => ({}));
+
   // Dialog state for the holiday-reason modal.
   const [dialog, setDialog] = useState(INITIAL_DIALOG);
+
+  const handleYearChange = useCallback((nextYear) => {
+    setYear(nextYear);
+    setMarks({});
+  }, []);
+
+  const handleMonthChange = useCallback((nextMonth) => {
+    setMonthIndex(nextMonth);
+    setMarks({});
+  }, []);
 
   const days = useMemo(
     () => buildMonthDays(year, monthIndex),
@@ -146,6 +161,18 @@ export default function AttendanceGenerator() {
     });
   }, [days]);
 
+  const setMark = useCallback((rowIndex, dateISO, value) => {
+    const key = `${rowIndex}-${dateISO}`;
+    setMarks((prev) => {
+      const next = { ...prev };
+      if (!value) delete next[key];
+      else next[key] = value;
+      return next;
+    });
+  }, []);
+
+  const clearMarks = useCallback(() => setMarks({}), []);
+
   return (
     <div className="space-y-6">
       <InstituteDetailsForm
@@ -158,8 +185,8 @@ export default function AttendanceGenerator() {
       <MonthYearPicker
         year={year}
         monthIndex={monthIndex}
-        onYearChange={setYear}
-        onMonthChange={setMonthIndex}
+        onYearChange={handleYearChange}
+        onMonthChange={handleMonthChange}
       />
 
       <StudentsForm
@@ -209,6 +236,11 @@ export default function AttendanceGenerator() {
         rollNumberPadding={rollNumberPadding}
         customColumns={customColumns}
         onRequestHoliday={requestHolidayForDate}
+        liveMarking={liveMarking}
+        onLiveMarkingChange={setLiveMarking}
+        marks={marks}
+        onSetMark={setMark}
+        onClearMarks={clearMarks}
       />
 
       <HolidayDialog
