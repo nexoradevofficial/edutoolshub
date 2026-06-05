@@ -115,9 +115,10 @@ const SECTIONS = [
         <li>Add terms (Term 1, Term 2, etc.) with their own date ranges.</li>
         <li>
           Map topics week by week and align each to <strong>IB</strong>,{" "}
-          <strong>Cambridge</strong>, or <strong>CBSE</strong> standards — or type your own
-          standard reference.
+          <strong>Cambridge</strong>, <strong>CBSE</strong>, or any <strong>custom framework</strong>{" "}
+          you add (e.g. Common Core, Australian Curriculum).
         </li>
+        <li>Type your own standard reference for any framework.</li>
         <li>Track each topic as pending, taught, or skipped using the coverage dashboard.</li>
         <li>Export your full curriculum map as a PDF or CSV spreadsheet.</li>
       </ul>

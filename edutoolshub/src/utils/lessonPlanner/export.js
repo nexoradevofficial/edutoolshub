@@ -11,16 +11,19 @@ function downloadBlob(content, filename, mimeType) {
   URL.revokeObjectURL(url);
 }
 
-export function exportLessonPlanPdf(plan) {
-  const doc = new jsPDF();
-  const margin = 20;
+function appendLessonPlanToPdf(doc, plan, { margin = 20, startOnNewPage = false } = {}) {
+  if (startOnNewPage) doc.addPage();
+
   let y = margin;
 
   doc.setFontSize(18);
+  doc.setFont("helvetica", "bold");
+  doc.setTextColor(0);
   doc.text(plan.title, margin, y);
   y += 10;
 
   doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
   doc.setTextColor(100);
   const meta = [
     plan.subject && `Subject: ${plan.subject}`,
@@ -51,8 +54,27 @@ export function exportLessonPlanPdf(plan) {
     doc.text(lines, margin, y);
     y += lines.length * 5 + 8;
   }
+}
 
+export function exportLessonPlanPdf(plan) {
+  const doc = new jsPDF();
+  appendLessonPlanToPdf(doc, plan);
   doc.save(`${plan.title.replace(/[^a-z0-9]/gi, "_")}_lesson_plan.pdf`);
+}
+
+export function exportAllLessonPlansPdf(plans) {
+  if (!plans.length) return;
+
+  const doc = new jsPDF();
+  const sorted = [...plans].sort(
+    (a, b) => new Date(b.updatedAt ?? 0) - new Date(a.updatedAt ?? 0)
+  );
+
+  sorted.forEach((plan, index) => {
+    appendLessonPlanToPdf(doc, plan, { startOnNewPage: index > 0 });
+  });
+
+  doc.save("all_lesson_plans.pdf");
 }
 
 export function exportCurriculumCsv(curriculum, topics) {

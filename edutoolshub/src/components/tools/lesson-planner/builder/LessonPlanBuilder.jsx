@@ -1,10 +1,12 @@
 import { useState } from "react";
 import Button from "../../../ui/Button";
+import { exportAllLessonPlansPdf } from "../../../../utils/lessonPlanner/export";
 import { LESSON_TEMPLATES, createBlankPlan, createPlanFromTemplate } from "../../../../utils/lessonPlanner/templates";
 import { useLessonPlanner } from "../LessonPlannerContext";
 import PlannerCard from "../shared/PlannerCard";
 import { FormField, selectClass } from "../shared/FormField";
 import LessonPlanEditor from "./LessonPlanEditor";
+import LessonPlanListItem from "./LessonPlanListItem";
 
 export default function LessonPlanBuilder() {
   const { lessonPlans } = useLessonPlanner();
@@ -37,8 +39,8 @@ export default function LessonPlanBuilder() {
   }
 
   function handleDelete(id) {
-    if (confirm("Delete this lesson plan?")) {
-      lessonPlans.remove(id);
+    lessonPlans.remove(id);
+    if (editingId === id) {
       setEditingId(null);
       setDraft(null);
     }
@@ -60,7 +62,11 @@ export default function LessonPlanBuilder() {
           setEditingId(null);
           setDraft(null);
         }}
-        onDelete={() => handleDelete(editingPlan.id)}
+        onDelete={() => {
+          if (confirm(`Delete "${editingPlan.title}"?`)) {
+            handleDelete(editingPlan.id);
+          }
+        }}
       />
     );
   }
@@ -131,6 +137,17 @@ export default function LessonPlanBuilder() {
       <PlannerCard
         title="Your Lesson Plans"
         description={`${lessonPlans.list.length} saved plan${lessonPlans.list.length !== 1 ? "s" : ""}`}
+        actions={
+          lessonPlans.list.length > 0 ? (
+            <Button
+              size="sm"
+              variant="secondary"
+              onClick={() => exportAllLessonPlansPdf(lessonPlans.list)}
+            >
+              Download All (PDF)
+            </Button>
+          ) : null
+        }
       >
         {lessonPlans.list.length === 0 ? (
           <p className="py-8 text-center text-sm text-text-muted">
@@ -142,32 +159,13 @@ export default function LessonPlanBuilder() {
               .slice()
               .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt))
               .map((plan) => (
-                <div
+                <LessonPlanListItem
                   key={plan.id}
-                  className="flex flex-wrap items-center justify-between gap-3 py-4 first:pt-0 last:pb-0"
-                >
-                  <div>
-                    <p className="font-semibold text-text">{plan.title}</p>
-                    <p className="mt-0.5 text-xs text-text-muted">
-                      {plan.subject} · Grade {plan.grade} · {plan.duration} min
-                      {plan.className && ` · ${plan.className}`}
-                    </p>
-                  </div>
-                  <div className="flex flex-wrap gap-2">
-                    <Button size="sm" variant="secondary" onClick={() => setEditingId(plan.id)}>
-                      Edit
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={() => {
-                        lessonPlans.duplicate(plan.id);
-                      }}
-                    >
-                      Duplicate
-                    </Button>
-                  </div>
-                </div>
+                  plan={plan}
+                  onEdit={setEditingId}
+                  onDuplicate={lessonPlans.duplicate}
+                  onDelete={handleDelete}
+                />
               ))}
           </div>
         )}

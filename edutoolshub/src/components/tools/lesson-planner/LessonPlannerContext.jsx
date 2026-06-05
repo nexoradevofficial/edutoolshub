@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { buildOptionLists } from "../../../utils/lessonPlanner/customOptions";
+import { buildOptionLists, slugifyFramework } from "../../../utils/lessonPlanner/customOptions";
 import { DEFAULT_STATE, generateId, loadState, saveState } from "../../../utils/lessonPlanner/storage";
 
 const LessonPlannerContext = createContext(null);
@@ -207,13 +207,34 @@ export function LessonPlannerProvider({ children }) {
       }));
     }
 
+    function addFramework(label) {
+      const trimmed = String(label).trim();
+      if (!trimmed) return null;
+      const existing = lists.frameworks.find(
+        (f) => f.label.toLowerCase() === trimmed.toLowerCase()
+      );
+      if (existing) return existing;
+
+      const framework = { id: slugifyFramework(trimmed), label: trimmed };
+      update((s) => ({
+        ...s,
+        settings: {
+          ...s.settings,
+          customFrameworks: [...(s.settings.customFrameworks ?? []), framework],
+        },
+      }));
+      return framework;
+    }
+
     return {
       subjects: lists.subjects,
       grades: lists.grades,
       durations: lists.durations,
+      frameworks: lists.frameworks,
       addSubject: (value) => addCustomItem("customSubjects", value, lists.subjects),
       addGrade: (value) => addCustomItem("customGrades", value, lists.grades),
       addDuration: (value) => addCustomItem("customDurations", Number(value), lists.durations),
+      addFramework,
     };
   }, [state, update]);
 

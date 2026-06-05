@@ -1,10 +1,7 @@
 import { useMemo, useState } from "react";
 import Button from "../../../ui/Button";
-import {
-  COVERAGE_STATUSES,
-  SAMPLE_STANDARDS,
-  STANDARDS_FRAMEWORKS,
-} from "../../../../utils/lessonPlanner/constants";
+import { getFrameworkLabel } from "../../../../utils/lessonPlanner/customOptions";
+import { COVERAGE_STATUSES, SAMPLE_STANDARDS } from "../../../../utils/lessonPlanner/constants";
 import {
   exportCurriculumCsv,
   exportCurriculumPdf,
@@ -13,10 +10,11 @@ import {
 import { generateId } from "../../../../utils/lessonPlanner/storage";
 import { useLessonPlanner } from "../LessonPlannerContext";
 import PlannerCard from "../shared/PlannerCard";
+import CustomFrameworkSelect from "../shared/CustomFrameworkSelect";
 import { FormField, inputClass, selectClass, textareaClass } from "../shared/FormField";
 
 export default function CurriculumMapper() {
-  const { curriculum } = useLessonPlanner();
+  const { curriculum, customOptions } = useLessonPlanner();
   const data = curriculum.data;
   const [framework, setFramework] = useState("ib");
   const [newTopic, setNewTopic] = useState({
@@ -65,7 +63,7 @@ export default function CurriculumMapper() {
       id: generateId(),
       weekNumber: newTopic.weekNumber,
       title: newTopic.title,
-      framework: STANDARDS_FRAMEWORKS.find((f) => f.id === framework)?.label ?? framework,
+      framework: getFrameworkLabel(customOptions.frameworks, framework),
       standard: newTopic.standard,
       status: "pending",
       notes: newTopic.notes,
@@ -209,17 +207,12 @@ export default function CurriculumMapper() {
       >
         <div className="mb-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <FormField label="Framework">
-            <select
+            <CustomFrameworkSelect
               value={framework}
-              onChange={(e) => setFramework(e.target.value)}
-              className={selectClass}
-            >
-              {STANDARDS_FRAMEWORKS.map((f) => (
-                <option key={f.id} value={f.id}>
-                  {f.label}
-                </option>
-              ))}
-            </select>
+              onChange={setFramework}
+              frameworks={customOptions.frameworks}
+              onAddCustom={customOptions.addFramework}
+            />
           </FormField>
           <FormField label="Week">
             <select

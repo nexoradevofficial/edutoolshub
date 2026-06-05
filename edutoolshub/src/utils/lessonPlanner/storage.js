@@ -18,6 +18,7 @@ export const DEFAULT_STATE = {
     customSubjects: [],
     customGrades: [],
     customDurations: [],
+    customFrameworks: [],
   },
 };
 
