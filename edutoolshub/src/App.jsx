@@ -12,6 +12,7 @@ const UniversityDetailPage = lazy(() => import("./pages/UniversityDetailPage"));
 const AttendancePage = lazy(() => import("./pages/AttendancePage"));
 const ExamMarksNeededPage = lazy(() => import("./pages/ExamMarksNeededPage"));
 const GpaToPercentagePage = lazy(() => import("./pages/GpaToPercentagePage"));
+const LessonPlannerPage = lazy(() => import("./pages/LessonPlannerPage"));
 const AdminUniversitiesPage = lazy(() => import("./pages/AdminUniversitiesPage"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 const About = lazy(() => import("./pages/About"));
@@ -63,6 +64,7 @@ export default function App() {
             element={<Navigate to="/tools/final-grade-calculator" replace />}
           />
           <Route path="tools/gpa-to-percentage" element={<GpaToPercentagePage />} />
+          <Route path="tools/lesson-planner" element={<LessonPlannerPage />} />
           <Route path="admin/universities" element={<AdminUniversitiesPage />} />
           <Route path="about" element={<About />} />
           <Route path="contact" element={<Contact />} />

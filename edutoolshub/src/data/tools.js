@@ -4,6 +4,7 @@ import {
   IconGpa,
   IconGpaChecker,
   IconGpaPercent,
+  IconReport,
 } from "../components/icons/ToolIcons";
 
 export const tools = [
@@ -45,6 +46,16 @@ export const tools = [
     status: "active",
     path: "/tools/attendance-sheet",
     color: "bg-accent/10 text-accent",
+  },
+  {
+    id: "lesson-planner",
+    name: "Lesson Planner",
+    description:
+      "Build lesson plans, schedule units on a calendar, map curriculum standards, and create substitute teacher plans — all saved locally in your browser.",
+    icon: IconReport,
+    status: "active",
+    path: "/tools/lesson-planner",
+    color: "bg-accent/10 text-accent-dark",
   },
   {
     id: "exam-marks-needed",
