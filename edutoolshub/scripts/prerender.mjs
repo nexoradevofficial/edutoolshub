@@ -7,12 +7,13 @@
  * 4. For each known route, opens it in headless Chromium, waits for the React app
  *    to render and Helmet to flush meta tags into <head>, then snapshots `document`
  *    and writes the full HTML to dist/<route>/index.html
- * 5. Writes dist/sitemap.xml and dist/_redirects for SPA fallback
+ * 5. Writes dist/sitemap.xml and dist/_redirects (SPA fallback for routes
+ *    not snapshotted, e.g. newly published blog posts before redeploy)
  *
  * Run via: `npm run build:prerender`
  */
 
-import { existsSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import process from "node:process";
 import { fileURLToPath } from "node:url";
@@ -70,7 +71,7 @@ const SETTLE_MS = 400;
 const STATIC_ROUTES = [
   "/",
   "/tools",
-  // /blog is client-rendered only — do not create dist/blog/ or /blog/:slug 404s on Vercel
+  "/blog",
   "/tools/gpa-calculator",
   "/tools/college-university-gpa-requirement-checker",
   "/tools/attendance-sheet",
@@ -105,6 +106,7 @@ async function fetchBlogSlugs(env) {
     dataset,
     apiVersion: "2025-01-01",
     useCdn: false,
+    perspective: "published",
   });
 
   try {
@@ -200,24 +202,40 @@ async function renderRoute(page, baseUrl, route) {
 
   await page.waitForSelector("main", { timeout: 10_000 });
 
-  // Wait until every loading skeleton inside <main> is gone. Skeletons are
-  // marked with `.animate-pulse`; once the Sanity query resolves the component
-  // re-renders without them. For static routes that never had skeletons, this
-  // resolves immediately.
-  await page
-    .waitForFunction(
-      () => !document.querySelector("main .animate-pulse"),
-      { timeout: 15_000 }
-    )
-    .catch(() => {
-      console.warn(
-        "    ⚠ Skeleton wait timed out — capturing whatever is rendered."
-      );
-    });
+  const isBlogPost = route.startsWith("/blog/") && route !== "/blog";
 
-  // One more tick so Helmet's useEffect can flush <head> updates and
-  // any deferred state can settle.
-  await new Promise((r) => setTimeout(r, SETTLE_MS));
+  if (isBlogPost) {
+    // Blog posts fetch from Sanity after mount — wait for the real article,
+    // not the loading skeleton or a 404 shell.
+    await page
+      .waitForSelector('article[data-blog-status="ready"]', {
+        timeout: PAGE_TIMEOUT,
+      })
+      .catch(() => {
+        console.warn(
+          `    ⚠ Blog content wait timed out for ${route} — capturing whatever is rendered.`
+        );
+      });
+  } else {
+    // Wait until every loading skeleton inside <main> is gone. Skeletons are
+    // marked with `.animate-pulse`; once data resolves the component re-renders
+    // without them. For static routes that never had skeletons, this resolves
+    // immediately.
+    await page
+      .waitForFunction(
+        () => !document.querySelector("main .animate-pulse"),
+        { timeout: 15_000 }
+      )
+      .catch(() => {
+        console.warn(
+          "    ⚠ Skeleton wait timed out — capturing whatever is rendered."
+        );
+      });
+  }
+
+  // Extra tick so react-helmet-async can flush <title> and <meta> into <head>.
+  const settleMs = isBlogPost ? 800 : SETTLE_MS;
+  await new Promise((r) => setTimeout(r, settleMs));
 
   // Dedupe duplicate <head> tags. react-helmet-async + React 19 leaves stale
   // tags around (it appends without removing the original index.html tags or
@@ -289,11 +307,10 @@ async function main() {
   const uniSlugs = await fetchUniversitySlugs(env);
   console.log(`[prerender] Found ${uniSlugs.length} university detail page(s).`);
 
-  // Blog posts are loaded client-side from Sanity so new publishes work without
-  // redeploying. Only static/tool/university routes are snapshotted to HTML.
   const blogRoutes = slugs.map((s) => `/blog/${s}`);
   const prerenderRoutes = [
     ...STATIC_ROUTES,
+    ...blogRoutes,
     ...uniSlugs.map((s) => `/tools/college-university-gpa-requirement-checker/${s}`),
   ];
   const uniquePrerenderRoutes = Array.from(new Set(prerenderRoutes));
@@ -328,6 +345,16 @@ async function main() {
           console.warn(`  ✗ ${route} — rendered 404, skipped writing HTML`);
           continue;
         }
+        if (
+          route.startsWith("/blog/") &&
+          !html.includes('data-blog-status="ready"')
+        ) {
+          failCount++;
+          console.warn(
+            `  ✗ ${route} — article content missing, skipped writing HTML`
+          );
+          continue;
+        }
         const outPath = outputPathForRoute(route);
         mkdirSync(dirname(outPath), { recursive: true });
         writeFileSync(outPath, html, "utf-8");
@@ -339,23 +366,16 @@ async function main() {
       }
     }
 
-    console.log(
-      `[prerender] ${slugs.length} blog post(s) are client-rendered and listed in sitemap.`
-    );
-
-    const staleBlogDir = resolve(distDir, "blog");
-    if (existsSync(staleBlogDir)) {
-      rmSync(staleBlogDir, { recursive: true, force: true });
-      console.log("[prerender] Removed stale dist/blog/ HTML (blog routes are client-rendered).");
-    }
-
     console.log("[prerender] Writing sitemap.xml, robots.txt, _redirects…");
     writeFileSync(resolve(distDir, "sitemap.xml"), generateSitemap(sitemapRoutes), "utf-8");
     writeFileSync(resolve(distDir, "robots.txt"), generateRobotsTxt(), "utf-8");
     writeFileSync(resolve(distDir, "_redirects"), generateRedirects(), "utf-8");
 
+    const blogRendered = blogRoutes.filter((route) =>
+      existsSync(outputPathForRoute(route))
+    ).length;
     console.log(
-      `[prerender] Done. ${successCount} rendered, ${failCount} failed, ${uniquePrerenderRoutes.length} prerendered, ${sitemapRoutes.length} URL(s) in sitemap (${blogRoutes.length} blog post(s)).`
+      `[prerender] Done. ${successCount} rendered, ${failCount} failed, ${uniquePrerenderRoutes.length} route(s) attempted, ${blogRendered}/${blogRoutes.length} blog post(s) written, ${sitemapRoutes.length} URL(s) in sitemap.`
     );
     if (failCount > 0) process.exitCode = 1;
   } finally {
