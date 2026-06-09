@@ -2,7 +2,8 @@
  * Post-build prerender step.
  *
  * 1. Loads VITE_SANITY_PROJECT_ID / VITE_SANITY_DATASET from .env.local (Vite-style)
- * 2. Fetches every published blog slug from Sanity
+ * 2. Fetches every published blog slug from Sanity (all current + any new posts
+ *    published before this build — redeploy after publishing to pick up new slugs)
  * 3. Boots `vite preview` programmatically (SPA fallback handles unknown routes)
  * 4. For each known route, opens it in headless Chromium, waits for the React app
  *    to render and Helmet to flush meta tags into <head>, then snapshots `document`
@@ -19,7 +20,6 @@ import process from "node:process";
 import { fileURLToPath } from "node:url";
 
 import { createClient } from "@sanity/client";
-import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import { loadEnv, preview } from "vite";
 
 // Puppeteer runs in two different ways:
@@ -125,35 +125,6 @@ async function fetchBlogSlugs(env) {
   } catch (err) {
     console.warn(
       `[prerender] Could not fetch blog slugs from Sanity (${err.message}). Static routes only.`
-    );
-    return [];
-  }
-}
-
-async function fetchUniversitySlugs(env) {
-  const url = env.VITE_SUPABASE_URL;
-  const key = env.VITE_SUPABASE_ANON_KEY;
-
-  if (!url || !key) {
-    console.warn(
-      "[prerender] VITE_SUPABASE_URL or VITE_SUPABASE_ANON_KEY not set — skipping university detail pages."
-    );
-    return [];
-  }
-
-  const client = createSupabaseClient(url, key);
-
-  try {
-    const { data, error } = await client
-      .from("universities")
-      .select("slug")
-      .order("qs_ranking", { ascending: true, nullsFirst: false });
-
-    if (error) throw error;
-    return Array.isArray(data) ? data.map((r) => r.slug).filter(Boolean) : [];
-  } catch (err) {
-    console.warn(
-      `[prerender] Could not fetch university slugs from Supabase (${err.message}).`
     );
     return [];
   }
@@ -301,18 +272,10 @@ async function main() {
 
   console.log("[prerender] Fetching blog slugs from Sanity…");
   const slugs = await fetchBlogSlugs(env);
-  console.log(`[prerender] Found ${slugs.length} published blog post(s).`);
-
-  console.log("[prerender] Fetching university slugs from Supabase…");
-  const uniSlugs = await fetchUniversitySlugs(env);
-  console.log(`[prerender] Found ${uniSlugs.length} university detail page(s).`);
+  console.log(`[prerender] Found ${slugs.length} published blog post(s) to prerender.`);
 
   const blogRoutes = slugs.map((s) => `/blog/${s}`);
-  const prerenderRoutes = [
-    ...STATIC_ROUTES,
-    ...blogRoutes,
-    ...uniSlugs.map((s) => `/tools/college-university-gpa-requirement-checker/${s}`),
-  ];
+  const prerenderRoutes = [...STATIC_ROUTES, ...blogRoutes];
   const uniquePrerenderRoutes = Array.from(new Set(prerenderRoutes));
   const sitemapRoutes = Array.from(new Set([...SITEMAP_ROUTES, ...blogRoutes]));
 
