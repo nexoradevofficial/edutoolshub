@@ -186,6 +186,22 @@
   }
 
   /* ----------------------------------------------------------- */
+  /* Fee Receipt — portrait print layout                         */
+  /* ----------------------------------------------------------- */
+  /* Landscape @page is injected at runtime by the print button. */
+
+  #fee-receipt-print {
+    border: 0 !important;
+    box-shadow: none !important;
+    margin: 0 auto !important;
+    max-width: 100% !important;
+    background: #ffffff !important;
+    color: #0f172a !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* ----------------------------------------------------------- */
   /* GPA Report — formal, ink-friendly print layout              */
   /* ----------------------------------------------------------- */
 

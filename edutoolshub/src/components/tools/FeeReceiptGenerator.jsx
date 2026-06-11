@@ -375,6 +375,57 @@ export default function FeeReceiptGenerator() {
               </Field>
             </div>
 
+            <div className="mt-4">
+              <span className={labelClass}>Institute logo (optional)</span>
+              <div className="flex flex-wrap items-center gap-4 rounded-xl border border-dashed border-border bg-surface-muted/60 p-4">
+                <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-border bg-white">
+                  {logoDataUrl ? (
+                    <img
+                      src={logoDataUrl}
+                      alt="Institute logo preview"
+                      className="h-full w-full object-contain"
+                    />
+                  ) : (
+                    <span className="text-[10px] font-medium uppercase tracking-wider text-text-muted">
+                      No logo
+                    </span>
+                  )}
+                </div>
+                <div className="flex flex-1 flex-col gap-2 sm:flex-row sm:items-center">
+                  <input
+                    ref={logoInputRef}
+                    id={`${uid}-logo`}
+                    type="file"
+                    accept="image/png,image/jpeg,image/webp,image/svg+xml"
+                    onChange={handleLogoUpload}
+                    className="hidden"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => logoInputRef.current?.click()}
+                    className="rounded-lg border border-border bg-white px-3 py-2 text-sm font-medium text-text transition-colors hover:border-primary/40 hover:text-primary"
+                  >
+                    {logoDataUrl ? "Replace logo" : "Upload logo"}
+                  </button>
+                  {logoDataUrl && (
+                    <button
+                      type="button"
+                      onClick={clearLogo}
+                      className="rounded-lg px-3 py-2 text-sm font-medium text-text-muted transition-colors hover:bg-red-50 hover:text-red-600"
+                    >
+                      Remove
+                    </button>
+                  )}
+                  <p className="text-xs text-text-muted sm:ml-auto">
+                    PNG, JPG, WEBP, or SVG · max 1.5&nbsp;MB
+                  </p>
+                </div>
+              </div>
+              {logoError && (
+                <p className="mt-2 text-xs font-medium text-red-600">{logoError}</p>
+              )}
+            </div>
+
             <div className="mt-4 space-y-3">
               <p className="text-sm font-medium text-text">Authorized signature</p>
               <ToggleGroup
@@ -754,27 +805,49 @@ export default function FeeReceiptGenerator() {
 
         {/* Preview */}
         <div className="xl:sticky xl:top-24 xl:self-start">
-          <section className={`${sectionClass} space-y-4`}>
-            <div className="flex flex-wrap items-center justify-between gap-2">
+          <section className={`${sectionClass} space-y-4 print:border-0 print:shadow-none`}>
+            <div className="flex flex-wrap items-center justify-between gap-2 print:hidden">
               <h3 className="text-base font-semibold text-text">Receipt preview</h3>
-              <Button
-                variant="accent"
-                size="sm"
-                onClick={downloadPdf}
-                disabled={downloading}
-              >
-                {downloading ? "Generating…" : "Download PDF"}
-              </Button>
+              <div className="flex flex-wrap gap-2">
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={printFeeReceipt}
+                >
+                  <IconPrint />
+                  Print
+                </Button>
+                <Button
+                  variant="accent"
+                  size="sm"
+                  onClick={downloadPdf}
+                  disabled={downloading}
+                >
+                  {downloading ? "Generating…" : "Download PDF"}
+                </Button>
+              </div>
             </div>
 
-            <div className="overflow-x-auto rounded-xl border border-border bg-surface-muted/30 p-2">
+            {pdfError && (
+              <p className="text-sm font-medium text-red-600 print:hidden">{pdfError}</p>
+            )}
+
+            <div className="overflow-x-auto rounded-xl border border-border bg-surface-muted/30 p-2 print:overflow-visible print:border-0 print:bg-transparent print:p-0">
               <div
+                id="fee-receipt-print"
                 ref={receiptRef}
-                className="mx-auto w-full max-w-[360px] bg-white p-6 text-text shadow-sm"
+                className="mx-auto w-full max-w-[360px] bg-white p-6 text-text shadow-sm print:max-w-none print:shadow-none"
                 style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
               >
                 {/* Header */}
                 <div className="border-b-2 border-text/80 pb-4 text-center">
+                  {logoDataUrl && (
+                    <img
+                      src={logoDataUrl}
+                      alt={`${schoolName || "School"} logo`}
+                      className="mx-auto mb-3 h-16 w-16 object-contain"
+                    />
+                  )}
                   <h4 className="text-lg font-bold uppercase tracking-wide">
                     {schoolName || "School Name"}
                   </h4>
@@ -884,7 +957,8 @@ export default function FeeReceiptGenerator() {
                     <p className="font-semibold">{paymentMethod}</p>
                   </div>
                   <span
-                    className={`rounded-full border px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide ${STATUS_STYLES[paymentStatus]}`}
+                    className="rounded-full border px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide"
+                    style={STATUS_STYLES[paymentStatus]}
                   >
                     {paymentStatus}
                   </span>
