@@ -2,7 +2,8 @@ import { useCallback, useId, useMemo, useRef, useState } from "react";
 import html2canvas from "html2canvas";
 import { jsPDF } from "jspdf";
 import Button from "../ui/Button";
-import { IconPlus, IconTrash } from "../icons/ToolIcons";
+import { IconPlus, IconPrint, IconTrash } from "../icons/ToolIcons";
+import { readFileAsDataURL, validateLogoFile } from "../../utils/attendance";
 
 const inputClass =
   "w-full rounded-lg border border-border bg-white px-3 py-2 text-sm text-text outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-primary/20";
@@ -25,10 +26,29 @@ const PAYMENT_METHODS = ["Cash", "Bank Transfer", "Online", "Cheque"];
 const PAYMENT_STATUSES = ["Paid", "Partial", "Pending"];
 
 const STATUS_STYLES = {
-  Paid: "bg-emerald-100 text-emerald-800 border-emerald-200",
-  Partial: "bg-amber-100 text-amber-800 border-amber-200",
-  Pending: "bg-red-100 text-red-800 border-red-200",
+  Paid: { background: "#d1fae5", color: "#065f46", borderColor: "#a7f3d0" },
+  Partial: { background: "#fef3c7", color: "#92400e", borderColor: "#fde68a" },
+  Pending: { background: "#fee2e2", color: "#991b1b", borderColor: "#fecaca" },
 };
+
+function printFeeReceipt() {
+  const id = "fee-receipt-print-page-rule";
+  document.getElementById(id)?.remove();
+
+  const style = document.createElement("style");
+  style.id = id;
+  style.textContent = `@page { size: A4 portrait; margin: 12mm; }`;
+  document.head.appendChild(style);
+
+  const cleanup = () => {
+    document.getElementById(id)?.remove();
+    window.removeEventListener("afterprint", cleanup);
+  };
+  window.addEventListener("afterprint", cleanup);
+  setTimeout(cleanup, 60_000);
+
+  window.print();
+}
 
 let subjectIdCounter = 1;
 
@@ -107,7 +127,12 @@ function Field({ label, htmlFor, children, className = "" }) {
 export default function FeeReceiptGenerator() {
   const uid = useId();
   const receiptRef = useRef(null);
+  const logoInputRef = useRef(null);
+  const downloadingRef = useRef(false);
   const [downloading, setDownloading] = useState(false);
+  const [pdfError, setPdfError] = useState("");
+  const [logoDataUrl, setLogoDataUrl] = useState("");
+  const [logoError, setLogoError] = useState("");
 
   const [schoolName, setSchoolName] = useState("");
   const [teacherName, setTeacherName] = useState("");
@@ -202,18 +227,60 @@ export default function FeeReceiptGenerator() {
     e.target.value = "";
   }, []);
 
+  const handleLogoUpload = useCallback(async (e) => {
+    setLogoError("");
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const check = validateLogoFile(file);
+    if (!check.ok) {
+      setLogoError(check.error);
+      e.target.value = "";
+      return;
+    }
+
+    try {
+      const dataUrl = await readFileAsDataURL(file);
+      setLogoDataUrl(String(dataUrl));
+    } catch {
+      setLogoError("Could not read the file. Please try a different image.");
+    } finally {
+      e.target.value = "";
+    }
+  }, []);
+
+  const clearLogo = useCallback(() => {
+    setLogoDataUrl("");
+    setLogoError("");
+    if (logoInputRef.current) logoInputRef.current.value = "";
+  }, []);
+
   const downloadPdf = useCallback(async () => {
     const element = receiptRef.current;
-    if (!element || downloading) return;
+    if (!element || downloadingRef.current) return;
 
+    downloadingRef.current = true;
     setDownloading(true);
+    setPdfError("");
+
     try {
+      await document.fonts.ready;
+
       const canvas = await html2canvas(element, {
         scale: 2,
         useCORS: true,
+        allowTaint: true,
         backgroundColor: "#ffffff",
         logging: false,
+        onclone: (_doc, clonedEl) => {
+          clonedEl.style.backgroundColor = "#ffffff";
+          clonedEl.style.color = "#0f172a";
+        },
       });
+
+      if (!canvas.width || !canvas.height) {
+        throw new Error("Receipt could not be rendered");
+      }
 
       const imgData = canvas.toDataURL("image/png");
       const pdf = new jsPDF("p", "mm", "a4");
@@ -238,16 +305,19 @@ export default function FeeReceiptGenerator() {
 
       const safeName = (receiptNumber || "fee-receipt").replace(/[^\w-]+/g, "_");
       pdf.save(`${safeName}.pdf`);
+    } catch {
+      setPdfError("PDF download failed. Try the Print button instead.");
     } finally {
+      downloadingRef.current = false;
       setDownloading(false);
     }
-  }, [downloading, receiptNumber]);
+  }, [receiptNumber]);
 
   const sym = currency.symbol;
 
   return (
     <div className="space-y-6">
-      <section className="rounded-2xl border border-primary/20 bg-gradient-to-br from-primary/10 via-white to-accent/5 p-6 shadow-sm sm:p-8">
+      <section className="rounded-2xl border border-primary/20 bg-gradient-to-br from-primary/10 via-white to-accent/5 p-6 shadow-sm sm:p-8 print:hidden">
         <h2 className="text-lg font-semibold text-text">How this tool works</h2>
         <p className="mt-2 text-sm leading-relaxed text-text-muted">
           Fill in school and student details, add subject-wise fees, and optionally
@@ -258,7 +328,7 @@ export default function FeeReceiptGenerator() {
       </section>
 
       <div className="grid gap-6 xl:grid-cols-[1fr_400px]">
-        <div className="space-y-6">
+        <div className="space-y-6 print:hidden">
           {/* School / Teacher */}
           <section className={sectionClass}>
             <h3 className="mb-4 text-base font-semibold text-text">
@@ -376,7 +446,7 @@ export default function FeeReceiptGenerator() {
                   id={`${uid}-student`}
                   type="text"
                   className={inputClass}
-                  placeholder="e.g. Ali Khan"
+                  placeholder="e.g. John Doe"
                   value={studentName}
                   onChange={(e) => setStudentName(e.target.value)}
                 />
@@ -406,7 +476,7 @@ export default function FeeReceiptGenerator() {
                   id={`${uid}-parent`}
                   type="text"
                   className={inputClass}
-                  placeholder="e.g. Mr. Khan"
+                  placeholder="e.g. John Doe"
                   value={parentName}
                   onChange={(e) => setParentName(e.target.value)}
                 />
