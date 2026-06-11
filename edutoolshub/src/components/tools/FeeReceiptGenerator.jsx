@@ -1,9 +1,9 @@
 import { useCallback, useId, useMemo, useRef, useState } from "react";
-import html2canvas from "html2canvas";
 import { jsPDF } from "jspdf";
 import Button from "../ui/Button";
 import { IconPlus, IconPrint, IconTrash } from "../icons/ToolIcons";
 import { readFileAsDataURL, validateLogoFile } from "../../utils/attendance";
+import { captureElementAsCanvas } from "../../utils/html2canvasExport";
 
 const inputClass =
   "w-full rounded-lg border border-border bg-white px-3 py-2 text-sm text-text outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-primary/20";
@@ -266,17 +266,7 @@ export default function FeeReceiptGenerator() {
     try {
       await document.fonts.ready;
 
-      const canvas = await html2canvas(element, {
-        scale: 2,
-        useCORS: true,
-        allowTaint: true,
-        backgroundColor: "#ffffff",
-        logging: false,
-        onclone: (_doc, clonedEl) => {
-          clonedEl.style.backgroundColor = "#ffffff";
-          clonedEl.style.color = "#0f172a";
-        },
-      });
+      const canvas = await captureElementAsCanvas(element);
 
       if (!canvas.width || !canvas.height) {
         throw new Error("Receipt could not be rendered");
