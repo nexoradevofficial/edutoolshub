@@ -13,6 +13,7 @@ const AttendancePage = lazy(() => import("./pages/AttendancePage"));
 const ExamMarksNeededPage = lazy(() => import("./pages/ExamMarksNeededPage"));
 const GpaToPercentagePage = lazy(() => import("./pages/GpaToPercentagePage"));
 const LessonPlannerPage = lazy(() => import("./pages/LessonPlannerPage"));
+const FeeReceiptPage = lazy(() => import("./pages/FeeReceiptPage"));
 const AdminUniversitiesPage = lazy(() => import("./pages/AdminUniversitiesPage"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 const About = lazy(() => import("./pages/About"));
@@ -65,6 +66,7 @@ export default function App() {
           />
           <Route path="tools/gpa-to-percentage" element={<GpaToPercentagePage />} />
           <Route path="tools/lesson-planner" element={<LessonPlannerPage />} />
+          <Route path="tools/fee-receipt" element={<FeeReceiptPage />} />
           <Route path="admin/universities" element={<AdminUniversitiesPage />} />
           <Route path="about" element={<About />} />
           <Route path="contact" element={<Contact />} />

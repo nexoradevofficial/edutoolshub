@@ -77,6 +77,7 @@ const STATIC_ROUTES = [
   "/tools/attendance-sheet",
   "/tools/final-grade-calculator",
   "/tools/gpa-to-percentage",
+  "/tools/fee-receipt",
   "/about",
   "/contact",
   "/privacy",

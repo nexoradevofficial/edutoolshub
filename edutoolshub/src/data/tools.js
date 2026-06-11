@@ -4,6 +4,7 @@ import {
   IconGpa,
   IconGpaChecker,
   IconGpaPercent,
+  IconReceipt,
   IconReport,
 } from "../components/icons/ToolIcons";
 
@@ -66,6 +67,16 @@ export const tools = [
     status: "active",
     path: "/tools/final-grade-calculator",
     color: "bg-primary/10 text-primary-dark",
+  },
+  {
+    id: "fee-receipt",
+    name: "Fee Receipt Generator",
+    description:
+      "Generate printable school fee receipts with subject-wise fees, discounts, tax, and payment status — download as PDF in one click.",
+    icon: IconReceipt,
+    status: "active",
+    path: "/tools/fee-receipt",
+    color: "bg-accent/10 text-accent-dark",
   },
 ];
 
