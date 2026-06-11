@@ -276,22 +276,22 @@ export default function FeeReceiptGenerator() {
       const pdf = new jsPDF("p", "mm", "a4");
       const pageWidth = pdf.internal.pageSize.getWidth();
       const pageHeight = pdf.internal.pageSize.getHeight();
-      const margin = 10;
-      const contentWidth = pageWidth - margin * 2;
-      const imgHeight = (canvas.height * contentWidth) / canvas.width;
+      const margin = 12;
+      const maxWidth = pageWidth - margin * 2;
+      const maxHeight = pageHeight - margin * 2;
 
-      let heightLeft = imgHeight;
-      let position = margin;
-
-      pdf.addImage(imgData, "PNG", margin, position, contentWidth, imgHeight);
-      heightLeft -= pageHeight - margin * 2;
-
-      while (heightLeft > 0) {
-        pdf.addPage();
-        position = margin - (imgHeight - heightLeft);
-        pdf.addImage(imgData, "PNG", margin, position, contentWidth, imgHeight);
-        heightLeft -= pageHeight - margin * 2;
+      // Scale down to fit the full receipt on one A4 page (width- or height-bound).
+      let imgWidth = maxWidth;
+      let imgHeight = (canvas.height * imgWidth) / canvas.width;
+      if (imgHeight > maxHeight) {
+        imgHeight = maxHeight;
+        imgWidth = (canvas.width * imgHeight) / canvas.height;
       }
+
+      const x = (pageWidth - imgWidth) / 2;
+      const y = margin;
+
+      pdf.addImage(imgData, "PNG", x, y, imgWidth, imgHeight);
 
       const safeName = (receiptNumber || "fee-receipt").replace(/[^\w-]+/g, "_");
       pdf.save(`${safeName}.pdf`);
