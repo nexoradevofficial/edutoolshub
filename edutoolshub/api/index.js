@@ -1,13 +1,13 @@
 /**
- * Single Vercel serverless entry for all /api/* routes (Hobby plan limit).
- * Individual handlers live in api/lib/handlers/.
+ * Sole Vercel serverless function — all /api/* and SSR blog routes rewrite here.
+ * Server logic lives in server/lib/ (outside /api so Vercel does not bundle each file).
  */
-import { handlePostsApi } from "./lib/handlers/posts.js";
-import { handleRefreshUniversities } from "./lib/handlers/refresh-universities.js";
-import { handleRenderBlog } from "./lib/handlers/render-blog.js";
-import { handleRenderBlogPost } from "./lib/handlers/render-blog-post.js";
-import { handleSitemap } from "./lib/handlers/sitemap.js";
-import { handleUniversities } from "./lib/handlers/universities.js";
+import { handlePostsApi } from "../server/lib/handlers/posts.js";
+import { handleRefreshUniversities } from "../server/lib/handlers/refresh-universities.js";
+import { handleRenderBlog } from "../server/lib/handlers/render-blog.js";
+import { handleRenderBlogPost } from "../server/lib/handlers/render-blog-post.js";
+import { handleSitemap } from "../server/lib/handlers/sitemap.js";
+import { handleUniversities } from "../server/lib/handlers/universities.js";
 
 const ROUTES = new Map([
   ["posts", handlePostsApi],

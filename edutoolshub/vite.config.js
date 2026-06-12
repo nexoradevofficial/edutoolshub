@@ -2,9 +2,9 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import { loadEnv } from "vite";
-import { handlePostsRequest } from "./api/lib/posts-handler.js";
-import { buildSitemapXml } from "./api/lib/sitemap-builder.js";
-import { SITE_URL } from "./api/lib/sitemap-data.js";
+import { handlePostsRequest } from "./server/lib/posts-handler.js";
+import { buildSitemapXml } from "./server/lib/sitemap-builder.js";
+import { SITE_URL } from "./server/lib/sitemap-data.js";
 
 /** API routes for dev + `vite preview` (prerender uses preview; mirrors Vercel handlers). */
 function vercelApiDevPlugin(env) {

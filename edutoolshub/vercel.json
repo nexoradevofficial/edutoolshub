@@ -33,15 +33,19 @@
   "rewrites": [
     {
       "source": "/sitemap.xml",
-      "destination": "/api/sitemap"
+      "destination": "/api/index?path=sitemap"
     },
     {
       "source": "/blog",
-      "destination": "/api/render-blog"
+      "destination": "/api/index?path=render-blog"
     },
     {
       "source": "/blog/:slug",
-      "destination": "/api/render-blog-post?slug=:slug"
+      "destination": "/api/index?path=render-blog-post&slug=:slug"
+    },
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/index?path=$1"
     },
     {
       "source": "/((?!api/).*)",
