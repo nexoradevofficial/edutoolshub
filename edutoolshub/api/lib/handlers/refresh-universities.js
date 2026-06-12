@@ -1,4 +1,4 @@
-import { getSupabaseAdmin } from "../lib/supabase-admin.js";
+import { getSupabaseAdmin } from "../supabase-admin.js";
 
 function isAuthorized(req) {
   const cronSecret = process.env.CRON_SECRET;
@@ -13,11 +13,10 @@ function isAuthorized(req) {
     }
   }
 
-  // TODO: Remove open admin refresh before production — add proper auth instead.
   return process.env.ALLOW_OPEN_ADMIN_REFRESH === "true";
 }
 
-export default async function handler(req, res) {
+export async function handleRefreshUniversities(req, res) {
   if (req.method !== "POST" && req.method !== "GET") {
     res.setHeader("Allow", "GET, POST");
     return res.status(405).json({ error: "Method not allowed" });

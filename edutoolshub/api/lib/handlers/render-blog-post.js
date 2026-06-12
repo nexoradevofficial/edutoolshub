@@ -1,16 +1,9 @@
-import {
-  buildBlogPostNotFoundPage,
-  buildBlogPostPage,
-} from "./lib/blog-html.js";
-import { CACHE_MAX_AGE, handlePostsRequest } from "./lib/posts-handler.js";
-import { buildSsrPage } from "./lib/ssr-shell.js";
-import { normalizePostSlug } from "../src/sanity/normalizeSlug.js";
+import { buildBlogPostNotFoundPage, buildBlogPostPage } from "../blog-html.js";
+import { CACHE_MAX_AGE, handlePostsRequest } from "../posts-handler.js";
+import { buildSsrPage } from "../ssr-shell.js";
+import { normalizePostSlug } from "../../../src/sanity/normalizeSlug.js";
 
-/**
- * Server-side render /blog/:slug with full article HTML in the initial response.
- * Rewritten from /blog/:slug via vercel.json.
- */
-export default async function handler(req, res) {
+export async function handleRenderBlogPost(req, res) {
   if (req.method !== "GET") {
     res.setHeader("Allow", "GET");
     return res.status(405).end("Method not allowed");

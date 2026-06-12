@@ -1,12 +1,8 @@
-import { buildBlogListPage } from "./lib/blog-html.js";
-import { CACHE_MAX_AGE, handlePostsRequest } from "./lib/posts-handler.js";
-import { buildSsrPage } from "./lib/ssr-shell.js";
+import { buildBlogListPage } from "../blog-html.js";
+import { CACHE_MAX_AGE, handlePostsRequest } from "../posts-handler.js";
+import { buildSsrPage } from "../ssr-shell.js";
 
-/**
- * Server-side render /blog with post cards in the initial HTML.
- * Rewritten from /blog via vercel.json — new Sanity posts appear on each request.
- */
-export default async function handler(req, res) {
+export async function handleRenderBlog(req, res) {
   if (req.method !== "GET") {
     res.setHeader("Allow", "GET");
     return res.status(405).end("Method not allowed");

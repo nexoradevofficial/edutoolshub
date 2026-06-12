@@ -1,8 +1,8 @@
-import { getSupabaseAdmin } from "../lib/supabase-admin.js";
+import { getSupabaseAdmin } from "../supabase-admin.js";
 
 const CACHE_MAX_AGE = 3600;
 
-export default async function handler(req, res) {
+export async function handleUniversities(req, res) {
   if (req.method !== "GET") {
     res.setHeader("Allow", "GET");
     return res.status(405).json({ error: "Method not allowed" });
