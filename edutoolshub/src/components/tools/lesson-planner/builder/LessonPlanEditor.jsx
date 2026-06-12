@@ -1,3 +1,4 @@
+import { trackGenerateResult } from "../../../../utils/analytics";
 import Button from "../../../ui/Button";
 import { IconPrint } from "../../../icons/ToolIcons";
 import { exportLessonPlanPdf } from "../../../../utils/lessonPlanner/export";
@@ -22,6 +23,7 @@ export default function LessonPlanEditor({ plan, onSave, onCancel, onDelete }) {
 
   function handlePdf() {
     exportLessonPlanPdf(plan);
+    trackGenerateResult("Lesson Planner", "pdf");
   }
 
   function addSection() {

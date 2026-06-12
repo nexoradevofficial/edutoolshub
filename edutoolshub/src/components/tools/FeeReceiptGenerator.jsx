@@ -4,6 +4,10 @@ import Button from "../ui/Button";
 import { IconPlus, IconPrint, IconTrash } from "../icons/ToolIcons";
 import { readFileAsDataURL, validateLogoFile } from "../../utils/attendance";
 import { captureElementAsCanvas } from "../../utils/html2canvasExport";
+import {
+  trackGenerateResult,
+  useTrackGenerateResult,
+} from "../../utils/analytics";
 
 const inputClass =
   "w-full rounded-lg border border-border bg-white px-3 py-2 text-sm text-text outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-primary/20";
@@ -295,6 +299,7 @@ export default function FeeReceiptGenerator() {
 
       const safeName = (receiptNumber || "fee-receipt").replace(/[^\w-]+/g, "_");
       pdf.save(`${safeName}.pdf`);
+      trackGenerateResult("Fee Receipt Generator", "pdf");
     } catch {
       setPdfError("PDF download failed. Try the Print button instead.");
     } finally {
@@ -304,6 +309,12 @@ export default function FeeReceiptGenerator() {
   }, [receiptNumber]);
 
   const sym = currency.symbol;
+
+  const hasReceiptOutput = Boolean(
+    (schoolName.trim() || studentName.trim()) && totals.grandTotal > 0
+  );
+
+  useTrackGenerateResult("Fee Receipt Generator", hasReceiptOutput);
 
   return (
     <div className="space-y-6">

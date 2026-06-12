@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { trackGenerateResult } from "../../../../utils/analytics";
 import Button from "../../../ui/Button";
 import { exportAllLessonPlansPdf } from "../../../../utils/lessonPlanner/export";
 import { LESSON_TEMPLATES, createBlankPlan, createPlanFromTemplate } from "../../../../utils/lessonPlanner/templates";
@@ -35,6 +36,7 @@ export default function LessonPlanBuilder() {
 
   function handleSave(plan) {
     lessonPlans.save(plan);
+    trackGenerateResult("Lesson Planner", "text");
     setDraft(null);
   }
 

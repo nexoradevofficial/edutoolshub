@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { useTrackGenerateResult } from "../../utils/analytics";
 import {
   EXAM_RESULT_STATUS,
   calculateExamMarksNeeded,
@@ -125,6 +126,8 @@ export default function ExamMarksNeededCalculator() {
   const showResults =
     result.status !== EXAM_RESULT_STATUS.INCOMPLETE &&
     result.status !== EXAM_RESULT_STATUS.INVALID;
+
+  useTrackGenerateResult("Final Grade Calculator", showResults);
 
   return (
     <div className="space-y-6">

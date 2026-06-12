@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useState } from "react";
+import { useTrackGenerateResult } from "../../utils/analytics";
 import Button from "../ui/Button";
 import PercentageRing from "./gpa-percentage/PercentageRing";
 import {
@@ -65,6 +66,8 @@ export default function GpaToPercentageConverter() {
       : getDescriptorStyles("—");
 
   const showResult = result.status === CONVERSION_STATUS.VALID;
+
+  useTrackGenerateResult("GPA to Percentage Converter", showResult);
 
   const handleGpaChange = (e) => {
     setGpaInput(sanitizeGpaInput(e.target.value));

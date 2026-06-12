@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useState } from "react";
+import { useTrackGenerateResult } from "../../utils/analytics";
 import InstituteDetailsForm from "./attendance/InstituteDetailsForm";
 import MonthYearPicker from "./attendance/MonthYearPicker";
 import StudentsForm from "./attendance/StudentsForm";
@@ -94,6 +95,14 @@ export default function AttendanceGenerator() {
       }),
     [studentText, extraBlankRows, blankRows]
   );
+
+  const hasSheetOutput = Boolean(
+    institute.name.trim() ||
+      classInfo.className.trim() ||
+      studentText.trim()
+  );
+
+  useTrackGenerateResult("Attendance Sheet Generator", hasSheetOutput, "print");
 
   /** Open the dialog targeting a single date — add or edit based on state. */
   const requestHolidayForDate = useCallback(

@@ -1,4 +1,5 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
+import { trackBlogRead } from "../utils/analytics";
 import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { PortableText } from "@portabletext/react";
@@ -30,6 +31,7 @@ export default function BlogPost() {
   const slug = normalizePostSlug(rawSlug);
   const { data: rawPost, error, isLoading } = useSanityQuery(postBySlugQuery, { slug });
   const post = useMemo(() => normalizePost(rawPost), [rawPost]);
+  const blogReadTracked = useRef(false);
 
   const canonicalSlug = post?.slug || slug;
 
@@ -40,6 +42,32 @@ export default function BlogPost() {
       navigate(`/blog/${canonicalSlug}`, { replace: true });
     }
   }, [post, canonicalSlug, rawSlug, navigate]);
+
+  useEffect(() => {
+    if (!post) return;
+
+    const handleScroll = () => {
+      if (blogReadTracked.current) return;
+
+      const scrollTop =
+        window.scrollY || document.documentElement.scrollTop;
+      const scrollHeight =
+        document.documentElement.scrollHeight -
+        document.documentElement.clientHeight;
+
+      if (scrollHeight <= 0) return;
+
+      if (scrollTop / scrollHeight >= 0.8) {
+        blogReadTracked.current = true;
+        trackBlogRead(post.title, window.location.pathname);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [post]);
 
   if (!slug || slug === "null") {
     return <Navigate to="/blog" replace />;

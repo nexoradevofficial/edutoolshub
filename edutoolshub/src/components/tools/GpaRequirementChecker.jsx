@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { useTrackGenerateResult } from "../../utils/analytics";
 import {
   SUPPORTED_COUNTRIES,
   countByCountry,
@@ -71,6 +72,15 @@ export default function GpaRequirementChecker() {
         sortBy,
       }),
     [universities, country, selectedUniversitySlug, type, sortBy]
+  );
+
+  const parsedStudentGpa = parseFloat(studentGpa);
+  const hasGpaMatches =
+    Number.isFinite(parsedStudentGpa) && parsedStudentGpa > 0;
+
+  useTrackGenerateResult(
+    "College / University GPA Requirement Checker",
+    hasGpaMatches
   );
 
   if (loading) {

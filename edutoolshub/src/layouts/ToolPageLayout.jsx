@@ -1,4 +1,6 @@
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
+import { trackToolUsed } from "../utils/analytics";
 
 const MAX_WIDTH_CLASSES = {
   md: "max-w-3xl",
@@ -13,8 +15,15 @@ export default function ToolPageLayout({
   description,
   children,
   maxWidth = "lg",
+  toolName,
+  toolCategory = "",
 }) {
   const widthClass = MAX_WIDTH_CLASSES[maxWidth] ?? MAX_WIDTH_CLASSES.lg;
+
+  useEffect(() => {
+    const name = toolName ?? title;
+    if (name) trackToolUsed(name, toolCategory);
+  }, [toolName, toolCategory, title]);
 
   return (
     <div className="min-h-[calc(100vh-4rem)] bg-surface-muted py-6 sm:py-12">

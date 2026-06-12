@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useTrackGenerateResult } from "../../utils/analytics";
 import Button from "../ui/Button";
 import { IconReport } from "../icons/ToolIcons";
 import CountrySelector from "./gpa/CountrySelector";
@@ -117,6 +118,16 @@ export default function GpaCalculator() {
       courses: allCourses,
     });
   }, [semesters, countryCode, gpaType, customScaleMax]);
+
+  const hasGpaResult = useMemo(
+    () =>
+      semesters.some((sem) => sem.courses.some((course) => course.grade)) &&
+      cumulativeResult?.gpa != null &&
+      !Number.isNaN(cumulativeResult.gpa),
+    [semesters, cumulativeResult]
+  );
+
+  useTrackGenerateResult("GPA / CGPA Calculator", hasGpaResult);
 
   const activeSemester = useMemo(
     () =>
