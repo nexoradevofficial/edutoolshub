@@ -30,6 +30,11 @@
       "permanent": true
     }
   ],
+  "functions": {
+    "api/index.js": {
+      "includeFiles": "server/lib/app-shell.html"
+    }
+  },
   "rewrites": [
     {
       "source": "/sitemap.xml",

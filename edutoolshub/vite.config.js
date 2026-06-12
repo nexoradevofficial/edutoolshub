@@ -1,3 +1,5 @@
+import { readFileSync, writeFileSync } from "node:fs";
+import { resolve } from "node:path";
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
@@ -5,6 +7,18 @@ import { loadEnv } from "vite";
 import { handlePostsRequest } from "./server/lib/posts-handler.js";
 import { buildSitemapXml } from "./server/lib/sitemap-builder.js";
 import { SITE_URL } from "./server/lib/sitemap-data.js";
+
+/** Embed dist/index.html for Vercel SSR (serverless functions cannot read dist/ at runtime). */
+function embedAppShellPlugin() {
+  return {
+    name: "embed-app-shell",
+    closeBundle() {
+      const indexHtml = readFileSync(resolve("dist/index.html"), "utf-8");
+      const outPath = resolve("server/lib/app-shell.html");
+      writeFileSync(outPath, indexHtml, "utf-8");
+    },
+  };
+}
 
 /** API routes for dev + `vite preview` (prerender uses preview; mirrors Vercel handlers). */
 function vercelApiDevPlugin(env) {
@@ -58,7 +72,7 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
 
   return {
-    plugins: [react(), tailwindcss(), vercelApiDevPlugin(env)],
+    plugins: [react(), tailwindcss(), embedAppShellPlugin(), vercelApiDevPlugin(env)],
     build: {
       target: "es2020",
       rollupOptions: {

@@ -21,6 +21,6 @@ export async function handleRenderBlog(req, res) {
     return res.status(200).send(html);
   } catch (err) {
     console.error("[ssr/blog]", err);
-    return res.status(500).end("Failed to render blog page");
+    return res.status(500).end(`Failed to render blog page: ${err?.message || err}`);
   }
 }

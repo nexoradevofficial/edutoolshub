@@ -1,16 +1,32 @@
-import { readFileSync } from "node:fs";
-import { join } from "node:path";
+import { existsSync, readFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 import { escapeHtml } from "./html-escape.js";
 
 const SITE_URL = process.env.SITE_URL || "https://edutoolshub.com";
+const libDir = dirname(fileURLToPath(import.meta.url));
 
 let cachedShell = null;
 
 function readAppShell() {
   if (cachedShell) return cachedShell;
-  const indexPath = join(process.cwd(), "dist", "index.html");
-  cachedShell = readFileSync(indexPath, "utf-8");
-  return cachedShell;
+
+  const candidates = [
+    join(libDir, "app-shell.html"),
+    join(process.cwd(), "server", "lib", "app-shell.html"),
+    join(process.cwd(), "dist", "index.html"),
+  ];
+
+  for (const path of candidates) {
+    if (existsSync(path)) {
+      cachedShell = readFileSync(path, "utf-8");
+      return cachedShell;
+    }
+  }
+
+  throw new Error(
+    "App shell HTML not found. Run `npm run build` to generate server/lib/app-shell.html."
+  );
 }
 
 /**
@@ -30,10 +46,7 @@ export function buildSsrPage({ title, rootHtml, headHtml = "", ssrBootstrap }) {
     ? `<script>window.__EDUTOOLSHUB_SSR__=${JSON.stringify(ssrBootstrap).replace(/</g, "\\u003c")}</script>`
     : "";
 
-  html = html.replace(
-    "</head>",
-    `${headHtml}${bootstrapScript}</head>`
-  );
+  html = html.replace("</head>", `${headHtml}${bootstrapScript}</head>`);
 
   html = html.replace(
     /<div id="root"><\/div>/,
