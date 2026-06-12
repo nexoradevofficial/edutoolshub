@@ -14,7 +14,7 @@
  * Run via: `npm run build:prerender`
  */
 
-import { mkdirSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import process from "node:process";
 import { fileURLToPath } from "node:url";
@@ -96,6 +96,18 @@ const SITEMAP_ROUTES = [
   ...STATIC_ROUTES.filter((r) => r !== "/" && r !== "/tools"),
 ];
 
+/** Vite loadEnv only reads .env files — on Vercel, Sanity vars live in process.env. */
+function resolveBuildEnv() {
+  const fromFiles = loadEnv("production", projectRoot, "");
+  return {
+    ...fromFiles,
+    VITE_SANITY_PROJECT_ID:
+      fromFiles.VITE_SANITY_PROJECT_ID || process.env.VITE_SANITY_PROJECT_ID,
+    VITE_SANITY_DATASET:
+      fromFiles.VITE_SANITY_DATASET || process.env.VITE_SANITY_DATASET || "production",
+  };
+}
+
 async function fetchBlogSlugs(env) {
   const projectId = env.VITE_SANITY_PROJECT_ID;
   const dataset = env.VITE_SANITY_DATASET || "production";
@@ -158,15 +170,15 @@ function generateSitemap(routes) {
  * SSR rewrites in vercel.json remain a fallback for posts published after deploy.
  */
 async function writeBlogStaticPages(env) {
-  if (!env.VITE_SANITY_PROJECT_ID) {
+  process.env.VITE_SANITY_PROJECT_ID ??= env.VITE_SANITY_PROJECT_ID;
+  process.env.VITE_SANITY_DATASET ??= env.VITE_SANITY_DATASET || "production";
+
+  if (!process.env.VITE_SANITY_PROJECT_ID) {
     console.warn(
       "[prerender] VITE_SANITY_PROJECT_ID not set — skipping static blog HTML (runtime SSR only)."
     );
     return { listing: false, posts: 0 };
   }
-
-  process.env.VITE_SANITY_PROJECT_ID = env.VITE_SANITY_PROJECT_ID;
-  process.env.VITE_SANITY_DATASET = env.VITE_SANITY_DATASET || "production";
 
   try {
     const rawPosts = await handlePostsRequest("all");
@@ -336,8 +348,8 @@ function isNotFoundHtml(html, route) {
 }
 
 async function main() {
-  console.log("[prerender] Loading env from .env.local");
-  const env = loadEnv("production", projectRoot, "");
+  console.log("[prerender] Loading env (.env files + process.env for Vercel)");
+  const env = resolveBuildEnv();
 
   console.log("[prerender] Fetching blog slugs from Sanity…");
   const slugs = await fetchBlogSlugs(env);
@@ -349,6 +361,18 @@ async function main() {
 
   console.log("[prerender] Writing static blog HTML (server-side, no Puppeteer)…");
   const blogStatic = await writeBlogStaticPages(env);
+
+  const blogIndexPath = resolve(distDir, "blog", "index.html");
+  if (process.env.VERCEL) {
+    if (!blogStatic.listing || !existsSync(blogIndexPath)) {
+      console.error(
+        "[prerender] FATAL: dist/blog/index.html missing on Vercel build. " +
+          "Set VITE_SANITY_PROJECT_ID and VITE_SANITY_DATASET in Vercel project env vars."
+      );
+      process.exit(1);
+    }
+    console.log("[prerender] Verified dist/blog/index.html for /blog listing.");
+  }
 
   console.log("[prerender] Starting `vite preview` server…");
   const previewServer = await preview({
@@ -400,10 +424,15 @@ async function main() {
       }
     }
 
-    console.log("[prerender] Writing sitemap.xml, robots.txt, _redirects…");
+    console.log("[prerender] Writing sitemap.xml, robots.txt…");
     writeFileSync(resolve(distDir, "sitemap.xml"), generateSitemap(sitemapRoutes), "utf-8");
     writeFileSync(resolve(distDir, "robots.txt"), generateRobotsTxt(), "utf-8");
-    writeFileSync(resolve(distDir, "_redirects"), generateRedirects(), "utf-8");
+    // dist/_redirects /* → index.html overrides vercel.json /blog rewrites on Vercel.
+    if (!process.env.VERCEL) {
+      writeFileSync(resolve(distDir, "_redirects"), generateRedirects(), "utf-8");
+    } else {
+      console.log("[prerender] Skipping dist/_redirects on Vercel (vercel.json handles routing).");
+    }
 
     console.log(
       `[prerender] Done. ${successCount} puppeteer route(s), ${failCount} failed, blog listing static=${blogStatic.listing}, ${blogStatic.posts} blog post HTML file(s), ${blogRoutes.length} blog URL(s) in sitemap.`
