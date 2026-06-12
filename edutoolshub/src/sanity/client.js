@@ -14,7 +14,9 @@ export const sanityClient = createClient({
   projectId: projectId || "missing-project-id",
   dataset,
   apiVersion: "2025-01-01",
-  // API (not CDN) so newly published posts are visible immediately
-  useCdn: false,
+  // CDN is required for browser requests — the non-CDN API blocks cross-origin
+  // calls from edutoolshub.com (CORS). Server scripts (prerender, sitemap) use
+  // their own client with useCdn: false.
+  useCdn: true,
   perspective: "published",
 });

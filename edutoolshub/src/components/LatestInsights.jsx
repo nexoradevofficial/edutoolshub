@@ -27,7 +27,10 @@ function ChevronIcon({ direction = "right", className = "" }) {
 
 export default function LatestInsights() {
   const { data: rawPosts, error, isLoading } = useSanityQuery(recentPostsQuery);
-  const posts = useMemo(() => normalizePosts(rawPosts), [rawPosts]);
+  const posts = useMemo(() => {
+    const normalized = normalizePosts(rawPosts);
+    return Array.isArray(normalized) ? normalized : [];
+  }, [rawPosts]);
 
   const [emblaRef, emblaApi] = useEmblaCarousel({
     align: "start",

@@ -16,7 +16,10 @@ const PAGE_DESCRIPTION =
 
 export default function Blog() {
   const { data: rawPosts, error, isLoading } = useSanityQuery(allPostsQuery);
-  const posts = useMemo(() => normalizePosts(rawPosts), [rawPosts]);
+  const posts = useMemo(() => {
+    const normalized = normalizePosts(rawPosts);
+    return Array.isArray(normalized) ? normalized : [];
+  }, [rawPosts]);
 
   return (
     <>

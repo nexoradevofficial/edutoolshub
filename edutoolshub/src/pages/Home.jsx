@@ -1,4 +1,5 @@
 import { lazy, Suspense } from "react";
+import { Helmet } from "react-helmet-async";
 import Hero from "../components/Hero";
 import ToolsSection from "../components/ToolsSection";
 import HowItWorks from "../components/HowItWorks";
@@ -6,9 +7,50 @@ import WhyUse from "../components/WhyUse";
 
 const LatestInsights = lazy(() => import("../components/LatestInsights"));
 
+const SITE_URL = "https://edutoolshub.com";
+const SITE_NAME = "EduToolsHub";
+const TITLE = "Free Education Tools for Students & Teachers | EduToolsHub";
+const DESCRIPTION =
+  "Free online education tools for students and teachers — GPA calculator, college GPA requirement checker, attendance sheet generator, lesson planner, fee receipt maker, and final grade calculator. No signup required.";
+const KEYWORDS =
+  "education tools, free tools for students, free tools for teachers, GPA calculator, GPA to percentage, college GPA requirement checker, minimum GPA for college, attendance sheet generator, student attendance tracker, lesson plan maker, lesson planner online, school fee receipt generator, fee receipt maker, final grade calculator, what grade do I need to pass, EduToolsHub";
+
+const websiteLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: SITE_NAME,
+  url: SITE_URL,
+  description: DESCRIPTION,
+  publisher: {
+    "@type": "Organization",
+    name: SITE_NAME,
+    url: SITE_URL,
+    logo: `${SITE_URL}/logo.png`,
+  },
+};
+
 export default function Home() {
   return (
     <>
+      <Helmet>
+        <title>{TITLE}</title>
+        <meta name="description" content={DESCRIPTION} />
+        <meta name="keywords" content={KEYWORDS} />
+        <link rel="canonical" href={SITE_URL} />
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content={SITE_NAME} />
+        <meta property="og:title" content={TITLE} />
+        <meta property="og:description" content={DESCRIPTION} />
+        <meta property="og:url" content={SITE_URL} />
+        <meta property="og:image" content={`${SITE_URL}/logo.png`} />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={TITLE} />
+        <meta name="twitter:description" content={DESCRIPTION} />
+        <meta name="twitter:image" content={`${SITE_URL}/logo.png`} />
+        <meta name="robots" content="index,follow" />
+        <script type="application/ld+json">{JSON.stringify(websiteLd)}</script>
+      </Helmet>
+
       <Hero />
       <ToolsSection />
       <HowItWorks />

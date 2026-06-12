@@ -1,13 +1,10 @@
 import { useEffect, useRef, useState } from "react";
+import { fetchPostsFromApi, getPostsApiScope } from "./fetchFromApi";
 import { sanityClient } from "./client";
 
 /**
- * Small wrapper around `sanityClient.fetch` that returns `{ data, error, isLoading }`.
- *
- * - Re-runs whenever the query string or stringified params change.
- * - Cancels stale responses so unmounted / superseded queries never call setState.
- * - Treats a missing VITE_SANITY_PROJECT_ID as an error so the UI can surface it
- *   instead of silently rendering an empty state.
+ * Fetches Sanity content. Blog queries use `/api/posts` in the browser to
+ * avoid CORS blocks from direct Sanity API calls.
  */
 export function useSanityQuery(query, params) {
   const [data, setData] = useState(null);
@@ -16,40 +13,52 @@ export function useSanityQuery(query, params) {
 
   const paramsKey = params ? JSON.stringify(params) : "";
   const requestId = useRef(0);
+  const apiScope = typeof window !== "undefined" ? getPostsApiScope(query) : null;
 
   useEffect(() => {
     const id = ++requestId.current;
-    setIsLoading(true);
-    setError(null);
+    let cancelled = false;
 
-    if (!import.meta.env.VITE_SANITY_PROJECT_ID) {
-      setError(
-        new Error(
-          "Sanity is not configured. Set VITE_SANITY_PROJECT_ID in .env.local and restart `npm run dev`."
-        )
-      );
-      setIsLoading(false);
-      return;
-    }
+    async function load() {
+      setIsLoading(true);
+      setError(null);
 
-    sanityClient
-      .fetch(query, params ?? {})
-      .then((result) => {
-        if (id !== requestId.current) return;
+      if (!import.meta.env.VITE_SANITY_PROJECT_ID) {
+        if (!cancelled && id === requestId.current) {
+          setError(
+            new Error(
+              "Sanity is not configured. Set VITE_SANITY_PROJECT_ID in .env.local and restart `npm run dev`."
+            )
+          );
+          setIsLoading(false);
+        }
+        return;
+      }
+
+      try {
+        const result =
+          apiScope != null
+            ? await fetchPostsFromApi(apiScope, params)
+            : await sanityClient.fetch(query, params ?? {});
+
+        if (cancelled || id !== requestId.current) return;
         setData(result);
         setIsLoading(false);
-      })
-      .catch((err) => {
-        if (id !== requestId.current) return;
-        setError(err);
+      } catch (err) {
+        if (cancelled || id !== requestId.current) return;
+        setError(err instanceof Error ? err : new Error(String(err)));
         setIsLoading(false);
-      });
+      }
+    }
+
+    load();
 
     return () => {
+      cancelled = true;
       requestId.current++;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [query, paramsKey]);
+  }, [query, paramsKey, apiScope]);
 
   return { data, error, isLoading };
 }
