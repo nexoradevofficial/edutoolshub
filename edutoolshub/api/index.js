@@ -4,8 +4,6 @@
  */
 import { handlePostsApi } from "../server/lib/handlers/posts.js";
 import { handleRefreshUniversities } from "../server/lib/handlers/refresh-universities.js";
-import { handleRenderBlog } from "../server/lib/handlers/render-blog.js";
-import { handleRenderBlogPost } from "../server/lib/handlers/render-blog-post.js";
 import { handleSitemap } from "../server/lib/handlers/sitemap.js";
 import { handleUniversities } from "../server/lib/handlers/universities.js";
 
@@ -13,8 +11,6 @@ const ROUTES = new Map([
   ["posts", handlePostsApi],
   ["sitemap", handleSitemap],
   ["universities", handleUniversities],
-  ["render-blog", handleRenderBlog],
-  ["render-blog-post", handleRenderBlogPost],
   ["admin/refresh-universities", handleRefreshUniversities],
 ]);
 

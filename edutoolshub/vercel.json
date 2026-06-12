@@ -33,6 +33,12 @@
   "functions": {
     "api/index.js": {
       "includeFiles": "server/lib/app-shell.html"
+    },
+    "api/render/blog.js": {
+      "includeFiles": "server/lib/app-shell.html"
+    },
+    "api/render/blog-post.js": {
+      "includeFiles": "server/lib/app-shell.html"
     }
   },
   "rewrites": [
@@ -42,18 +48,18 @@
     },
     {
       "source": "/blog",
-      "destination": "/api/index?path=render-blog"
+      "destination": "/api/render/blog"
     },
     {
       "source": "/blog/:slug",
-      "destination": "/api/index?path=render-blog-post&slug=:slug"
+      "destination": "/api/render/blog-post?slug=:slug"
     },
     {
       "source": "/api/(.*)",
       "destination": "/api/index?path=$1"
     },
     {
-      "source": "/((?!api/).*)",
+      "source": "/(.*)",
       "destination": "/index.html"
     }
   ]

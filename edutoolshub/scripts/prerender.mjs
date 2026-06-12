@@ -148,14 +148,13 @@ function generateSitemap(routes) {
 }
 
 function generateRedirects() {
-  // Netlify / Cloudflare: explicit blog SPA fallbacks, then global fallback
+  // Netlify / Cloudflare SPA fallbacks. Do NOT add /blog rules here — Vercel SSR
+  // serves /blog via vercel.json rewrites; dist/_redirects blog rules override them.
   return [
     "/blog/null  /blog  302",
     "/tools/exam-marks-needed  /tools/final-grade-calculator  301",
     "/tools/gpa-requirement-checker  /tools/college-university-gpa-requirement-checker  301",
     "/tools/gpa-requirement-checker/*  /tools/college-university-gpa-requirement-checker/:splat  301",
-    "/blog/*  /index.html  200",
-    "/blog  /index.html  200",
     "/*  /index.html  200",
   ].join("\n") + "\n";
 }
