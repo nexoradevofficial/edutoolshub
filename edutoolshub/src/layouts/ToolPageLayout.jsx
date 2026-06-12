@@ -1,6 +1,11 @@
 import { useEffect } from "react";
+import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
+import ToolSeoSection from "../components/tools/ToolSeoSection";
+import { buildToolSchema } from "../data/toolSeo";
 import { trackToolUsed } from "../utils/analytics";
+
+const SITE_URL = "https://edutoolshub.com";
 
 const MAX_WIDTH_CLASSES = {
   md: "max-w-3xl",
@@ -17,6 +22,7 @@ export default function ToolPageLayout({
   maxWidth = "lg",
   toolName,
   toolCategory = "",
+  seo,
 }) {
   const widthClass = MAX_WIDTH_CLASSES[maxWidth] ?? MAX_WIDTH_CLASSES.lg;
 
@@ -26,6 +32,21 @@ export default function ToolPageLayout({
   }, [toolName, toolCategory, title]);
 
   return (
+    <>
+      {seo && (
+        <Helmet>
+          <title>{seo.metaTitle}</title>
+          <meta name="description" content={seo.metaDescription} />
+          <link rel="canonical" href={`${SITE_URL}${seo.path}`} />
+          <meta property="og:title" content={seo.metaTitle} />
+          <meta property="og:description" content={seo.metaDescription} />
+          <meta property="og:url" content={`${SITE_URL}${seo.path}`} />
+          <script type="application/ld+json">
+            {JSON.stringify(buildToolSchema(seo))}
+          </script>
+        </Helmet>
+      )}
+
     <div className="min-h-[calc(100vh-4rem)] bg-surface-muted py-6 sm:py-12">
       <div className={`mx-auto ${widthClass} px-4 sm:px-6 lg:px-8`}>
         <Link
@@ -43,7 +64,17 @@ export default function ToolPageLayout({
         </header>
 
         {children}
+
+        {seo && (
+          <ToolSeoSection
+            name={seo.name}
+            howToUse={seo.howToUse}
+            faqs={seo.faqs}
+            relatedTools={seo.relatedTools}
+          />
+        )}
       </div>
     </div>
+    </>
   );
 }

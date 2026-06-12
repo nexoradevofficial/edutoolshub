@@ -1,5 +1,6 @@
 import ToolPageLayout from "../layouts/ToolPageLayout";
 import GpaToPercentageConverter from "../components/tools/GpaToPercentageConverter";
+import { toolSeoById } from "../data/toolSeo";
 
 export default function GpaToPercentagePage() {
   return (
@@ -7,6 +8,7 @@ export default function GpaToPercentagePage() {
       title="GPA to Percentage Converter"
       description="Convert your GPA to an equivalent percentage on the 4.0, 5.0, or 10.0 scale — with letter grade, performance descriptor, and a visual percentage indicator."
       maxWidth="lg"
+      seo={toolSeoById["gpa-to-percentage"]}
     >
       <GpaToPercentageConverter />
     </ToolPageLayout>
