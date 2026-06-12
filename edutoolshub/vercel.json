@@ -1,5 +1,7 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "npm run build:prerender",
+  "outputDirectory": "dist",
   "cleanUrls": true,
   "trailingSlash": false,
   "crons": [
@@ -28,6 +30,26 @@
       "source": "/tools/gpa-requirement-checker/:slug",
       "destination": "/tools/college-university-gpa-requirement-checker/:slug",
       "permanent": true
+    }
+  ],
+  "headers": [
+    {
+      "source": "/blog",
+      "headers": [
+        {
+          "key": "X-EduToolsHub-Render",
+          "value": "blog-listing"
+        }
+      ]
+    },
+    {
+      "source": "/blog/:slug",
+      "headers": [
+        {
+          "key": "X-EduToolsHub-Render",
+          "value": "blog-post"
+        }
+      ]
     }
   ],
   "functions": {
@@ -60,7 +82,7 @@
     },
     {
       "source": "/(.*)",
-      "destination": "/index.html"
+      "destination": "/index"
     }
   ]
 }

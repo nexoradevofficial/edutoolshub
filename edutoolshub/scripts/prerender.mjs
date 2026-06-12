@@ -14,13 +14,18 @@
  * Run via: `npm run build:prerender`
  */
 
-import { existsSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
+import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import process from "node:process";
 import { fileURLToPath } from "node:url";
 
 import { createClient } from "@sanity/client";
 import { loadEnv, preview } from "vite";
+
+import { buildBlogListPage, buildBlogPostPage } from "../server/lib/blog-html.js";
+import { handlePostsRequest } from "../server/lib/posts-handler.js";
+import { buildSsrPage } from "../server/lib/ssr-shell.js";
+import { normalizePostSlug } from "../src/sanity/normalizeSlug.js";
 
 // Puppeteer runs in two different ways:
 //   - Local dev (Windows / macOS): plain `puppeteer` with its bundled Chromium.
@@ -68,7 +73,7 @@ const PREVIEW_HOST = "127.0.0.1";
 const PAGE_TIMEOUT = 30_000;
 const SETTLE_MS = 400;
 
-/** Blog routes are SSR'd at runtime via /api/render-blog* — do not prerender to dist/blog/. */
+/** Puppeteer-prerendered routes (blog uses server-side HTML in writeBlogStaticPages). */
 const STATIC_ROUTES = [
   "/",
   "/tools",
@@ -147,9 +152,62 @@ function generateSitemap(routes) {
   return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${items}\n</urlset>\n`;
 }
 
+/**
+ * Write /blog and /blog/:slug as static HTML using the same SSR builders as api/render/*.
+ * Vercel serves these files before rewrites, so view-source always has post titles.
+ * SSR rewrites in vercel.json remain a fallback for posts published after deploy.
+ */
+async function writeBlogStaticPages(env) {
+  if (!env.VITE_SANITY_PROJECT_ID) {
+    console.warn(
+      "[prerender] VITE_SANITY_PROJECT_ID not set — skipping static blog HTML (runtime SSR only)."
+    );
+    return { listing: false, posts: 0 };
+  }
+
+  process.env.VITE_SANITY_PROJECT_ID = env.VITE_SANITY_PROJECT_ID;
+  process.env.VITE_SANITY_DATASET = env.VITE_SANITY_DATASET || "production";
+
+  try {
+    const rawPosts = await handlePostsRequest("all");
+    const listPage = buildBlogListPage(rawPosts);
+    const listHtml = buildSsrPage(listPage);
+    const listPath = outputPathForRoute("/blog");
+    mkdirSync(dirname(listPath), { recursive: true });
+    writeFileSync(listPath, listHtml, "utf-8");
+    console.log(`  ✓ /blog (static HTML, ${Array.isArray(rawPosts) ? rawPosts.length : 0} post(s))`);
+
+    let postCount = 0;
+    const slugs = (Array.isArray(rawPosts) ? rawPosts : [])
+      .map((post) => normalizePostSlug(post?.slug?.current ?? post?.slug))
+      .filter(Boolean);
+
+    for (const slug of slugs) {
+      const rawPost = await handlePostsRequest("post", slug);
+      const page = buildBlogPostPage(rawPost);
+      if (!page) {
+        console.warn(`  ✗ /blog/${slug} — post data missing, skipped`);
+        continue;
+      }
+      const html = buildSsrPage(page);
+      const outPath = outputPathForRoute(`/blog/${slug}`);
+      mkdirSync(dirname(outPath), { recursive: true });
+      writeFileSync(outPath, html, "utf-8");
+      postCount++;
+      console.log(`  ✓ /blog/${slug}`);
+    }
+
+    return { listing: true, posts: postCount };
+  } catch (err) {
+    console.warn(
+      `[prerender] Static blog HTML failed (${err.message}) — /blog will rely on Vercel SSR rewrites.`
+    );
+    return { listing: false, posts: 0 };
+  }
+}
+
 function generateRedirects() {
-  // Netlify / Cloudflare SPA fallbacks. Do NOT add /blog rules here — Vercel SSR
-  // serves /blog via vercel.json rewrites; dist/_redirects blog rules override them.
+  // Netlify / Cloudflare SPA fallbacks. Never add /blog → /index.html here.
   return [
     "/blog/null  /blog  302",
     "/tools/exam-marks-needed  /tools/final-grade-calculator  301",
@@ -283,20 +341,14 @@ async function main() {
 
   console.log("[prerender] Fetching blog slugs from Sanity…");
   const slugs = await fetchBlogSlugs(env);
-  console.log(
-    `[prerender] Found ${slugs.length} published blog post(s) for sitemap (SSR at runtime, not prerendered).`
-  );
+  console.log(`[prerender] Found ${slugs.length} published blog post(s) for sitemap.`);
 
   const blogRoutes = slugs.map((s) => `/blog/${s}`);
   const uniquePrerenderRoutes = Array.from(new Set(STATIC_ROUTES));
   const sitemapRoutes = Array.from(new Set([...SITEMAP_ROUTES, ...blogRoutes]));
 
-  // Static dist/blog/*.html takes precedence over Vercel rewrites — remove any leftovers.
-  const blogDistDir = resolve(distDir, "blog");
-  if (existsSync(blogDistDir)) {
-    rmSync(blogDistDir, { recursive: true, force: true });
-    console.log("[prerender] Removed dist/blog/ so Vercel SSR rewrites can serve /blog.");
-  }
+  console.log("[prerender] Writing static blog HTML (server-side, no Puppeteer)…");
+  const blogStatic = await writeBlogStaticPages(env);
 
   console.log("[prerender] Starting `vite preview` server…");
   const previewServer = await preview({
@@ -354,7 +406,7 @@ async function main() {
     writeFileSync(resolve(distDir, "_redirects"), generateRedirects(), "utf-8");
 
     console.log(
-      `[prerender] Done. ${successCount} rendered, ${failCount} failed, ${uniquePrerenderRoutes.length} static route(s), ${blogRoutes.length} blog URL(s) in sitemap (SSR at runtime).`
+      `[prerender] Done. ${successCount} puppeteer route(s), ${failCount} failed, blog listing static=${blogStatic.listing}, ${blogStatic.posts} blog post HTML file(s), ${blogRoutes.length} blog URL(s) in sitemap.`
     );
     if (failCount > 0) process.exitCode = 1;
   } finally {

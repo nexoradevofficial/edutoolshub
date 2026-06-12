@@ -114,7 +114,7 @@ vercel --prod
 # Output dir:     dist
 ```
 
-Blog listing (`/blog`) and posts (`/blog/:slug`) are **not** prerendered to `dist/blog/` — Vercel serves them via SPA fallback so new Sanity posts work without redeploying.
+Blog listing (`/blog`) and posts (`/blog/:slug`) are written to `dist/blog/` at build time (server-side HTML from Sanity, no Puppeteer). Vercel serves those static files first; `vercel.json` SSR rewrites (`/api/render/blog*`) are a fallback for posts published after the last deploy.
 
 You also need to set `VITE_SANITY_PROJECT_ID` and `VITE_SANITY_DATASET` as
 Vercel project env vars. **Blog posts load from Sanity at runtime** — you do

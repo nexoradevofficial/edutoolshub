@@ -30,6 +30,7 @@ export async function handleRenderBlogPost(req, res) {
 
     const html = buildSsrPage(page);
     res.setHeader("Content-Type", "text/html; charset=utf-8");
+    res.setHeader("X-EduToolsHub-Render", "ssr-blog-post");
     res.setHeader(
       "Cache-Control",
       `public, s-maxage=${CACHE_MAX_AGE}, stale-while-revalidate=600`
