@@ -2,20 +2,38 @@ import { useEffect, useRef, useState } from "react";
 import { fetchPostsFromApi, getPostsApiScope } from "./fetchFromApi";
 import { sanityClient } from "./client";
 
+/** Read data injected by Vercel SSR (`api/render/blog*`). */
+function readSsrBootstrap(apiScope, params) {
+  if (typeof window === "undefined" || apiScope == null) return undefined;
+  const boot = window.__EDUTOOLSHUB_SSR__;
+  if (!boot || boot.scope !== apiScope) return undefined;
+  if (apiScope === "post" && boot.slug !== params?.slug) return undefined;
+  return boot.data ?? null;
+}
+
 /**
  * Fetches Sanity content. Blog queries use `/api/posts` in the browser to
  * avoid CORS blocks from direct Sanity API calls.
+ * When the page was SSR'd, uses `window.__EDUTOOLSHUB_SSR__` to skip a round-trip.
  */
 export function useSanityQuery(query, params) {
-  const [data, setData] = useState(null);
-  const [error, setError] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-
   const paramsKey = params ? JSON.stringify(params) : "";
   const requestId = useRef(0);
   const apiScope = typeof window !== "undefined" ? getPostsApiScope(query) : null;
+  const ssrData = readSsrBootstrap(apiScope, params);
+  const skipInitialFetch = useRef(ssrData !== undefined);
+
+  const [data, setData] = useState(ssrData !== undefined ? ssrData : null);
+  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(ssrData === undefined);
 
   useEffect(() => {
+    if (skipInitialFetch.current) {
+      skipInitialFetch.current = false;
+      delete window.__EDUTOOLSHUB_SSR__;
+      return;
+    }
+
     const id = ++requestId.current;
     let cancelled = false;
 

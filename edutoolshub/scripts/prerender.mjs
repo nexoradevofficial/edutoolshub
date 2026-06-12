@@ -14,7 +14,7 @@
  * Run via: `npm run build:prerender`
  */
 
-import { existsSync, mkdirSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import process from "node:process";
 import { fileURLToPath } from "node:url";
@@ -68,10 +68,10 @@ const PREVIEW_HOST = "127.0.0.1";
 const PAGE_TIMEOUT = 30_000;
 const SETTLE_MS = 400;
 
+/** Blog routes are SSR'd at runtime via /api/render-blog* — do not prerender to dist/blog/. */
 const STATIC_ROUTES = [
   "/",
   "/tools",
-  "/blog",
   "/tools/gpa-calculator",
   "/tools/college-university-gpa-requirement-checker",
   "/tools/attendance-sheet",
@@ -174,6 +174,7 @@ async function renderRoute(page, baseUrl, route) {
 
   await page.waitForSelector("main", { timeout: 10_000 });
 
+  const isBlogList = route === "/blog";
   const isBlogPost = route.startsWith("/blog/") && route !== "/blog";
 
   if (isBlogPost) {
@@ -186,6 +187,16 @@ async function renderRoute(page, baseUrl, route) {
       .catch(() => {
         console.warn(
           `    ⚠ Blog content wait timed out for ${route} — capturing whatever is rendered.`
+        );
+      });
+  } else if (isBlogList) {
+    await page
+      .waitForSelector('[data-blog-list-status="ready"]', {
+        timeout: PAGE_TIMEOUT,
+      })
+      .catch(() => {
+        console.warn(
+          `    ⚠ Blog list wait timed out for ${route} — capturing whatever is rendered.`
         );
       });
   } else {
@@ -273,12 +284,20 @@ async function main() {
 
   console.log("[prerender] Fetching blog slugs from Sanity…");
   const slugs = await fetchBlogSlugs(env);
-  console.log(`[prerender] Found ${slugs.length} published blog post(s) to prerender.`);
+  console.log(
+    `[prerender] Found ${slugs.length} published blog post(s) for sitemap (SSR at runtime, not prerendered).`
+  );
 
   const blogRoutes = slugs.map((s) => `/blog/${s}`);
-  const prerenderRoutes = [...STATIC_ROUTES, ...blogRoutes];
-  const uniquePrerenderRoutes = Array.from(new Set(prerenderRoutes));
+  const uniquePrerenderRoutes = Array.from(new Set(STATIC_ROUTES));
   const sitemapRoutes = Array.from(new Set([...SITEMAP_ROUTES, ...blogRoutes]));
+
+  // Static dist/blog/*.html takes precedence over Vercel rewrites — remove any leftovers.
+  const blogDistDir = resolve(distDir, "blog");
+  if (existsSync(blogDistDir)) {
+    rmSync(blogDistDir, { recursive: true, force: true });
+    console.log("[prerender] Removed dist/blog/ so Vercel SSR rewrites can serve /blog.");
+  }
 
   console.log("[prerender] Starting `vite preview` server…");
   const previewServer = await preview({
@@ -335,11 +354,8 @@ async function main() {
     writeFileSync(resolve(distDir, "robots.txt"), generateRobotsTxt(), "utf-8");
     writeFileSync(resolve(distDir, "_redirects"), generateRedirects(), "utf-8");
 
-    const blogRendered = blogRoutes.filter((route) =>
-      existsSync(outputPathForRoute(route))
-    ).length;
     console.log(
-      `[prerender] Done. ${successCount} rendered, ${failCount} failed, ${uniquePrerenderRoutes.length} route(s) attempted, ${blogRendered}/${blogRoutes.length} blog post(s) written, ${sitemapRoutes.length} URL(s) in sitemap.`
+      `[prerender] Done. ${successCount} rendered, ${failCount} failed, ${uniquePrerenderRoutes.length} static route(s), ${blogRoutes.length} blog URL(s) in sitemap (SSR at runtime).`
     );
     if (failCount > 0) process.exitCode = 1;
   } finally {

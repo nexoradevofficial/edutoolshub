@@ -36,7 +36,10 @@ export default function Blog() {
         <meta name="twitter:description" content={PAGE_DESCRIPTION} />
       </Helmet>
 
-      <section className="py-16 sm:py-20">
+      <section
+        className="py-16 sm:py-20"
+        data-blog-list-status={!isLoading && !error && posts.length > 0 ? "ready" : undefined}
+      >
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           <header className="mx-auto max-w-2xl text-center">
             <p className="text-sm font-semibold uppercase tracking-wider text-primary">

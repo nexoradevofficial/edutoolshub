@@ -36,8 +36,16 @@
       "destination": "/api/sitemap"
     },
     {
+      "source": "/blog",
+      "destination": "/api/render-blog"
+    },
+    {
+      "source": "/blog/:slug",
+      "destination": "/api/render-blog-post?slug=:slug"
+    },
+    {
       "source": "/((?!api/).*)",
-      "destination": "/index"
+      "destination": "/index.html"
     }
   ]
 }
