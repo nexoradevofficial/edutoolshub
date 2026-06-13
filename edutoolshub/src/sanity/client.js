@@ -1,11 +1,12 @@
 import { createClient } from "@sanity/client";
+import { sanityDataset, sanityProjectId } from "@/lib/env";
 
-const projectId = import.meta.env.VITE_SANITY_PROJECT_ID;
-const dataset = import.meta.env.VITE_SANITY_DATASET || "production";
+const projectId = sanityProjectId();
+const dataset = sanityDataset();
 
-if (!projectId && import.meta.env.DEV) {
+if (!projectId && process.env.NODE_ENV === "development") {
   console.warn(
-    "[sanity] VITE_SANITY_PROJECT_ID is missing. Copy .env.example to .env.local " +
+    "[sanity] NEXT_PUBLIC_SANITY_PROJECT_ID is missing. Copy .env.example to .env.local " +
       "and fill it in, then restart `npm run dev`. Blog queries will return empty results until this is set."
   );
 }

@@ -1,16 +1,14 @@
 import { createClient } from "@supabase/supabase-js";
+import { supabaseAnonKey, supabaseUrl } from "@/lib/env";
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const url = supabaseUrl();
+const anonKey = supabaseAnonKey();
 
-if (!supabaseUrl && import.meta.env.DEV) {
+if (!url && process.env.NODE_ENV === "development") {
   console.warn(
-    "[supabase] VITE_SUPABASE_URL is missing. Copy .env.example to .env.local " +
+    "[supabase] NEXT_PUBLIC_SUPABASE_URL is missing. Copy .env.example to .env.local " +
       "and fill in Supabase credentials, then restart `npm run dev`."
   );
 }
 
-export const supabase =
-  supabaseUrl && supabaseAnonKey
-    ? createClient(supabaseUrl, supabaseAnonKey)
-    : null;
+export const supabase = url && anonKey ? createClient(url, anonKey) : null;

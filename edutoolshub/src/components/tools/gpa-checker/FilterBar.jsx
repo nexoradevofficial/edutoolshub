@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import Link from "next/link";
 
 const selectClass =
   "w-full rounded-lg border border-border bg-white px-3 py-2 text-sm text-text outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-primary/20";
@@ -73,7 +73,7 @@ export default function FilterBar({
 
       <p className="mb-4 rounded-lg border border-border bg-surface-muted/80 px-3 py-2.5 text-xs leading-relaxed text-text-muted">
         More countries and universities will be added soon.{" "}
-        <Link to="/contact" className="font-semibold text-primary hover:underline">
+        <Link href="/contact" className="font-semibold text-primary hover:underline">
           Contact us
         </Link>{" "}
         to request your country or a specific university.

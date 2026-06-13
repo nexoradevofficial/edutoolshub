@@ -1,5 +1,7 @@
+"use client";
+
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import Button from "../../ui/Button";
 import UniversityCard from "./UniversityCard";
 import {
@@ -48,14 +50,14 @@ export default function UniversityDetailContent({ university, similar = [] }) {
       <nav aria-label="Breadcrumb" className="text-sm text-text-muted">
         <ol className="flex flex-wrap items-center gap-1">
           <li>
-            <Link to="/" className="hover:text-primary">
+            <Link href="/" className="hover:text-primary">
               Home
             </Link>
           </li>
           <li aria-hidden>/</li>
           <li>
             <Link
-              to="/tools/college-university-gpa-requirement-checker"
+              href="/tools/college-university-gpa-requirement-checker"
               className="hover:text-primary"
             >
               GPA Checker
@@ -205,7 +207,7 @@ export default function UniversityDetailContent({ university, similar = [] }) {
 
       <div className="rounded-xl border border-primary/15 bg-primary/5 p-4 text-sm">
         <Link
-          to="/tools/college-university-gpa-requirement-checker"
+          href="/tools/college-university-gpa-requirement-checker"
           className="font-medium text-primary hover:underline"
         >
           ← Back to College / University GPA Requirement Checker

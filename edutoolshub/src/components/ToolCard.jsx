@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import { IconArrowRight, IconLock } from "./icons/ToolIcons";
 
 export default function ToolCard({ tool }) {
@@ -8,7 +8,7 @@ export default function ToolCard({ tool }) {
   if (isActive) {
     return (
       <Link
-        to={tool.path}
+        href={tool.path}
         className="group relative flex flex-col rounded-2xl border-2 border-primary/20 bg-white p-6 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:border-primary hover:shadow-lg hover:shadow-primary/10"
       >
         <span className="absolute right-4 top-4 rounded-full bg-accent/10 px-2.5 py-1 text-xs font-semibold text-accent">

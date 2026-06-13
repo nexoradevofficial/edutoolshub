@@ -35,11 +35,11 @@ export default function Hero() {
         </p>
 
         <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-          <Button to="/tools/college-university-gpa-requirement-checker" size="lg">
+          <Button href="/tools/college-university-gpa-requirement-checker" size="lg">
             College / University GPA Requirement Checker
             <IconArrowRight />
           </Button>
-          <Button to="/tools" variant="secondary" size="lg">
+          <Button href="/tools" variant="secondary" size="lg">
             View All Tools
           </Button>
         </div>

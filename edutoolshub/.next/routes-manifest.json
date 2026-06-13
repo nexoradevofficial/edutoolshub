@@ -1,0 +1,224 @@
+{
+  "version": 3,
+  "pages404": true,
+  "appType": "app",
+  "caseSensitive": false,
+  "basePath": "",
+  "redirects": [
+    {
+      "source": "/:path+/",
+      "destination": "/:path+",
+      "internal": true,
+      "priority": true,
+      "statusCode": 308,
+      "regex": "^(?:/((?:[^/]+?)(?:/(?:[^/]+?))*))/$"
+    },
+    {
+      "source": "/blog/null",
+      "destination": "/blog",
+      "statusCode": 307,
+      "regex": "^(?!/_next)/blog/null(?:/)?$"
+    },
+    {
+      "source": "/tools/exam-marks-needed",
+      "destination": "/tools/final-grade-calculator",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/tools/exam-marks-needed(?:/)?$"
+    },
+    {
+      "source": "/tools/gpa-requirement-checker",
+      "destination": "/tools/college-university-gpa-requirement-checker",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/tools/gpa-requirement-checker(?:/)?$"
+    },
+    {
+      "source": "/tools/gpa-requirement-checker/:slug",
+      "destination": "/tools/college-university-gpa-requirement-checker/:slug",
+      "statusCode": 308,
+      "regex": "^(?!/_next)/tools/gpa-requirement-checker(?:/([^/]+?))(?:/)?$"
+    }
+  ],
+  "headers": [],
+  "onMatchHeaders": [],
+  "rewrites": {
+    "beforeFiles": [],
+    "afterFiles": [],
+    "fallback": []
+  },
+  "dynamicRoutes": [
+    {
+      "page": "/blog/[slug]",
+      "regex": "^/blog/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPslug": "nxtPslug"
+      },
+      "namedRegex": "^/blog/(?<nxtPslug>[^/]+?)(?:/)?$"
+    },
+    {
+      "page": "/tools/college-university-gpa-requirement-checker/[slug]",
+      "regex": "^/tools/college\\-university\\-gpa\\-requirement\\-checker/([^/]+?)(?:/)?$",
+      "routeKeys": {
+        "nxtPslug": "nxtPslug"
+      },
+      "namedRegex": "^/tools/college\\-university\\-gpa\\-requirement\\-checker/(?<nxtPslug>[^/]+?)(?:/)?$"
+    }
+  ],
+  "staticRoutes": [
+    {
+      "page": "/",
+      "regex": "^/(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/(?:/)?$"
+    },
+    {
+      "page": "/_global-error",
+      "regex": "^/_global\\-error(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/_global\\-error(?:/)?$"
+    },
+    {
+      "page": "/_not-found",
+      "regex": "^/_not\\-found(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/_not\\-found(?:/)?$"
+    },
+    {
+      "page": "/about",
+      "regex": "^/about(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/about(?:/)?$"
+    },
+    {
+      "page": "/admin/universities",
+      "regex": "^/admin/universities(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/admin/universities(?:/)?$"
+    },
+    {
+      "page": "/api/admin/refresh-universities",
+      "regex": "^/api/admin/refresh\\-universities(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/admin/refresh\\-universities(?:/)?$"
+    },
+    {
+      "page": "/api/posts",
+      "regex": "^/api/posts(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/posts(?:/)?$"
+    },
+    {
+      "page": "/blog",
+      "regex": "^/blog(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/blog(?:/)?$"
+    },
+    {
+      "page": "/contact",
+      "regex": "^/contact(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/contact(?:/)?$"
+    },
+    {
+      "page": "/privacy",
+      "regex": "^/privacy(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/privacy(?:/)?$"
+    },
+    {
+      "page": "/robots.txt",
+      "regex": "^/robots\\.txt(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/robots\\.txt(?:/)?$"
+    },
+    {
+      "page": "/sitemap.xml",
+      "regex": "^/sitemap\\.xml(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/sitemap\\.xml(?:/)?$"
+    },
+    {
+      "page": "/terms",
+      "regex": "^/terms(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/terms(?:/)?$"
+    },
+    {
+      "page": "/tools",
+      "regex": "^/tools(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/tools(?:/)?$"
+    },
+    {
+      "page": "/tools/attendance-sheet",
+      "regex": "^/tools/attendance\\-sheet(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/tools/attendance\\-sheet(?:/)?$"
+    },
+    {
+      "page": "/tools/behavior-chart-generator",
+      "regex": "^/tools/behavior\\-chart\\-generator(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/tools/behavior\\-chart\\-generator(?:/)?$"
+    },
+    {
+      "page": "/tools/college-university-gpa-requirement-checker",
+      "regex": "^/tools/college\\-university\\-gpa\\-requirement\\-checker(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/tools/college\\-university\\-gpa\\-requirement\\-checker(?:/)?$"
+    },
+    {
+      "page": "/tools/fee-receipt",
+      "regex": "^/tools/fee\\-receipt(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/tools/fee\\-receipt(?:/)?$"
+    },
+    {
+      "page": "/tools/final-grade-calculator",
+      "regex": "^/tools/final\\-grade\\-calculator(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/tools/final\\-grade\\-calculator(?:/)?$"
+    },
+    {
+      "page": "/tools/gpa-calculator",
+      "regex": "^/tools/gpa\\-calculator(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/tools/gpa\\-calculator(?:/)?$"
+    },
+    {
+      "page": "/tools/gpa-to-percentage",
+      "regex": "^/tools/gpa\\-to\\-percentage(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/tools/gpa\\-to\\-percentage(?:/)?$"
+    },
+    {
+      "page": "/tools/lesson-planner",
+      "regex": "^/tools/lesson\\-planner(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/tools/lesson\\-planner(?:/)?$"
+    },
+    {
+      "page": "/tools/tracing-sheet-generator",
+      "regex": "^/tools/tracing\\-sheet\\-generator(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/tools/tracing\\-sheet\\-generator(?:/)?$"
+    }
+  ],
+  "dataRoutes": [],
+  "rsc": {
+    "header": "rsc",
+    "varyHeader": "rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch",
+    "prefetchHeader": "next-router-prefetch",
+    "didPostponeHeader": "x-nextjs-postponed",
+    "contentTypeHeader": "text/x-component",
+    "suffix": ".rsc",
+    "prefetchSegmentHeader": "next-router-segment-prefetch",
+    "prefetchSegmentSuffix": ".segment.rsc",
+    "prefetchSegmentDirSuffix": ".segments",
+    "clientParamParsing": false,
+    "dynamicRSCPrerender": false
+  },
+  "rewriteHeaders": {
+    "pathHeader": "x-nextjs-rewritten-path",
+    "queryHeader": "x-nextjs-rewritten-query"
+  }
+}

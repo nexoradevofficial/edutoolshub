@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import SiteLogo from "./SiteLogo";
 import { CONTACT_EMAIL } from "../constants/site";
 
@@ -8,7 +8,7 @@ export default function Footer() {
       <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
         <div className="flex flex-col items-center justify-between gap-8 md:flex-row md:items-start">
           <div className="text-center md:text-left">
-            <Link to="/" className="inline-flex items-center gap-2.5">
+            <Link href="/" className="inline-flex items-center gap-2.5">
               <SiteLogo />
               <span className="text-lg font-bold text-text">
                 EduTools<span className="text-primary">Hub</span>
@@ -20,25 +20,25 @@ export default function Footer() {
           </div>
 
           <nav className="flex flex-wrap justify-center gap-6 text-sm">
-            <Link to="/tools" className="text-text-muted transition-colors hover:text-primary">
+            <Link href="/tools" className="text-text-muted transition-colors hover:text-primary">
               Tools
             </Link>
-            <Link to="/blog" className="text-text-muted transition-colors hover:text-primary">
+            <Link href="/blog" className="text-text-muted transition-colors hover:text-primary">
               Blog
             </Link>
-            <Link to="/about" className="text-text-muted transition-colors hover:text-primary">
+            <Link href="/about" className="text-text-muted transition-colors hover:text-primary">
               About Us
             </Link>
-            <Link to="/contact" className="text-text-muted transition-colors hover:text-primary">
+            <Link href="/contact" className="text-text-muted transition-colors hover:text-primary">
               Contact
             </Link>
             <Link
-              to="/privacy"
+              href="/privacy"
               className="text-text-muted transition-colors hover:text-primary"
             >
               Privacy Policy
             </Link>
-            <Link to="/terms" className="text-text-muted transition-colors hover:text-primary">
+            <Link href="/terms" className="text-text-muted transition-colors hover:text-primary">
               Terms of Service
             </Link>
             <a

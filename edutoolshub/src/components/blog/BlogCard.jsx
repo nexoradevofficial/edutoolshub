@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import { format, parseISO } from "date-fns";
 import { urlFor } from "../../sanity/image";
 import { blogPostHref } from "../../sanity/normalizeSlug";
@@ -35,7 +35,7 @@ export default function BlogCard({ post, priority = false }) {
 
   return (
     <Link
-      to={href}
+      href={href}
       className="group relative flex flex-col overflow-hidden rounded-2xl border border-border bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 hover:shadow-xl hover:shadow-primary/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
     >
       <div

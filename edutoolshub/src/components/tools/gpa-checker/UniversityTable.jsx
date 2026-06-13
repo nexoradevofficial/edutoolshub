@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import { getCardMatch, matchBadgeClasses } from "../../../services/universities/matchLogic";
 
 export default function UniversityTable({ universities, studentGpa }) {
@@ -32,7 +32,7 @@ export default function UniversityTable({ universities, studentGpa }) {
               <tr key={u.slug} className="hover:bg-surface-muted/50">
                 <td className="px-4 py-3">
                   <Link
-                    to={`/tools/college-university-gpa-requirement-checker/${u.slug}`}
+                    href={`/tools/college-university-gpa-requirement-checker/${u.slug}`}
                     className="font-medium text-text hover:text-primary"
                   >
                     {u.name}

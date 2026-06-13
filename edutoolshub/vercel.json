@@ -1,88 +1,9 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "npm run build:prerender",
-  "outputDirectory": "dist",
-  "cleanUrls": true,
-  "trailingSlash": false,
   "crons": [
     {
       "path": "/api/admin/refresh-universities",
       "schedule": "0 0 1 * *"
-    }
-  ],
-  "redirects": [
-    {
-      "source": "/blog/null",
-      "destination": "/blog",
-      "permanent": false
-    },
-    {
-      "source": "/tools/exam-marks-needed",
-      "destination": "/tools/final-grade-calculator",
-      "permanent": true
-    },
-    {
-      "source": "/tools/gpa-requirement-checker",
-      "destination": "/tools/college-university-gpa-requirement-checker",
-      "permanent": true
-    },
-    {
-      "source": "/tools/gpa-requirement-checker/:slug",
-      "destination": "/tools/college-university-gpa-requirement-checker/:slug",
-      "permanent": true
-    }
-  ],
-  "headers": [
-    {
-      "source": "/blog",
-      "headers": [
-        {
-          "key": "X-EduToolsHub-Render",
-          "value": "blog-listing"
-        }
-      ]
-    },
-    {
-      "source": "/blog/:slug",
-      "headers": [
-        {
-          "key": "X-EduToolsHub-Render",
-          "value": "blog-post"
-        }
-      ]
-    }
-  ],
-  "functions": {
-    "api/index.js": {
-      "includeFiles": "server/lib/app-shell.html"
-    },
-    "api/render/blog.js": {
-      "includeFiles": "server/lib/app-shell.html"
-    },
-    "api/render/blog-post.js": {
-      "includeFiles": "server/lib/app-shell.html"
-    }
-  },
-  "rewrites": [
-    {
-      "source": "/sitemap.xml",
-      "destination": "/api/index?path=sitemap"
-    },
-    {
-      "source": "/blog",
-      "destination": "/api/render/blog"
-    },
-    {
-      "source": "/blog/:slug",
-      "destination": "/api/render/blog-post?slug=:slug"
-    },
-    {
-      "source": "/api/(.*)",
-      "destination": "/api/index?path=$1"
-    },
-    {
-      "source": "/(.*)",
-      "destination": "/index"
     }
   ]
 }

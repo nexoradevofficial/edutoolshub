@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import { getCardMatch, matchBadgeClasses } from "../../../services/universities/matchLogic";
 
 function GpaBar({ avgGpa, scale }) {
@@ -35,7 +35,7 @@ export default function UniversityCard({ university, studentGpa }) {
       <div className="flex items-start justify-between gap-3">
         <div>
           <Link
-            to={`/tools/college-university-gpa-requirement-checker/${university.slug}`}
+            href={`/tools/college-university-gpa-requirement-checker/${university.slug}`}
             className="text-base font-semibold text-text transition-colors hover:text-primary"
           >
             {university.name}

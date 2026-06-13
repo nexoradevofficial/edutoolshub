@@ -1,10 +1,10 @@
+"use client";
+
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import useEmblaCarousel from "embla-carousel-react";
 import InsightSlide from "./blog/InsightSlide";
-import { useSanityQuery } from "../sanity/useSanityQuery";
 import { normalizePosts } from "../sanity/normalizeSlug";
-import { recentPostsQuery } from "../sanity/queries";
 
 function ChevronIcon({ direction = "right", className = "" }) {
   return (
@@ -25,12 +25,11 @@ function ChevronIcon({ direction = "right", className = "" }) {
   );
 }
 
-export default function LatestInsights() {
-  const { data: rawPosts, error, isLoading } = useSanityQuery(recentPostsQuery);
+export default function LatestInsights({ initialPosts }) {
   const posts = useMemo(() => {
-    const normalized = normalizePosts(rawPosts);
+    const normalized = normalizePosts(initialPosts);
     return Array.isArray(normalized) ? normalized : [];
-  }, [rawPosts]);
+  }, [initialPosts]);
 
   const [emblaRef, emblaApi] = useEmblaCarousel({
     align: "start",
@@ -70,8 +69,7 @@ export default function LatestInsights() {
   const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi]);
   const scrollTo = useCallback((i) => emblaApi?.scrollTo(i), [emblaApi]);
 
-  if (error) return null;
-  if (!isLoading && (!posts || posts.length === 0)) return null;
+  if (!posts || posts.length === 0) return null;
 
   return (
     <section className="bg-white py-20 sm:py-24">
@@ -92,7 +90,7 @@ export default function LatestInsights() {
 
           <div className="flex items-center gap-3">
             <Link
-              to="/blog"
+              href="/blog"
               className="hidden text-sm font-semibold text-primary transition-colors hover:text-primary-dark sm:inline-flex sm:items-center sm:gap-1"
             >
               View all
@@ -118,17 +116,14 @@ export default function LatestInsights() {
         </div>
 
         <div className="mt-10">
-          {isLoading ? (
-            <SlidesSkeleton />
-          ) : (
-            <div
-              className="overflow-hidden"
-              ref={emblaRef}
-              aria-roledescription="carousel"
-              aria-label="Latest articles"
-            >
-              <div className="-ml-4 flex touch-pan-y select-none sm:-ml-5">
-                {posts.map((post, i) => (
+          <div
+            className="overflow-hidden"
+            ref={emblaRef}
+            aria-roledescription="carousel"
+            aria-label="Latest articles"
+          >
+            <div className="-ml-4 flex touch-pan-y select-none sm:-ml-5">
+              {posts.map((post, i) => (
                   <div
                     key={post._id}
                     className="min-w-0 shrink-0 grow-0 basis-[85%] pl-4 sm:basis-[46%] sm:pl-5 lg:basis-[33.333%]"
@@ -139,9 +134,8 @@ export default function LatestInsights() {
                     <InsightSlide post={post} />
                   </div>
                 ))}
-              </div>
             </div>
-          )}
+          </div>
         </div>
 
         {scrollSnaps.length > 1 && (
@@ -184,7 +178,7 @@ export default function LatestInsights() {
 
         <div className="mt-8 text-center sm:hidden">
           <Link
-            to="/blog"
+            href="/blog"
             className="inline-flex items-center gap-1 text-sm font-semibold text-primary hover:underline"
           >
             View all articles

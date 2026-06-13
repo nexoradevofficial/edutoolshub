@@ -1,6 +1,5 @@
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import { format, parseISO } from "date-fns";
-import { urlFor } from "../../sanity/image";
 import { blogPostHref } from "../../sanity/normalizeSlug";
 import { IconArrowRight } from "../icons/ToolIcons";
 
@@ -15,26 +14,18 @@ function formatDate(iso) {
 
 export default function InsightSlide({ post }) {
   if (!post) return null;
-  const { title, slug, mainImage, excerpt, publishedAt } = post;
+  const { title, slug, excerpt, publishedAt, _insightImage } = post;
   const href = blogPostHref(slug);
   if (!href) return null;
 
-  const imageSrc = mainImage
-    ? urlFor(mainImage).width(800).height(1000).fit("crop").auto("format").url()
-    : null;
-  const imageSrcSet = mainImage
-    ? [
-        `${urlFor(mainImage).width(500).height(625).fit("crop").auto("format").url()} 500w`,
-        `${urlFor(mainImage).width(800).height(1000).fit("crop").auto("format").url()} 800w`,
-        `${urlFor(mainImage).width(1100).height(1375).fit("crop").auto("format").url()} 1100w`,
-      ].join(", ")
-    : undefined;
-  const lqip = mainImage?.asset?.metadata?.lqip;
-  const altText = mainImage?.alt || title || "Article cover image";
+  const imageSrc = _insightImage?.src ?? null;
+  const imageSrcSet = _insightImage?.srcSet;
+  const lqip = _insightImage?.lqip;
+  const altText = _insightImage?.alt || title || "Article cover image";
 
   return (
     <Link
-      to={href}
+      href={href}
       className="group relative block aspect-[4/5] overflow-hidden rounded-2xl bg-slate-900 shadow-md transition-shadow duration-300 hover:shadow-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
       style={lqip ? { backgroundImage: `url(${lqip})`, backgroundSize: "cover" } : undefined}
       draggable={false}

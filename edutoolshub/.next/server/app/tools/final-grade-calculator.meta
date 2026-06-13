@@ -1,0 +1,16 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/tools/layout,_N_T_/tools/final-grade-calculator/layout,_N_T_/tools/final-grade-calculator/page,_N_T_/tools/final-grade-calculator"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/tools/final-grade-calculator/__PAGE__",
+    "/tools/final-grade-calculator",
+    "/tools",
+    "/_index",
+    "/_head"
+  ]
+}

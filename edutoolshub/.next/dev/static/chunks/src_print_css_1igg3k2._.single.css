@@ -1,0 +1,327 @@
+/* [project]/src/print.css [app-client] (css) */
+@media print {
+  header, footer, .print\:hidden {
+    display: none !important;
+  }
+
+  #gpa-report-print header, #gpa-report-print footer {
+    display: block !important;
+  }
+
+  body {
+    background: #fff;
+  }
+
+  #attendance-print, .attendance-sheet {
+    font-size: 9pt;
+    line-height: 1.2;
+    box-shadow: none !important;
+    color: #000 !important;
+    background: #fff !important;
+    border: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  #attendance-print .attendance-sheet__table-wrap {
+    overflow: visible !important;
+  }
+
+  #attendance-print .attendance-sheet__sunday, #attendance-print .attendance-sheet__holiday {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  #attendance-print .attendance-sheet__sunday {
+    color: #991b1b !important;
+    background-color: #fee2e2 !important;
+  }
+
+  #attendance-print .attendance-sheet__holiday {
+    color: #78350f !important;
+    background-color: #fde68a !important;
+  }
+
+  #attendance-print .attendance-sheet__table {
+    border-collapse: collapse !important;
+    table-layout: fixed !important;
+    width: 100% !important;
+  }
+
+  #attendance-print .attendance-sheet__table th, #attendance-print .attendance-sheet__table td {
+    vertical-align: middle;
+    border: .5pt solid #000 !important;
+    padding: 2pt 1pt !important;
+  }
+
+  #attendance-print .attendance-sheet__table thead {
+    display: table-header-group;
+  }
+
+  #attendance-print .attendance-sheet__row {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  #attendance-print .attendance-sheet__header {
+    border-bottom: 1pt solid #000 !important;
+    padding-bottom: 6pt !important;
+  }
+
+  #attendance-print .attendance-sheet__footer {
+    border-top: .5pt solid #000 !important;
+    margin-top: 8pt !important;
+    padding-top: 4pt !important;
+  }
+
+  #attendance-print .attendance-sheet__td, #attendance-print .attendance-sheet__th {
+    position: static !important;
+  }
+
+  #fee-receipt-print {
+    box-shadow: none !important;
+    color: #0f172a !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    background: #fff !important;
+    border: 0 !important;
+    max-width: 100% !important;
+    margin: 0 auto !important;
+  }
+
+  #tracing-sheet-print, .tracing-sheet {
+    box-shadow: none !important;
+    color: #000 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    background: #fff !important;
+    border: 0 !important;
+    max-width: 100% !important;
+    margin: 0 auto !important;
+  }
+
+  #tracing-sheet-print header, #tracing-sheet-print footer {
+    display: block !important;
+  }
+
+  #tracing-sheet-print .tracing-sheet__char-block {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  #behavior-chart-print, .behavior-chart {
+    box-shadow: none !important;
+    color: #000 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    background: #fff !important;
+    border: 0 !important;
+    max-width: 100% !important;
+    margin: 0 auto !important;
+  }
+
+  #behavior-chart-print header, #behavior-chart-print footer {
+    display: block !important;
+  }
+
+  #behavior-chart-print .behavior-chart__table-wrap {
+    overflow: visible !important;
+  }
+
+  #behavior-chart-print .behavior-chart__table {
+    border-collapse: collapse !important;
+    width: 100% !important;
+  }
+
+  #behavior-chart-print .behavior-chart__table thead {
+    display: table-header-group;
+  }
+
+  #behavior-chart-print .behavior-chart__row {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  #behavior-chart-print .behavior-chart__table--weekly .behavior-chart__cell {
+    width: 12mm !important;
+    min-width: 12mm !important;
+    height: 12mm !important;
+    min-height: 12mm !important;
+  }
+
+  #behavior-chart-print .behavior-chart__table--monthly .behavior-chart__cell {
+    width: 5mm !important;
+    min-width: 5mm !important;
+    height: 5mm !important;
+    min-height: 5mm !important;
+  }
+
+  #behavior-chart-print .behavior-chart__cell {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  @page {
+    size: A4;
+    margin: 16mm 14mm;
+  }
+
+  html, body {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    color: #000 !important;
+    background: #fff !important;
+  }
+
+  #gpa-report-print, .gpa-report {
+    font-size: 11pt;
+    line-height: 1.45;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-shadow: none !important;
+    color: #000 !important;
+    background: #fff !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    position: static !important;
+  }
+
+  .gpa-report__actions {
+    display: none !important;
+  }
+
+  #gpa-report-print, #gpa-report-print * {
+    color: #000 !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+    background: none !important;
+  }
+
+  #gpa-report-print .gpa-report__header {
+    border-bottom: 2pt solid #000 !important;
+    padding-bottom: 8pt !important;
+  }
+
+  #gpa-report-print .gpa-report__gpa {
+    page-break-inside: avoid;
+    break-inside: avoid;
+    border-top: 2pt solid #000 !important;
+    border-bottom: 2pt solid #000 !important;
+    padding: 14pt 0 !important;
+  }
+
+  #gpa-report-print .gpa-report__meta dt {
+    color: #444 !important;
+  }
+
+  #gpa-report-print .gpa-report__table {
+    border-collapse: collapse !important;
+    width: 100% !important;
+  }
+
+  #gpa-report-print .gpa-report__table thead {
+    display: table-header-group;
+  }
+
+  #gpa-report-print .gpa-report__table tfoot {
+    display: table-row-group;
+  }
+
+  #gpa-report-print .gpa-report__table thead tr {
+    border-bottom: 1.5pt solid #000 !important;
+  }
+
+  #gpa-report-print .gpa-report__table tfoot tr {
+    border-top: 1.5pt solid #000 !important;
+  }
+
+  #gpa-report-print .gpa-report__row {
+    page-break-inside: avoid;
+    break-inside: avoid;
+    border-bottom: .5pt solid #999 !important;
+  }
+
+  #gpa-report-print .gpa-report__table th, #gpa-report-print .gpa-report__table td {
+    vertical-align: top;
+    padding: 6pt 4pt !important;
+  }
+
+  #gpa-report-print .gpa-report__row span {
+    border: .5pt solid #000 !important;
+    padding: 0 4pt !important;
+  }
+
+  #gpa-report-print .gpa-report__disclaimer {
+    page-break-inside: avoid;
+    break-inside: avoid;
+    font-size: 9pt;
+    color: #333 !important;
+    border-top: .5pt solid #999 !important;
+    margin-top: 18pt !important;
+    padding-top: 8pt !important;
+  }
+
+  .lesson-plan-print, .substitute-print {
+    padding: 0;
+    display: block !important;
+  }
+
+  nav, .print\:hidden {
+    display: none !important;
+  }
+}
+
+.lesson-planner-calendar .react-calendar {
+  border: none;
+  width: 100%;
+  font-family: inherit;
+  line-height: 1.25;
+}
+
+.lesson-planner-calendar .react-calendar__navigation {
+  margin-bottom: .5rem;
+}
+
+.lesson-planner-calendar .react-calendar__navigation button {
+  min-width: 36px;
+  color: var(--color-text);
+  border-radius: .5rem;
+  font-size: .875rem;
+  font-weight: 600;
+}
+
+.lesson-planner-calendar .react-calendar__navigation button:enabled:hover, .lesson-planner-calendar .react-calendar__navigation button:enabled:focus {
+  background-color: color-mix(in srgb, var(--color-primary) 8%, transparent);
+}
+
+.lesson-planner-calendar .react-calendar__month-view__weekdays {
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  font-size: .65rem;
+  font-weight: 600;
+}
+
+.lesson-planner-calendar .react-calendar__tile {
+  border-radius: .5rem;
+  padding: .5rem .25rem;
+  font-size: .8rem;
+}
+
+.lesson-planner-calendar .react-calendar__tile:enabled:hover, .lesson-planner-calendar .react-calendar__tile:enabled:focus {
+  background-color: color-mix(in srgb, var(--color-primary) 10%, transparent);
+}
+
+.lesson-planner-calendar .react-calendar__tile--now {
+  background: color-mix(in srgb, var(--color-accent) 15%, transparent);
+}
+
+.lesson-planner-calendar .react-calendar__tile--active {
+  color: #fff;
+  background: var(--color-primary) !important;
+}
+
+/*# sourceMappingURL=src_print_css_1igg3k2._.single.css.map*/

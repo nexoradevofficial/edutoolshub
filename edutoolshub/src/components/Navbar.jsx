@@ -1,22 +1,30 @@
+"use client";
+
 import { useEffect, useState } from "react";
-import { Link, NavLink, useLocation } from "react-router-dom";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import Button from "./ui/Button";
 import SiteLogo from "./SiteLogo";
 import { IconArrowRight, IconClose, IconMenu } from "./icons/ToolIcons";
 
 const navLinks = [
-  { label: "Home", to: "/", end: true },
-  { label: "Tools", to: "/tools" },
-  { label: "Blog", to: "/blog" },
-  { label: "About Us", to: "/about" },
-  { label: "Contact", to: "/contact" },
-  { label: "Privacy", to: "/privacy" },
+  { label: "Home", href: "/", end: true },
+  { label: "Tools", href: "/tools" },
+  { label: "Blog", href: "/blog" },
+  { label: "About Us", href: "/about" },
+  { label: "Contact", href: "/contact" },
+  { label: "Privacy", href: "/privacy" },
 ];
+
+function isLinkActive(pathname, href, end) {
+  if (end) return pathname === href;
+  return pathname === href || pathname.startsWith(`${href}/`);
+}
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const location = useLocation();
+  const pathname = usePathname();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -27,7 +35,7 @@ export default function Navbar() {
 
   useEffect(() => {
     setMobileOpen(false);
-  }, [location.pathname, location.hash]);
+  }, [pathname]);
 
   const linkBase =
     "relative rounded-full px-3 py-1.5 text-sm font-medium transition-colors whitespace-nowrap";
@@ -35,28 +43,15 @@ export default function Navbar() {
   const linkActive = "text-primary bg-primary/10";
 
   const renderDesktopLink = (link) => {
-    if (link.hash) {
-      return (
-        <a
-          key={link.label}
-          href={link.to}
-          className={`${linkBase} ${linkInactive}`}
-        >
-          {link.label}
-        </a>
-      );
-    }
+    const active = isLinkActive(pathname, link.href, link.end);
     return (
-      <NavLink
+      <Link
         key={link.label}
-        to={link.to}
-        end={link.end}
-        className={({ isActive }) =>
-          `${linkBase} ${isActive ? linkActive : linkInactive}`
-        }
+        href={link.href}
+        className={`${linkBase} ${active ? linkActive : linkInactive}`}
       >
         {link.label}
-      </NavLink>
+      </Link>
     );
   };
 
@@ -69,7 +64,7 @@ export default function Navbar() {
       }`}
     >
       <nav className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8">
-        <Link to="/" className="group flex items-center gap-2.5">
+        <Link href="/" className="group flex items-center gap-2.5">
           <SiteLogo
             className="h-9 w-9 shrink-0 rounded-xl object-contain transition-transform group-hover:scale-105"
             priority
@@ -84,7 +79,7 @@ export default function Navbar() {
         </div>
 
         <div className="hidden items-center lg:flex">
-          <Button to="/tools" size="md" className="!px-4">
+          <Button href="/tools" size="md" className="!px-4">
             Start Free
             <IconArrowRight />
           </Button>
@@ -104,37 +99,26 @@ export default function Navbar() {
       {mobileOpen && (
         <div className="border-t border-border bg-white px-4 py-4 shadow-lg shadow-slate-200/50 md:hidden">
           <ul className="flex flex-col gap-1">
-            {navLinks.map((link) =>
-              link.hash ? (
+            {navLinks.map((link) => {
+              const active = isLinkActive(pathname, link.href, link.end);
+              return (
                 <li key={link.label}>
-                  <a
-                    href={link.to}
-                    className="block rounded-lg px-3 py-2.5 text-sm font-medium text-text-muted transition-colors hover:bg-surface-muted hover:text-primary"
+                  <Link
+                    href={link.href}
+                    className={`block rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
+                      active
+                        ? "bg-primary/10 text-primary"
+                        : "text-text-muted hover:bg-surface-muted hover:text-primary"
+                    }`}
                   >
                     {link.label}
-                  </a>
+                  </Link>
                 </li>
-              ) : (
-                <li key={link.label}>
-                  <NavLink
-                    to={link.to}
-                    end={link.end}
-                    className={({ isActive }) =>
-                      `block rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
-                        isActive
-                          ? "bg-primary/10 text-primary"
-                          : "text-text-muted hover:bg-surface-muted hover:text-primary"
-                      }`
-                    }
-                  >
-                    {link.label}
-                  </NavLink>
-                </li>
-              )
-            )}
+              );
+            })}
           </ul>
           <div className="mt-4">
-            <Button to="/tools" className="w-full">
+            <Button href="/tools" className="w-full">
               Start Free
               <IconArrowRight />
             </Button>

@@ -1,10 +1,10 @@
+"use client";
+
 import { useEffect } from "react";
-import { Helmet } from "react-helmet-async";
-import { Link } from "react-router-dom";
-import ToolSeoSection from "../components/tools/ToolSeoSection";
-import { buildToolSchema } from "../data/toolSeo";
-import { trackToolUsed } from "../utils/analytics";
-import "../print.css";
+import Link from "next/link";
+import ToolSeoSection from "@/components/tools/ToolSeoSection";
+import { buildToolSchema } from "@/data/toolSeo";
+import { trackToolUsed } from "@/utils/analytics";
 
 const SITE_URL = "https://edutoolshub.com";
 
@@ -33,25 +33,10 @@ export default function ToolPageLayout({
   }, [toolName, toolCategory, title]);
 
   return (
-    <>
-      {seo && (
-        <Helmet>
-          <title>{seo.metaTitle}</title>
-          <meta name="description" content={seo.metaDescription} />
-          <link rel="canonical" href={`${SITE_URL}${seo.path}`} />
-          <meta property="og:title" content={seo.metaTitle} />
-          <meta property="og:description" content={seo.metaDescription} />
-          <meta property="og:url" content={`${SITE_URL}${seo.path}`} />
-          <script type="application/ld+json">
-            {JSON.stringify(buildToolSchema(seo))}
-          </script>
-        </Helmet>
-      )}
-
     <div className="min-h-[calc(100vh-4rem)] bg-surface-muted py-6 sm:py-12">
       <div className={`mx-auto ${widthClass} px-4 sm:px-6 lg:px-8`}>
         <Link
-          to="/tools"
+          href="/tools"
           className="inline-flex items-center gap-1 text-sm font-medium text-text-muted transition-colors hover:text-primary print:hidden"
         >
           ← Back to tools
@@ -76,6 +61,22 @@ export default function ToolPageLayout({
         )}
       </div>
     </div>
-    </>
   );
+}
+
+export function buildToolMetadata(seo) {
+  if (!seo) return {};
+  return {
+    title: seo.metaTitle,
+    description: seo.metaDescription,
+    alternates: { canonical: `${SITE_URL}${seo.path}` },
+    openGraph: {
+      title: seo.metaTitle,
+      description: seo.metaDescription,
+      url: `${SITE_URL}${seo.path}`,
+    },
+    other: {
+      "script:ld+json": JSON.stringify(buildToolSchema(seo)),
+    },
+  };
 }

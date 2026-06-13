@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import Link from "next/link";
 
 const sectionClass =
   "rounded-2xl border border-border bg-white p-6 shadow-sm sm:p-8";
@@ -55,7 +55,7 @@ export default function ToolSeoSection({ name, howToUse, faqs, relatedTools }) {
             {relatedTools.map((tool) => (
               <li key={tool.path}>
                 <Link
-                  to={tool.path}
+                  href={tool.path}
                   className="text-sm font-medium text-primary underline-offset-2 hover:underline sm:text-base"
                 >
                   {tool.label}

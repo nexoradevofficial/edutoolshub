@@ -1,0 +1,2 @@
+:HL["/_next/static/chunks/05mrbm1rgfv8w.css","style"]
+0:{"tree":{"name":"","param":null,"prefetchHints":16,"slots":{"children":{"name":"tools","param":null,"prefetchHints":0,"slots":{"children":{"name":"fee-receipt","param":null,"prefetchHints":0,"slots":{"children":{"name":"__PAGE__","param":null,"prefetchHints":0,"slots":null}}}}}}},"staleTime":300,"buildId":"tuC_IB5s2QIR7qf9rMQDm"}
