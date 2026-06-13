@@ -4,10 +4,7 @@ import { HelmetProvider } from "react-helmet-async";
 import "./index.css";
 import App from "./App.jsx";
 import { scheduleAnalytics } from "./utils/analytics.js";
-import { scheduleFontLoad } from "./utils/loadFonts.js";
 import { scheduleAppReveal } from "./utils/revealApp.js";
-
-scheduleFontLoad();
 
 const rootEl = document.getElementById("root");
 const app = (
