@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { CONTACT_EMAIL } from "../constants/site";
 
 export default function Footer() {
   return (
@@ -44,11 +45,14 @@ export default function Footer() {
             >
               Privacy Policy
             </Link>
+            <Link to="/terms" className="text-text-muted transition-colors hover:text-primary">
+              Terms of Service
+            </Link>
             <a
-              href="mailto:nexoradevofficial@gmail.com"
+              href={`mailto:${CONTACT_EMAIL}`}
               className="text-text-muted transition-colors hover:text-primary"
             >
-              nexoradevofficial@gmail.com
+              {CONTACT_EMAIL}
             </a>
           </nav>
         </div>

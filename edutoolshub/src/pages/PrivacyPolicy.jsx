@@ -1,9 +1,7 @@
 import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
 
-const SITE_URL = "https://edutoolshub.com";
-const SITE_NAME = "EduToolsHub";
-const CONTACT_EMAIL = "nexoradevofficial@gmail.com";
+import { CONTACT_EMAIL, SITE_NAME, SITE_URL } from "../constants/site";
 const EFFECTIVE_DATE = "May 26, 2026";
 
 const sections = [
@@ -642,13 +640,10 @@ export default function PrivacyPolicy() {
           </article>
 
           <p className="mt-8 text-center text-sm text-text-muted">
-            Looking for our terms? Email us at{" "}
-            <a
-              href={`mailto:${CONTACT_EMAIL}`}
-              className="text-primary hover:underline"
-            >
-              {CONTACT_EMAIL}
-            </a>{" "}
+            See our{" "}
+            <Link to="/terms" className="text-primary hover:underline">
+              Terms of Service
+            </Link>{" "}
             or head back to the{" "}
             <Link to="/" className="text-primary hover:underline">
               homepage

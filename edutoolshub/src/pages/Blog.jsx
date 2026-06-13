@@ -5,11 +5,10 @@ import Button from "../components/ui/Button";
 import BlogCard from "../components/blog/BlogCard";
 import BlogCardSkeleton from "../components/blog/BlogCardSkeleton";
 import { IconArrowRight } from "../components/icons/ToolIcons";
+import { SITE_URL } from "../constants/site";
 import { useSanityQuery } from "../sanity/useSanityQuery";
-import { normalizePosts } from "../sanity/normalizeSlug";
+import { blogPostHref, normalizePosts } from "../sanity/normalizeSlug";
 import { allPostsQuery } from "../sanity/queries";
-
-const SITE_URL = "https://edutoolshub.com";
 const PAGE_TITLE = "Blog — Guides for Students & Teachers | EduToolsHub";
 const PAGE_DESCRIPTION =
   "Free expert guides on GPA calculations, attendance tracking, exam prep, and university admissions for students and teachers worldwide.";
@@ -18,7 +17,8 @@ export default function Blog() {
   const { data: rawPosts, error, isLoading } = useSanityQuery(allPostsQuery);
   const posts = useMemo(() => {
     const normalized = normalizePosts(rawPosts);
-    return Array.isArray(normalized) ? normalized : [];
+    if (!Array.isArray(normalized)) return [];
+    return normalized.filter((post) => blogPostHref(post?.slug));
   }, [rawPosts]);
 
   return (
@@ -38,7 +38,7 @@ export default function Blog() {
 
       <section
         className="py-16 sm:py-20"
-        data-blog-list-status={!isLoading && !error && posts.length > 0 ? "ready" : undefined}
+        data-blog-list-status={!isLoading && !error ? "ready" : undefined}
       >
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           <header className="mx-auto max-w-2xl text-center">

@@ -1,3 +1,4 @@
+import { normalizePostSlug } from "../../src/sanity/normalizeSlug.js";
 import { handlePostsRequest } from "./posts-handler.js";
 import { STATIC_PAGES, TOOL_PAGES } from "./sitemap-data.js";
 
@@ -20,8 +21,7 @@ function formatLastmod(date) {
 }
 
 function normalizeSlug(slug) {
-  if (slug == null || slug === "") return "";
-  return String(slug).replace(/^\/+|\/+$/g, "").trim();
+  return normalizePostSlug(slug);
 }
 
 function buildUrlEntry({ path, lastmod, changefreq, priority }, siteUrl) {

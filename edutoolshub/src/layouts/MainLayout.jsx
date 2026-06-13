@@ -6,14 +6,15 @@ import DefaultMeta from "../components/DefaultMeta";
 
 export default function MainLayout() {
   const { pathname } = useLocation();
-  const isHome = pathname === "/";
+  const skipSuspense =
+    pathname === "/" || pathname === "/blog" || pathname.startsWith("/blog/");
 
   return (
     <div className="flex min-h-screen flex-col">
       <DefaultMeta />
       <Navbar />
       <main className="flex-1">
-        {isHome ? (
+        {skipSuspense ? (
           <Outlet />
         ) : (
           <Suspense fallback={<PageFallback />}>

@@ -83,9 +83,11 @@ const STATIC_ROUTES = [
   "/tools/final-grade-calculator",
   "/tools/gpa-to-percentage",
   "/tools/fee-receipt",
+  "/tools/lesson-planner",
   "/about",
   "/contact",
   "/privacy",
+  "/terms",
 ];
 
 /** Pages listed in sitemap.xml — static pages + blog posts (no university detail URLs). */

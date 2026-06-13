@@ -1,5 +1,5 @@
 import { toHTML } from "@portabletext/to-html";
-import { normalizePost, normalizePosts } from "../../src/sanity/normalizeSlug.js";
+import { normalizePost, normalizePosts, normalizePostSlug } from "../../src/sanity/normalizeSlug.js";
 import { escapeHtml } from "./html-escape.js";
 import { buildImageUrl } from "./sanity-image-server.js";
 import { SITE_URL } from "./ssr-shell.js";
@@ -157,7 +157,9 @@ function renderCtaBlock() {
 
 /** @param {object[]} rawPosts */
 export function buildBlogListPage(rawPosts) {
-  const posts = normalizePosts(rawPosts) || [];
+  const posts = (normalizePosts(rawPosts) || []).filter((post) =>
+    normalizePostSlug(post?.slug)
+  );
   const cardsHtml = posts.map((post, i) => renderBlogCard(post, i < 3)).join("");
 
   const rootHtml = `<div class="flex min-h-screen flex-col">

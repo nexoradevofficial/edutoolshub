@@ -3,6 +3,9 @@
  */
 export function normalizePostSlug(slug) {
   if (slug == null || slug === "") return "";
+  if (typeof slug === "object" && slug.current != null) {
+    slug = slug.current;
+  }
   const s = String(slug).replace(/^\/+|\/+$/g, "").trim();
   if (s === "null" || s === "undefined") return "";
   return s;

@@ -49,7 +49,7 @@ export function buildSsrPage({ title, rootHtml, headHtml = "", ssrBootstrap }) {
   html = html.replace("</head>", `${headHtml}${bootstrapScript}</head>`);
 
   html = html.replace(
-    /<div id="root"><\/div>/,
+    /<div id="root">\s*<\/div>/i,
     `<div id="root">${rootHtml}</div>`
   );
 

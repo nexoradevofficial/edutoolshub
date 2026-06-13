@@ -3,9 +3,7 @@ import { Helmet } from "react-helmet-async";
 import Button from "../components/ui/Button";
 import { IconArrowRight } from "../components/icons/ToolIcons";
 
-const SITE_URL = "https://edutoolshub.com";
-const SITE_NAME = "EduToolsHub";
-const CONTACT_EMAIL = "nexoradevofficial@gmail.com";
+import { CONTACT_EMAIL, SITE_NAME, SITE_URL } from "../constants/site";
 
 const SUBJECTS = [
   "General inquiry",
@@ -146,6 +144,15 @@ export default function Contact() {
           <p className="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-text-muted">
             Got a question, a tool idea, or a bug to report? Drop us a line and
             we’ll get back to you within 1–2 business days.
+          </p>
+          <p className="mt-4 text-base font-medium text-text">
+            Or email us directly at{" "}
+            <a
+              href={`mailto:${CONTACT_EMAIL}`}
+              className="text-primary hover:text-primary-dark hover:underline"
+            >
+              {CONTACT_EMAIL}
+            </a>
           </p>
         </div>
       </section>

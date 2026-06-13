@@ -2,13 +2,30 @@ import { useEffect, useRef, useState } from "react";
 import { fetchPostsFromApi, getPostsApiScope } from "./fetchFromApi";
 import { sanityClient } from "./client";
 
-/** Read data injected by Vercel SSR (`api/render/blog*`). */
+/** Module-level cache survives React StrictMode remounts and bootstrap cleanup. */
+const ssrBootstrapCache = new Map();
+
+function cacheKey(apiScope, params) {
+  if (apiScope === "post") return `post:${params?.slug ?? ""}`;
+  return String(apiScope);
+}
+
+/** Read data injected by Vercel SSR (`api/render/blog*`) or static prerender. */
 function readSsrBootstrap(apiScope, params) {
   if (typeof window === "undefined" || apiScope == null) return undefined;
+
+  const key = cacheKey(apiScope, params);
+  if (ssrBootstrapCache.has(key)) {
+    return ssrBootstrapCache.get(key);
+  }
+
   const boot = window.__EDUTOOLSHUB_SSR__;
   if (!boot || boot.scope !== apiScope) return undefined;
   if (apiScope === "post" && boot.slug !== params?.slug) return undefined;
-  return boot.data ?? null;
+
+  const data = boot.data ?? null;
+  ssrBootstrapCache.set(key, data);
+  return data;
 }
 
 /**
@@ -30,7 +47,6 @@ export function useSanityQuery(query, params) {
   useEffect(() => {
     if (skipInitialFetch.current) {
       skipInitialFetch.current = false;
-      delete window.__EDUTOOLSHUB_SSR__;
       return;
     }
 
@@ -62,6 +78,10 @@ export function useSanityQuery(query, params) {
         if (cancelled || id !== requestId.current) return;
         setData(result);
         setIsLoading(false);
+
+        if (apiScope != null) {
+          ssrBootstrapCache.set(cacheKey(apiScope, params), result);
+        }
       } catch (err) {
         if (cancelled || id !== requestId.current) return;
         setError(err instanceof Error ? err : new Error(String(err)));

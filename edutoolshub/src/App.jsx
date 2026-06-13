@@ -2,10 +2,10 @@ import { lazy } from "react";
 import { BrowserRouter, Navigate, Route, Routes, useParams } from "react-router-dom";
 import MainLayout from "./layouts/MainLayout";
 import Home from "./pages/Home";
+import Blog from "./pages/Blog";
+import BlogPost from "./pages/BlogPost";
 
 const Tools = lazy(() => import("./pages/Tools"));
-const Blog = lazy(() => import("./pages/Blog"));
-const BlogPost = lazy(() => import("./pages/BlogPost"));
 const GpaCalculatorPage = lazy(() => import("./pages/GpaCalculatorPage"));
 const GpaRequirementCheckerPage = lazy(() => import("./pages/GpaRequirementCheckerPage"));
 const UniversityDetailPage = lazy(() => import("./pages/UniversityDetailPage"));
@@ -16,6 +16,7 @@ const LessonPlannerPage = lazy(() => import("./pages/LessonPlannerPage"));
 const FeeReceiptPage = lazy(() => import("./pages/FeeReceiptPage"));
 const AdminUniversitiesPage = lazy(() => import("./pages/AdminUniversitiesPage"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
+const TermsOfService = lazy(() => import("./pages/TermsOfService"));
 const About = lazy(() => import("./pages/About"));
 const Contact = lazy(() => import("./pages/Contact"));
 const NotFound = lazy(() => import("./pages/NotFound"));
@@ -71,6 +72,7 @@ export default function App() {
           <Route path="about" element={<About />} />
           <Route path="contact" element={<Contact />} />
           <Route path="privacy" element={<PrivacyPolicy />} />
+          <Route path="terms" element={<TermsOfService />} />
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>

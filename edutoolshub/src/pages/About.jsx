@@ -9,9 +9,7 @@ import {
 } from "../components/icons/ToolIcons";
 import { activeTools } from "../data/tools";
 
-const SITE_URL = "https://edutoolshub.com";
-const SITE_NAME = "EduToolsHub";
-const CONTACT_EMAIL = "nexoradevofficial@gmail.com";
+import { CONTACT_EMAIL, SITE_NAME, SITE_URL } from "../constants/site";
 
 const values = [
   {
