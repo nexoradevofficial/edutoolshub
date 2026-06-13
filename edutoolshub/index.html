@@ -7,15 +7,93 @@
     <link rel="apple-touch-icon" href="/logo.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="author" content="EduToolsHub" />
+    <link rel="preload" href="/logo-36.webp" as="image" type="image/webp" />
+    <style>
+      #app-shell {
+        font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+        color: #0f172a;
+        background: #fff;
+        min-height: 100vh;
+      }
+      #app-shell__nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid #e2e8f0;
+        background: rgba(255, 255, 255, 0.9);
+      }
+      #app-shell__brand {
+        display: flex;
+        align-items: center;
+        gap: 0.625rem;
+        font-weight: 700;
+        font-size: 1.125rem;
+      }
+      #app-shell__hero {
+        padding: 3rem 1rem 4rem;
+        text-align: center;
+        background: linear-gradient(180deg, #f8fafc 0%, #fff 100%);
+      }
+      #app-shell__badge {
+        display: inline-block;
+        margin-bottom: 1rem;
+        padding: 0.375rem 1rem;
+        border-radius: 9999px;
+        background: rgba(37, 99, 235, 0.08);
+        color: #2563eb;
+        font-size: 0.875rem;
+        font-weight: 500;
+      }
+      #app-shell h1 {
+        margin: 0 auto;
+        max-width: 48rem;
+        font-size: clamp(2rem, 5vw, 3.25rem);
+        line-height: 1.15;
+        font-weight: 700;
+      }
+      #app-shell h1 span {
+        color: #2563eb;
+      }
+      #app-shell__lead {
+        margin: 1.25rem auto 0;
+        max-width: 42rem;
+        color: #64748b;
+        font-size: 1.125rem;
+        line-height: 1.6;
+      }
+    </style>
     <!--
       Per-route SEO is owned by react-helmet-async via <DefaultMeta /> in MainLayout
       (and per-page Helmet overrides in Blog / BlogPost). We keep only a minimal
       bootstrap <title> here so the browser tab has something before JS runs.
     -->
-    <title>EduToolsHub</title>
+    <title>EduToolsHub — Smart Tools for Students & Teachers</title>
+    <meta
+      name="description"
+      content="Free online education tools for students and teachers — GPA calculator, attendance sheets, lesson planner, and more. No signup required."
+    />
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <div id="app-shell" aria-hidden="true">
+        <header id="app-shell__nav">
+          <div id="app-shell__brand">
+            <img src="/logo-36.webp" alt="" width="36" height="36" style="border-radius:0.75rem" />
+            EduTools<span style="color:#2563eb">Hub</span>
+          </div>
+        </header>
+        <main id="app-shell__hero">
+          <p id="app-shell__badge">Free education tools · No signup</p>
+          <h1>Smart Tools for <span>Students &amp; Teachers</span></h1>
+          <p id="app-shell__lead">
+            Free GPA calculator, college GPA requirement checker, attendance sheets,
+            and educational utilities for modern learners and educators.
+          </p>
+        </main>
+      </div>
+    </div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

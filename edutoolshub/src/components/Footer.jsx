@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import SiteLogo from "./SiteLogo";
 import { CONTACT_EMAIL } from "../constants/site";
 
 export default function Footer() {
@@ -8,15 +9,7 @@ export default function Footer() {
         <div className="flex flex-col items-center justify-between gap-8 md:flex-row md:items-start">
           <div className="text-center md:text-left">
             <Link to="/" className="inline-flex items-center gap-2.5">
-              <img
-                src="/logo.png"
-                alt="EduToolsHub logo"
-                width="36"
-                height="36"
-                className="h-9 w-9 shrink-0 rounded-xl object-contain"
-                loading="lazy"
-                decoding="async"
-              />
+              <SiteLogo />
               <span className="text-lg font-bold text-text">
                 EduTools<span className="text-primary">Hub</span>
               </span>

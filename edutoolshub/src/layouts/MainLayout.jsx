@@ -6,8 +6,7 @@ import DefaultMeta from "../components/DefaultMeta";
 
 export default function MainLayout() {
   const { pathname } = useLocation();
-  const skipSuspense =
-    pathname === "/" || pathname === "/blog" || pathname.startsWith("/blog/");
+  const skipSuspense = pathname === "/";
 
   return (
     <div className="flex min-h-screen flex-col">

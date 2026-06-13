@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import ToolSeoSection from "../components/tools/ToolSeoSection";
 import { buildToolSchema } from "../data/toolSeo";
 import { trackToolUsed } from "../utils/analytics";
+import "../print.css";
 
 const SITE_URL = "https://edutoolshub.com";
 

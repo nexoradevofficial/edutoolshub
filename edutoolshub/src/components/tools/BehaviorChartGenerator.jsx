@@ -39,6 +39,8 @@ const DEFAULT_STATE = {
   studentNames: ["", "", "", "", ""],
   useCategories: false,
   categories: ["Listening", "Sharing", ""],
+  liveMarking: false,
+  marks: {},
 };
 
 function loadState() {
@@ -137,6 +139,10 @@ function buildRows(students, categories, useCategories) {
   return rows;
 }
 
+function markKey(row, day) {
+  return `${row.studentName}::${row.category ?? ""}::${day}`;
+}
+
 function BehaviorChartPreview({
   chartType,
   className,
@@ -144,6 +150,9 @@ function BehaviorChartPreview({
   rewardIcon,
   rows,
   useCategories,
+  liveMarking,
+  marks,
+  onToggleMark,
 }) {
   const icon = REWARD_ICONS.find((i) => i.value === rewardIcon)?.symbol ?? "⭐";
   const dayColumns =
@@ -244,21 +253,47 @@ function BehaviorChartPreview({
                       {row.category}
                     </td>
                   ) : null}
-                  {dayColumns.map((day) => (
-                    <td
-                      key={day}
-                      className="behavior-chart__td behavior-chart__td--cell border border-slate-300 p-0.5 text-center align-middle"
-                    >
-                      <div
-                        className={`behavior-chart__cell mx-auto flex items-center justify-center border border-dashed border-slate-200 bg-white print:border-slate-400 ${
-                          isWeekly
-                            ? "h-11 w-11 min-h-[12mm] min-w-[12mm] sm:h-12 sm:w-12"
-                            : "h-6 w-6 min-h-[5mm] min-w-[5mm] sm:h-7 sm:w-7"
-                        }`}
-                        aria-label={`${row.studentName} ${day}`}
-                      />
-                    </td>
-                  ))}
+                  {dayColumns.map((day) => {
+                    const key = markKey(row, day);
+                    const marked = Boolean(marks[key]);
+
+                    return (
+                      <td
+                        key={day}
+                        className="behavior-chart__td behavior-chart__td--cell border border-slate-300 p-0.5 text-center align-middle"
+                      >
+                        <button
+                          type="button"
+                          onClick={() => onToggleMark(row, day)}
+                          disabled={!liveMarking}
+                          className={`behavior-chart__cell mx-auto flex items-center justify-center border bg-white transition-colors print:border-slate-400 ${
+                            isWeekly
+                              ? "h-11 w-11 min-h-[12mm] min-w-[12mm] sm:h-12 sm:w-12"
+                              : "h-6 w-6 min-h-[5mm] min-w-[5mm] sm:h-7 sm:w-7"
+                          } ${
+                            marked
+                              ? "border-amber-300 bg-amber-50"
+                              : "border-dashed border-slate-200"
+                          } ${
+                            liveMarking
+                              ? "cursor-pointer hover:border-primary/50 hover:bg-primary/5 focus:outline-none focus:ring-2 focus:ring-primary/30"
+                              : "cursor-default"
+                          } print:pointer-events-none print:cursor-default`}
+                          aria-label={`${row.studentName} ${day}${marked ? `, ${icon} awarded` : ", empty"}`}
+                          aria-pressed={marked}
+                        >
+                          {marked ? (
+                            <span
+                              className={`leading-none ${isWeekly ? "text-xl sm:text-2xl" : "text-sm sm:text-base"}`}
+                              aria-hidden
+                            >
+                              {icon}
+                            </span>
+                          ) : null}
+                        </button>
+                      </td>
+                    );
+                  })}
                 </tr>
               );
             })}
@@ -281,6 +316,8 @@ export default function BehaviorChartGenerator() {
   const [studentNames, setStudentNames] = useState(() => loadState().studentNames);
   const [useCategories, setUseCategories] = useState(() => loadState().useCategories);
   const [categories, setCategories] = useState(() => loadState().categories);
+  const [liveMarking, setLiveMarking] = useState(() => loadState().liveMarking);
+  const [marks, setMarks] = useState(() => loadState().marks ?? {});
 
   useEffect(() => {
     const data = {
@@ -291,9 +328,21 @@ export default function BehaviorChartGenerator() {
       studentNames,
       useCategories,
       categories,
+      liveMarking,
+      marks,
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-  }, [chartType, className, periodLabel, rewardIcon, studentNames, useCategories, categories]);
+  }, [
+    chartType,
+    className,
+    periodLabel,
+    rewardIcon,
+    studentNames,
+    useCategories,
+    categories,
+    liveMarking,
+    marks,
+  ]);
 
   const students = useMemo(() => parseStudentNames(studentNames), [studentNames]);
   const rows = useMemo(
@@ -337,6 +386,22 @@ export default function BehaviorChartGenerator() {
     setCategories((prev) => prev.filter((_, i) => i !== index));
   }, []);
 
+  const toggleMark = useCallback(
+    (row, day) => {
+      if (!liveMarking) return;
+      const key = markKey(row, day);
+      setMarks((prev) => {
+        const next = { ...prev };
+        if (next[key]) delete next[key];
+        else next[key] = true;
+        return next;
+      });
+    },
+    [liveMarking]
+  );
+
+  const clearMarks = useCallback(() => setMarks({}), []);
+
   const clearSaved = useCallback(() => {
     localStorage.removeItem(STORAGE_KEY);
     setChartType(DEFAULT_STATE.chartType);
@@ -346,6 +411,8 @@ export default function BehaviorChartGenerator() {
     setStudentNames(DEFAULT_STATE.studentNames);
     setUseCategories(DEFAULT_STATE.useCategories);
     setCategories(DEFAULT_STATE.categories);
+    setLiveMarking(DEFAULT_STATE.liveMarking);
+    setMarks(DEFAULT_STATE.marks);
   }, []);
 
   const handlePrint = useCallback(() => {
@@ -523,25 +590,78 @@ export default function BehaviorChartGenerator() {
       </div>
 
       <section>
-        <div className="print:hidden mb-4 flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <h2 className="text-lg font-semibold text-text">Preview</h2>
-            <p className="text-sm text-text-muted">
-              {hasOutput
-                ? `${students.length} student${students.length === 1 ? "" : "s"} · ${chartType === "weekly" ? "A4 landscape" : "A4 portrait"} print`
-                : "Your chart will appear here"}
-            </p>
+        <div className="print:hidden mb-4 space-y-3">
+          <div className="flex flex-col gap-3 rounded-2xl border border-border bg-surface-muted/50 p-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="text-sm font-semibold text-text">Chart mode</p>
+              <p className="mt-0.5 text-xs text-text-muted">
+                Blank chart: empty boxes for stickers on paper. Live marking: click
+                cells to place your reward icon in the browser.
+              </p>
+            </div>
+            <div
+              className="inline-flex rounded-xl border border-border bg-white p-1 shadow-sm"
+              role="group"
+              aria-label="Behavior chart mode"
+            >
+              <button
+                type="button"
+                onClick={() => setLiveMarking(false)}
+                className={`rounded-lg px-4 py-2 text-sm font-semibold transition-colors ${
+                  !liveMarking
+                    ? "bg-primary text-white shadow-sm"
+                    : "text-text-muted hover:text-text"
+                }`}
+              >
+                Blank chart
+              </button>
+              <button
+                type="button"
+                onClick={() => setLiveMarking(true)}
+                className={`rounded-lg px-4 py-2 text-sm font-semibold transition-colors ${
+                  liveMarking
+                    ? "bg-primary text-white shadow-sm"
+                    : "text-text-muted hover:text-text"
+                }`}
+              >
+                Mark live
+              </button>
+            </div>
           </div>
-          <Button
-            variant="primary"
-            size="md"
-            onClick={handlePrint}
-            disabled={!hasOutput}
-            className="print:hidden"
-          >
-            <IconPrint className="mr-2 h-4 w-4" />
-            Print chart
-          </Button>
+
+          {liveMarking && (
+            <p className="text-xs text-text-muted">
+              Click a cell to place or remove your reward icon.{" "}
+              <button
+                type="button"
+                onClick={clearMarks}
+                className="font-semibold text-primary underline-offset-2 hover:underline"
+              >
+                Clear all marks
+              </button>
+            </p>
+          )}
+
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h2 className="text-lg font-semibold text-text">Preview</h2>
+              <p className="text-sm text-text-muted">
+                {hasOutput
+                  ? `${students.length} student${students.length === 1 ? "" : "s"} · ${chartType === "weekly" ? "A4 landscape" : "A4 portrait"} print`
+                  : "Your chart will appear here"}
+              </p>
+            </div>
+            <Button
+              variant="primary"
+              size="md"
+              onClick={handlePrint}
+              disabled={!hasOutput}
+              className="print:hidden"
+            >
+              <IconPrint className="mr-2 h-4 w-4" />
+              Print chart
+            </Button>
+          </div>
         </div>
 
         <BehaviorChartPreview
@@ -551,6 +671,9 @@ export default function BehaviorChartGenerator() {
           rewardIcon={rewardIcon}
           rows={rows}
           useCategories={useCategories}
+          liveMarking={liveMarking}
+          marks={marks}
+          onToggleMark={toggleMark}
         />
       </section>
     </div>

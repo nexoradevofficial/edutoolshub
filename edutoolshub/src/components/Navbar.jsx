@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import Button from "./ui/Button";
+import SiteLogo from "./SiteLogo";
 import { IconArrowRight, IconClose, IconMenu } from "./icons/ToolIcons";
 
 const navLinks = [
@@ -69,15 +70,9 @@ export default function Navbar() {
     >
       <nav className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8">
         <Link to="/" className="group flex items-center gap-2.5">
-          <img
-            src="/logo.png"
-            alt="EduToolsHub logo"
-            width="36"
-            height="36"
+          <SiteLogo
             className="h-9 w-9 shrink-0 rounded-xl object-contain transition-transform group-hover:scale-105"
-            loading="eager"
-            decoding="async"
-            fetchPriority="low"
+            priority
           />
           <span className="text-lg font-bold tracking-tight text-text">
             EduTools<span className="text-primary">Hub</span>

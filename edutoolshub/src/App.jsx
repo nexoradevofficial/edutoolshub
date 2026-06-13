@@ -2,8 +2,9 @@ import { lazy } from "react";
 import { BrowserRouter, Navigate, Route, Routes, useParams } from "react-router-dom";
 import MainLayout from "./layouts/MainLayout";
 import Home from "./pages/Home";
-import Blog from "./pages/Blog";
-import BlogPost from "./pages/BlogPost";
+
+const Blog = lazy(() => import("./pages/Blog"));
+const BlogPost = lazy(() => import("./pages/BlogPost"));
 
 const Tools = lazy(() => import("./pages/Tools"));
 const GpaCalculatorPage = lazy(() => import("./pages/GpaCalculatorPage"));

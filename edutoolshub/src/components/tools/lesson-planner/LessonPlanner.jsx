@@ -1,4 +1,5 @@
 import { useState } from "react";
+import "../../../lesson-planner-calendar.css";
 import { LessonPlannerProvider } from "./LessonPlannerContext";
 import LessonPlannerGuide from "./LessonPlannerGuide";
 import LessonPlannerTopBar from "./LessonPlannerTopBar";

@@ -74,11 +74,25 @@ export default defineConfig(({ mode }) => {
   return {
     plugins: [react(), tailwindcss(), embedAppShellPlugin(), vercelApiDevPlugin(env)],
     build: {
-      target: "es2020",
+      target: "es2022",
+      modulePreload: {
+        resolveDependencies: (_filename, deps) =>
+          deps.filter(
+            (dep) =>
+              !dep.includes("vendor-sanity") &&
+              !dep.includes("vendor-embla") &&
+              !dep.includes("vendor-portabletext") &&
+              !dep.includes("vendor-date-fns") &&
+              !dep.includes("vendor-jspdf") &&
+              !dep.includes("vendor-html2canvas")
+          ),
+      },
       rollupOptions: {
         output: {
           manualChunks(id) {
             if (!id.includes("node_modules")) return;
+            if (id.includes("jspdf")) return "vendor-jspdf";
+            if (id.includes("html2canvas")) return "vendor-html2canvas";
             if (id.includes("@sanity") || id.includes("/sanity/"))
               return "vendor-sanity";
             if (id.includes("embla-carousel")) return "vendor-embla";
