@@ -103,4 +103,3 @@ export const tools = [
 ];
 
 export const activeTools = tools.filter((t) => t.status === "active");
-export const comingSoonTools = tools.filter((t) => t.status === "coming-soon");

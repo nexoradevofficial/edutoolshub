@@ -4,7 +4,10 @@ import ToolPageLayout from "../layouts/ToolPageLayout";
 import GpaRequirementChecker from "../components/tools/GpaRequirementChecker";
 import { toolSeoById } from "../data/toolSeo";
 
-export default function GpaRequirementCheckerPage() {
+export default function GpaRequirementCheckerPage({
+  initialUniversities = [],
+  initialError = null,
+}) {
   return (
     <ToolPageLayout
       title="College / University GPA Requirement Checker"
@@ -12,7 +15,10 @@ export default function GpaRequirementCheckerPage() {
       maxWidth="3xl"
       seo={toolSeoById["gpa-requirement-checker"]}
     >
-      <GpaRequirementChecker />
+      <GpaRequirementChecker
+        initialUniversities={initialUniversities}
+        initialError={initialError}
+      />
     </ToolPageLayout>
   );
 }

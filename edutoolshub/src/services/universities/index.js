@@ -23,46 +23,6 @@ export async function fetchAllUniversities() {
   return { data: data ?? [], error };
 }
 
-/** Load universities — Supabase direct (works in Vite dev and production). */
-export async function loadUniversitiesForClient() {
-  const { data, error } = await fetchAllUniversities();
-  if (error) return { data: [], error };
-
-  if ((data ?? []).length === 0) {
-    return {
-      data: [],
-      error: new Error(
-        "No universities in the database yet. Run `npm run seed:universities` after applying the Supabase migration."
-      ),
-    };
-  }
-
-  return { data, error: null };
-}
-
-export async function fetchUniversityBySlug(slug) {
-  if (!supabase) return { data: null, error: new Error("Supabase is not configured") };
-
-  const { data, error } = await supabase
-    .from("universities")
-    .select(UNIVERSITY_COLUMNS)
-    .eq("slug", slug)
-    .maybeSingle();
-
-  return { data, error };
-}
-
-export async function fetchAllUniversitySlugs() {
-  if (!supabase) return { data: [], error: new Error("Supabase is not configured") };
-
-  const { data, error } = await supabase
-    .from("universities")
-    .select("slug")
-    .order("qs_ranking", { ascending: true, nullsFirst: false });
-
-  return { data: (data ?? []).map((row) => row.slug), error };
-}
-
 /** Similar universities: same country, comparable min GPA, excluding current. */
 export async function fetchSimilarUniversities(university, limit = 4, client = supabase) {
   if (!client || !university) {

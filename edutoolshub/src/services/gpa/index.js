@@ -38,5 +38,3 @@ export {
   getWeightedBonus,
   getCountryDefaultScale,
 } from "./scaleConfig.js";
-
-export { GPA_API_ROUTES, fetchGpaCalculate, fetchGpaCountries } from "./api.js";

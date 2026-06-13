@@ -6,7 +6,6 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "build:prerender": "next build",
     "start": "next start",
     "seed:universities": "node scripts/seed-universities.mjs",
     "lint": "eslint ."

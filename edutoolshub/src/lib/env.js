@@ -18,4 +18,5 @@ export const sanityDataset = () =>
 export const supabaseUrl = () =>
   publicEnv("SUPABASE_URL") || process.env.SUPABASE_URL || "";
 
-export const supabaseAnonKey = () => publicEnv("SUPABASE_ANON_KEY") || "";
+export const supabaseAnonKey = () =>
+  publicEnv("SUPABASE_ANON_KEY") || process.env.SUPABASE_ANON_KEY || "";

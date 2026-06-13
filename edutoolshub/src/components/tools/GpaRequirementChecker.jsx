@@ -5,7 +5,6 @@ import {
   countByCountry,
   filterUniversities,
   getUniversitiesByCountry,
-  loadUniversitiesForClient,
 } from "../../services/universities";
 import FilterBar from "./gpa-checker/FilterBar";
 import GpaInputBanner from "./gpa-checker/GpaInputBanner";
@@ -14,10 +13,12 @@ import UniversityTable from "./gpa-checker/UniversityTable";
 
 const DEFAULT_COUNTRY = SUPPORTED_COUNTRIES[0];
 
-export default function GpaRequirementChecker() {
-  const [universities, setUniversities] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+export default function GpaRequirementChecker({
+  initialUniversities = [],
+  initialError = null,
+}) {
+  const [universities] = useState(initialUniversities);
+  const [error] = useState(initialError);
 
   const [studentGpa, setStudentGpa] = useState("");
   const [country, setCountry] = useState(DEFAULT_COUNTRY);
@@ -25,31 +26,6 @@ export default function GpaRequirementChecker() {
   const [type, setType] = useState("all");
   const [sortBy, setSortBy] = useState("qs_ranking");
   const [viewMode, setViewMode] = useState("grid");
-
-  useEffect(() => {
-    let cancelled = false;
-
-    async function load() {
-      setLoading(true);
-      setError(null);
-
-      const { data, error: loadError } = await loadUniversitiesForClient();
-      if (cancelled) return;
-
-      if (loadError) {
-        setError(loadError.message);
-        setUniversities([]);
-      } else {
-        setUniversities(data);
-      }
-      setLoading(false);
-    }
-
-    load();
-    return () => {
-      cancelled = true;
-    };
-  }, []);
 
   useEffect(() => {
     setSelectedUniversitySlug("");
@@ -83,24 +59,10 @@ export default function GpaRequirementChecker() {
     hasGpaMatches
   );
 
-  if (loading) {
-    return (
-      <div className="space-y-6">
-        <div className="h-40 animate-pulse rounded-2xl bg-white/80" />
-        <div className="h-24 animate-pulse rounded-2xl bg-white/80" />
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="h-64 animate-pulse rounded-2xl bg-white/80" />
-          ))}
-        </div>
-      </div>
-    );
-  }
-
   if (error) {
     return (
       <div className="rounded-2xl border border-red-200 bg-red-50 p-6 text-sm text-red-800">
-        {error}. Check that Supabase is configured in your environment variables.
+        {error}
       </div>
     );
   }
