@@ -16,8 +16,7 @@ export const sanityClient = createClient({
   dataset,
   apiVersion: "2025-01-01",
   // CDN is required for browser requests — the non-CDN API blocks cross-origin
-  // calls from edutoolshub.com (CORS). Server scripts (prerender, sitemap) use
-  // their own client with useCdn: false.
+  // calls from edutoolshub.com (CORS). Server-side code uses getSanityServerClient().
   useCdn: true,
   perspective: "published",
 });

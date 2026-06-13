@@ -15,7 +15,6 @@ export const metadata = {
     "Free smart tools for students and teachers — GPA calculator, college GPA requirement checker, attendance sheets, timetables, seating plans, and more.",
   keywords:
     "education tools, GPA calculator, university GPA requirements, college admission GPA, attendance sheet, timetable builder, seating plan, report card generator, students, teachers",
-  themeColor: "#2563eb",
   openGraph: {
     type: "website",
     siteName: SITE_NAME,
@@ -28,6 +27,10 @@ export const metadata = {
     card: "summary_large_image",
     images: ["/logo.png"],
   },
+};
+
+export const viewport = {
+  themeColor: "#2563eb",
 };
 
 export default function RootLayout({ children }) {

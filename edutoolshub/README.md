@@ -3,38 +3,28 @@
 Free, smart tools for students and teachers — GPA calculator, attendance sheets,
 and more — paired with a Sanity-powered blog for SEO and content marketing.
 
-Built with **React 19 + Vite 8 + Tailwind CSS 4 + React Router DOM 7**.
+Built with **Next.js 16 (App Router) + React 19 + Tailwind CSS 4**.
 
 ## Project layout
 
-This repo is part of a two-folder setup:
-
 ```
 NEXORA DEV/edutoolshub/
-├── edutoolshub/      ← this folder: the Vite frontend (you are here)
+├── edutoolshub/      ← this folder: Next.js frontend (you are here)
 └── studio/           ← Sanity Studio (CMS) — runs independently on :3333
 ```
 
-Content is authored in `studio/` and consumed at runtime by `edutoolshub/` via
-the Sanity Content Lake.
+Content is authored in `studio/` and consumed by `edutoolshub/` via the Sanity Content Lake.
 
 ## Local setup
 
 ```bash
-# 1. Install deps
 npm install
-
-# 2. Configure environment
 copy .env.example .env.local
-# Edit .env.local and paste your Sanity projectId + dataset.
-# (See ../studio/README.md to create a Sanity project first.)
-
-# 3. Start the dev server
-npm run dev    # http://localhost:5173
+# Fill in NEXT_PUBLIC_* and server-only vars (see .env.example)
+npm run dev    # http://localhost:3000
 ```
 
-You'll also need to be running the Studio in a second terminal if you want
-to author content:
+Studio (optional, for authoring):
 
 ```bash
 cd ../studio && npm run dev   # http://localhost:3333
@@ -44,100 +34,44 @@ cd ../studio && npm run dev   # http://localhost:3333
 
 | Command | What it does |
 |---|---|
-| `npm run dev` | Vite dev server with HMR |
-| `npm run build` | Plain Vite build → `dist/` (fast; for previewing only) |
-| `npm run build:prerender` | **Production build**: Vite build + headless Chromium prerender of every static and blog route + sitemap.xml + robots.txt + SPA fallback config |
-| `npm run prerender` | Re-runs only the prerender step (assumes `dist/` already exists) |
-| `npm run preview` | Local preview of the built `dist/` folder |
-| `npm run lint` | ESLint over the whole repo |
+| `npm run dev` | Next.js dev server |
+| `npm run build` | Production build → `.next/` |
+| `npm run start` | Serve production build locally |
+| `npm run seed:universities` | Seed Supabase universities table |
+| `npm run lint` | ESLint |
 
 ## Architecture
 
-### Routing
+- **Routing:** `src/app/` (App Router) — file-based routes
+- **Page UI:** `src/views/` — tool/marketing page components imported by routes
+- **Blog:** Server Components fetch Sanity data; ISR `revalidate: 120`
+- **Universities:** SSG via `generateStaticParams` + ISR `revalidate: 86400`
+- **SEO:** Next.js `metadata` API + `src/app/sitemap.js` + `src/app/robots.js`
+- **API:** `src/app/api/posts`, `src/app/api/admin/refresh-universities`
 
-- `/` — landing page (Hero + Tools + How It Works + Why Use + Latest Insights slider)
-- `/tools` — full tools catalogue
-- `/tools/gpa-calculator` — GPA tool
-- `/tools/attendance-sheet` — Attendance generator
-- `/blog` — blog index (lists all published Sanity posts)
-- `/blog/:slug` — single blog post (Portable Text + dynamic SEO + JSON-LD)
+## Environment variables
 
-### Blog data flow
+See `.env.example`. Client vars must use the `NEXT_PUBLIC_` prefix:
 
-```
-Sanity Studio (../studio/)
-        ↓
-Sanity Content Lake
-        ↓
-@sanity/client (src/sanity/client.js)
-        ↓
-GROQ queries (src/sanity/queries.js)
-        ↓
-useSanityQuery hook (src/sanity/useSanityQuery.js)
-        ↓
-React components (BlogCard, BlogPost, LatestInsights)
-```
+- `NEXT_PUBLIC_SANITY_PROJECT_ID` / `NEXT_PUBLIC_SANITY_DATASET`
+- `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- `SUPABASE_SERVICE_ROLE_KEY` / `CRON_SECRET` (server only)
 
-### SEO strategy
+## Deploying (Vercel)
 
-This is a single-page app, but every blog page still needs to be indexable
-and shareable on social platforms.
+- **Framework:** Next.js
+- **Root directory:** `edutoolshub`
+- **Build command:** `npm run build` (or leave blank)
+- **Output directory:** leave blank (not `dist`)
+- Set env vars in Vercel dashboard (see `.env.example`)
+- `vercel.json` only defines the monthly universities refresh cron
 
-- **Dynamic `<head>` tags** via `react-helmet-async` (`<HelmetProvider>` in
-  `src/main.jsx`) — every page sets its own `<title>`, description, canonical,
-  full OpenGraph and Twitter Card tags, and JSON-LD structured data.
-- **Build-time prerendering** (`scripts/prerender.mjs`) — Chromium renders
-  every route and saves the captured HTML to `dist/<route>/index.html`. This
-  guarantees crawlers that don't run JavaScript (Twitter, Facebook,
-  LinkedIn, Slack) see the correct meta tags in the initial response.
-- **Sitemap + robots.txt** are generated automatically by the prerender
-  script using the live list of published blog slugs.
-- **JSON-LD `BlogPosting`** is emitted on every article — gives Google
-  eligibility for rich search results.
-
-## Deploying
-
-After `npm run build:prerender`, the `dist/` folder is fully static and can
-be deployed to any host. The script also generates:
-
-- `dist/sitemap.xml` — listed in `robots.txt`; submit it to Search Console
-- `dist/robots.txt` — points to the sitemap
-- `dist/_redirects` — SPA fallback for **Netlify** and **Cloudflare Pages**
-- `vercel.json` (root) — SPA fallback for **Vercel** (`filesystem` handle + `/index.html` rewrites for `/blog` and all routes)
-
-### Vercel
-
-```bash
-vercel --prod
-# Root directory: edutoolshub  (folder that contains vercel.json + package.json)
-# Build command:  npm run build:prerender
-# Output dir:     dist
-```
-
-Blog listing (`/blog`) and posts (`/blog/:slug`) are written to `dist/blog/` at build time (server-side HTML from Sanity, no Puppeteer). Vercel serves those static files first; `vercel.json` SSR rewrites (`/api/render/blog*`) are a fallback for posts published after the last deploy.
-
-You also need to set `VITE_SANITY_PROJECT_ID` and `VITE_SANITY_DATASET` as
-Vercel project env vars. **Blog posts load from Sanity at runtime** — you do
-not need to redeploy when publishing a new article. The dynamic `/api/sitemap`
-handler keeps `sitemap.xml` up to date automatically.
-
-### Netlify / Cloudflare Pages
-
-```
-Build command: npm run build:prerender
-Publish dir:   dist
-```
-
-### Adding new origins to Sanity CORS
-
-After deploying, Sanity will reject requests from your production domain
-until you whitelist it:
+### Sanity CORS (production domain)
 
 ```bash
 cd ../studio
 npx sanity cors add https://edutoolshub.com --no-credentials
 npx sanity cors add https://www.edutoolshub.com --no-credentials
-# Vercel preview URLs:
 npx sanity cors add "https://*.vercel.app" --no-credentials
 ```
 
@@ -145,46 +79,11 @@ npx sanity cors add "https://*.vercel.app" --no-credentials
 
 ```
 src/
-├── components/
-│   ├── blog/
-│   │   ├── BlogCard.jsx              ← grid card for /blog
-│   │   ├── BlogCardSkeleton.jsx
-│   │   └── InsightSlide.jsx          ← cinematic slide for homepage carousel
-│   ├── icons/ToolIcons.jsx
-│   ├── ui/Button.jsx
-│   ├── Hero.jsx
-│   ├── HowItWorks.jsx
-│   ├── LatestInsights.jsx            ← Embla carousel section
-│   ├── Navbar.jsx
-│   ├── Footer.jsx
-│   ├── ToolCard.jsx
-│   ├── ToolsSection.jsx
-│   ├── WhyUse.jsx
-│   └── tools/                        ← GPA, Attendance, etc.
-├── data/tools.js
-├── layouts/
-│   ├── MainLayout.jsx
-│   └── ToolPageLayout.jsx
-├── pages/
-│   ├── Home.jsx
-│   ├── Tools.jsx
-│   ├── Blog.jsx
-│   ├── BlogPost.jsx                  ← /blog/:slug
-│   ├── GpaCalculatorPage.jsx
-│   └── AttendancePage.jsx
-├── sanity/
-│   ├── client.js
-│   ├── image.js                      ← @sanity/image-url helper
-│   ├── queries.js                    ← all GROQ queries
-│   ├── useSanityQuery.js             ← fetch hook
-│   ├── portableTextComponents.jsx    ← typography for article body
-│   └── readingTime.js                ← reading-time estimator
-├── services/                         ← non-blog domain logic
-├── utils/
-├── App.jsx
-├── main.jsx                          ← wraps App in <HelmetProvider>
-└── index.css                         ← Tailwind 4 @theme tokens
-
-scripts/
-└── prerender.mjs                     ← Vite preview + puppeteer + sitemap
+├── app/                    ← routes, layouts, API, sitemap
+├── views/                  ← page-level components (tools, about, etc.)
+├── components/             ← shared UI
+├── lib/                    ← server helpers (sanity, supabase, metadata)
+├── sanity/                 ← client, queries, portable text
+├── services/               ← GPA, universities logic
+└── data/                   ← tools catalog, SEO copy
 ```

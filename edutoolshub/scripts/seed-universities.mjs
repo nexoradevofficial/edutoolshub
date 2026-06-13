@@ -1,25 +1,25 @@
 /**
  * Seed universities table from scripts/universities-seed-data.js
  * Run: node scripts/seed-universities.mjs
- * Requires SUPABASE_SERVICE_ROLE_KEY and VITE_SUPABASE_URL in .env.local
+ * Requires SUPABASE_SERVICE_ROLE_KEY and NEXT_PUBLIC_SUPABASE_URL in .env.local
  */
 import { readFileSync } from "node:fs";
 import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { createClient } from "@supabase/supabase-js";
-import { loadEnv } from "vite";
+import { loadEnvFiles, supabaseUrlFromEnv } from "./load-env.mjs";
 import { universitiesSeed } from "./universities-seed-data.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const projectRoot = resolve(__dirname, "..");
-const env = loadEnv("production", projectRoot, "");
+const env = loadEnvFiles(projectRoot);
 
-const url = env.VITE_SUPABASE_URL;
+const url = supabaseUrlFromEnv(env);
 const key = env.SUPABASE_SERVICE_ROLE_KEY;
 
 if (!url || !key) {
   console.error(
-    "Missing VITE_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY in .env.local"
+    "Missing NEXT_PUBLIC_SUPABASE_URL (or VITE_SUPABASE_URL) and SUPABASE_SERVICE_ROLE_KEY in .env.local"
   );
   process.exit(1);
 }

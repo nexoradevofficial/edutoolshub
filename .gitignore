@@ -4,6 +4,7 @@
 # Build output
 **/dist/
 **/dist-ssr/
+**/.next/
 
 # Local env files (NEVER commit these)
 **/.env
