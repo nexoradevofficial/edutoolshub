@@ -1,6 +1,7 @@
 import { SITE_URL } from "@/constants/site";
 
-export const STATIC_PAGES = [
+/** Navbar links — keep in sync with src/components/Navbar.jsx navLinks */
+export const NAV_PAGES = [
   { path: "/", priority: "1.0", changefreq: "weekly" },
   { path: "/tools", priority: "0.9", changefreq: "weekly" },
   { path: "/blog", priority: "0.9", changefreq: "weekly" },

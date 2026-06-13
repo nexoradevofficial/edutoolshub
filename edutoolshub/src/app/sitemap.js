@@ -1,7 +1,6 @@
 import { normalizePostSlug } from "@/sanity/normalizeSlug";
 import { handlePostsRequest } from "@/lib/posts-handler";
-import { getSupabaseServer } from "@/lib/supabase-server";
-import { SITE_URL, STATIC_PAGES, TOOL_PAGES } from "@/lib/sitemap-data";
+import { SITE_URL, NAV_PAGES, TOOL_PAGES } from "@/lib/sitemap-data";
 
 function formatLastmod(date) {
   if (!date) return new Date().toISOString().slice(0, 10);
@@ -16,7 +15,7 @@ export default async function sitemap() {
   const today = formatLastmod(new Date());
   const siteUrl = process.env.SITE_URL || SITE_URL;
 
-  const staticEntries = STATIC_PAGES.map((page) => ({
+  const navEntries = NAV_PAGES.map((page) => ({
     url: page.path === "/" ? siteUrl : `${siteUrl}${page.path}`,
     lastModified: today,
     changeFrequency: page.changefreq,
@@ -49,19 +48,5 @@ export default async function sitemap() {
     blogEntries = [];
   }
 
-  let universityEntries = [];
-  try {
-    const supabase = getSupabaseServer();
-    const { data } = await supabase.from("universities").select("slug, updated_at");
-    universityEntries = (data ?? []).map((row) => ({
-      url: `${siteUrl}/tools/college-university-gpa-requirement-checker/${row.slug}`,
-      lastModified: formatLastmod(row.updated_at),
-      changeFrequency: "monthly",
-      priority: 0.6,
-    }));
-  } catch {
-    universityEntries = [];
-  }
-
-  return [...staticEntries, ...toolEntries, ...blogEntries, ...universityEntries];
+  return [...navEntries, ...toolEntries, ...blogEntries];
 }
