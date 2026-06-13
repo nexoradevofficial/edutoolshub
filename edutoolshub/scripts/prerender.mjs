@@ -167,9 +167,9 @@ function generateSitemap(routes) {
 }
 
 /**
- * Write /blog and /blog/:slug as static HTML using the same SSR builders as api/render/*.
- * Vercel serves these files before rewrites, so view-source always has post titles.
- * SSR rewrites in vercel.json remain a fallback for posts published after deploy.
+ * Write /blog/:slug as static HTML using the same SSR builders as api/render/*.
+ * On Vercel, /blog listing is served by the live SSR function (vercel.json rewrite)
+ * so new posts appear without redeploy. Static post pages remain for fast cold loads.
  */
 async function writeBlogStaticPages(env) {
   process.env.VITE_SANITY_PROJECT_ID ??= env.VITE_SANITY_PROJECT_ID;
@@ -184,14 +184,24 @@ async function writeBlogStaticPages(env) {
 
   try {
     const rawPosts = await handlePostsRequest("all");
+    const postCount = Array.isArray(rawPosts) ? rawPosts.length : 0;
     const listPage = buildBlogListPage(rawPosts);
     const listHtml = buildSsrPage(listPage);
-    const listPath = outputPathForRoute("/blog");
-    mkdirSync(dirname(listPath), { recursive: true });
-    writeFileSync(listPath, listHtml, "utf-8");
-    console.log(`  ✓ /blog (static HTML, ${Array.isArray(rawPosts) ? rawPosts.length : 0} post(s))`);
 
-    let postCount = 0;
+    // Vercel: static dist/blog/index.html takes precedence over SSR rewrites.
+    // Skip writing it so /blog always hits api/render/blog (fresh Sanity data).
+    if (!process.env.VERCEL) {
+      const listPath = outputPathForRoute("/blog");
+      mkdirSync(dirname(listPath), { recursive: true });
+      writeFileSync(listPath, listHtml, "utf-8");
+      console.log(`  ✓ /blog (static HTML, ${postCount} post(s))`);
+    } else {
+      console.log(
+        `  ✓ /blog listing validated (${postCount} post(s)) — Vercel will use live SSR rewrite`
+      );
+    }
+
+    let writtenPosts = 0;
     const slugs = (Array.isArray(rawPosts) ? rawPosts : [])
       .map((post) => normalizePostSlug(post?.slug?.current ?? post?.slug))
       .filter(Boolean);
@@ -207,11 +217,11 @@ async function writeBlogStaticPages(env) {
       const outPath = outputPathForRoute(`/blog/${slug}`);
       mkdirSync(dirname(outPath), { recursive: true });
       writeFileSync(outPath, html, "utf-8");
-      postCount++;
+      writtenPosts++;
       console.log(`  ✓ /blog/${slug}`);
     }
 
-    return { listing: true, posts: postCount };
+    return { listing: true, posts: writtenPosts };
   } catch (err) {
     console.warn(
       `[prerender] Static blog HTML failed (${err.message}) — /blog will rely on Vercel SSR rewrites.`
@@ -262,7 +272,7 @@ async function renderRoute(page, baseUrl, route) {
       });
   } else if (isBlogList) {
     await page
-      .waitForSelector('[data-blog-list-status="ready"]', {
+      .waitForSelector('[data-blog-list-status="ready"] article, [data-blog-list-status="ready"] h2', {
         timeout: PAGE_TIMEOUT,
       })
       .catch(() => {
@@ -364,16 +374,17 @@ async function main() {
   console.log("[prerender] Writing static blog HTML (server-side, no Puppeteer)…");
   const blogStatic = await writeBlogStaticPages(env);
 
-  const blogIndexPath = resolve(distDir, "blog", "index.html");
   if (process.env.VERCEL) {
-    if (!blogStatic.listing || !existsSync(blogIndexPath)) {
+    if (!blogStatic.listing) {
       console.error(
-        "[prerender] FATAL: dist/blog/index.html missing on Vercel build. " +
+        "[prerender] FATAL: Blog listing SSR validation failed on Vercel build. " +
           "Set VITE_SANITY_PROJECT_ID and VITE_SANITY_DATASET in Vercel project env vars."
       );
       process.exit(1);
     }
-    console.log("[prerender] Verified dist/blog/index.html for /blog listing.");
+    console.log(
+      "[prerender] Verified blog listing SSR at build time (/blog will use live api/render/blog on Vercel)."
+    );
   }
 
   console.log("[prerender] Starting `vite preview` server…");

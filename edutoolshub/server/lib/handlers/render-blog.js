@@ -10,11 +10,15 @@ export async function handleRenderBlog(req, res) {
 
   try {
     const rawPosts = await handlePostsRequest("all");
+    const postCount = Array.isArray(rawPosts) ? rawPosts.length : 0;
+    console.log(`[ssr/blog] fetched ${postCount} post(s) from Sanity`);
+
     const page = buildBlogListPage(rawPosts);
     const html = buildSsrPage(page);
 
     res.setHeader("Content-Type", "text/html; charset=utf-8");
     res.setHeader("X-EduToolsHub-Render", "ssr-blog-listing");
+    res.setHeader("X-EduToolsHub-Post-Count", String(postCount));
     res.setHeader(
       "Cache-Control",
       `public, s-maxage=${CACHE_MAX_AGE}, stale-while-revalidate=600`

@@ -133,7 +133,8 @@ function renderBlogCard(post, priority = false) {
     ? `<p class="line-clamp-3 flex-1 text-sm leading-relaxed text-text-muted">${escapeHtml(post.excerpt)}</p>`
     : "";
 
-  return `<a href="${href}" class="group relative flex flex-col overflow-hidden rounded-2xl border border-border bg-white shadow-sm">
+  return `<article class="group relative flex flex-col overflow-hidden rounded-2xl border border-border bg-white shadow-sm">
+    <a href="${href}" class="flex flex-1 flex-col">
     <div class="relative aspect-[16/10] w-full overflow-hidden bg-surface-muted">${imageHtml}</div>
     <div class="flex flex-1 flex-col gap-3 p-6">
       ${dateHtml}
@@ -141,7 +142,8 @@ function renderBlogCard(post, priority = false) {
       ${excerptHtml}
       <span class="mt-2 inline-flex items-center gap-1.5 text-sm font-semibold text-primary">Read article →</span>
     </div>
-  </a>`;
+    </a>
+  </article>`;
 }
 
 function renderCtaBlock() {

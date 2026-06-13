@@ -53,6 +53,12 @@ export function buildSsrPage({ title, rootHtml, headHtml = "", ssrBootstrap }) {
     `<div id="root">${rootHtml}</div>`
   );
 
+  if (!html.includes(rootHtml.slice(0, 80))) {
+    throw new Error(
+      "SSR root injection failed: could not find empty <div id=\"root\"></div> in app shell. Run `npm run build` to refresh server/lib/app-shell.html."
+    );
+  }
+
   return html;
 }
 
