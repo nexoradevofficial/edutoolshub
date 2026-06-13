@@ -48,12 +48,16 @@ export function buildSsrPage({ title, rootHtml, headHtml = "", ssrBootstrap }) {
 
   html = html.replace("</head>", `${headHtml}${bootstrapScript}</head>`);
 
-  html = html.replace(
-    /<div id="root">\s*<\/div>/i,
-    `<div id="root">${rootHtml}</div>`
-  );
+  const emptyRoot = /<div id="root">\s*<\/div>/i;
+  const filledRoot = /<div id="root">[\s\S]*?<\/div>/i;
 
-  if (!html.includes(rootHtml.slice(0, 80))) {
+  if (emptyRoot.test(html)) {
+    html = html.replace(emptyRoot, `<div id="root">${rootHtml}</div>`);
+  } else if (filledRoot.test(html)) {
+    html = html.replace(filledRoot, `<div id="root">${rootHtml}</div>`);
+  }
+
+  if (!html.includes(rootHtml.slice(0, Math.min(80, rootHtml.length)))) {
     throw new Error(
       "SSR root injection failed: could not find empty <div id=\"root\"></div> in app shell. Run `npm run build` to refresh server/lib/app-shell.html."
     );

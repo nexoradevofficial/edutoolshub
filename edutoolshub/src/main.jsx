@@ -16,4 +16,6 @@ createRoot(document.getElementById("root")).render(
   </StrictMode>
 );
 
+document.getElementById("app-shell")?.remove();
+
 scheduleAnalytics();

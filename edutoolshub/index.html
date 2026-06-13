@@ -63,6 +63,10 @@
         font-size: 1.125rem;
         line-height: 1.6;
       }
+      /* Hide the static shell once #root has SSR or React content */
+      #root:not(:empty) ~ #app-shell {
+        display: none;
+      }
     </style>
     <!--
       Per-route SEO is owned by react-helmet-async via <DefaultMeta /> in MainLayout
@@ -76,23 +80,22 @@
     />
   </head>
   <body>
-    <div id="root">
-      <div id="app-shell" aria-hidden="true">
-        <header id="app-shell__nav">
-          <div id="app-shell__brand">
-            <img src="/logo-36.webp" alt="" width="36" height="36" style="border-radius:0.75rem" />
-            EduTools<span style="color:#2563eb">Hub</span>
-          </div>
-        </header>
-        <main id="app-shell__hero">
-          <p id="app-shell__badge">Free education tools · No signup</p>
-          <h1>Smart Tools for <span>Students &amp; Teachers</span></h1>
-          <p id="app-shell__lead">
-            Free GPA calculator, college GPA requirement checker, attendance sheets,
-            and educational utilities for modern learners and educators.
-          </p>
-        </main>
-      </div>
+    <div id="root"></div>
+    <div id="app-shell" aria-hidden="true">
+      <header id="app-shell__nav">
+        <div id="app-shell__brand">
+          <img src="/logo-36.webp" alt="" width="36" height="36" style="border-radius:0.75rem" />
+          EduTools<span style="color:#2563eb">Hub</span>
+        </div>
+      </header>
+      <main id="app-shell__hero">
+        <p id="app-shell__badge">Free education tools · No signup</p>
+        <h1>Smart Tools for <span>Students &amp; Teachers</span></h1>
+        <p id="app-shell__lead">
+          Free GPA calculator, college GPA requirement checker, attendance sheets,
+          and educational utilities for modern learners and educators.
+        </p>
+      </main>
     </div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
