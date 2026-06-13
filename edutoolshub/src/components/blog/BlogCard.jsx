@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { format, parseISO } from "date-fns";
-import { urlFor } from "../../sanity/image";
 import { blogPostHref } from "../../sanity/normalizeSlug";
 import { IconArrowRight } from "../icons/ToolIcons";
 
@@ -16,22 +15,14 @@ function formatDate(iso) {
 export default function BlogCard({ post, priority = false }) {
   if (!post) return null;
 
-  const { title, slug, mainImage, excerpt, publishedAt } = post;
+  const { title, slug, excerpt, publishedAt, _blogImage } = post;
   const href = blogPostHref(slug);
   if (!href) return null;
 
-  const imageSrc = mainImage
-    ? urlFor(mainImage).width(800).height(500).fit("crop").auto("format").url()
-    : null;
-  const imageSrcSet = mainImage
-    ? [
-        `${urlFor(mainImage).width(400).height(250).fit("crop").auto("format").url()} 400w`,
-        `${urlFor(mainImage).width(800).height(500).fit("crop").auto("format").url()} 800w`,
-        `${urlFor(mainImage).width(1200).height(750).fit("crop").auto("format").url()} 1200w`,
-      ].join(", ")
-    : undefined;
-  const lqip = mainImage?.asset?.metadata?.lqip;
-  const altText = mainImage?.alt || title || "Blog post cover image";
+  const imageSrc = _blogImage?.src ?? null;
+  const imageSrcSet = _blogImage?.srcSet;
+  const lqip = _blogImage?.lqip;
+  const altText = _blogImage?.alt || title || "Blog post cover image";
 
   return (
     <Link

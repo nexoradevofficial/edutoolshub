@@ -2,7 +2,7 @@ import { notFound, redirect } from "next/navigation";
 import BlogPostView from "@/components/blog/BlogPostView";
 import { SITE_NAME, SITE_URL } from "@/constants/site";
 import { getSanityServerClient } from "@/lib/sanity-server";
-import { urlFor } from "@/sanity/image";
+import { buildPostOgImageUrl, enrichPostForBlogView } from "@/lib/sanity-image";
 import { normalizePost, normalizePostSlug } from "@/sanity/normalizeSlug";
 import { allPostSlugsQuery, postBySlugQuery } from "@/sanity/queries";
 
@@ -35,9 +35,7 @@ export async function generateMetadata({ params }) {
     const seoTitle = post.seoTitle || post.title;
     const seoDescription = post.metaDescription || post.excerpt || "";
     const canonicalUrl = `${SITE_URL}/blog/${post.slug || slug}`;
-    const ogImage = post.mainImage
-      ? urlFor(post.mainImage).width(1200).height(630).fit("crop").auto("format").url()
-      : undefined;
+    const ogImage = post.mainImage ? buildPostOgImageUrl(post.mainImage) : undefined;
 
     return {
       title: `${seoTitle} | ${SITE_NAME}`,
@@ -74,7 +72,7 @@ export default async function BlogPostPage({ params }) {
 
   const client = getSanityServerClient();
   const rawPost = await client.fetch(postBySlugQuery, { slug });
-  const post = normalizePost(rawPost);
+  const post = enrichPostForBlogView(normalizePost(rawPost));
 
   if (!post) {
     notFound();
@@ -86,9 +84,7 @@ export default async function BlogPostPage({ params }) {
 
   const seoDescription = post.metaDescription || post.excerpt || "";
   const canonicalUrl = `${SITE_URL}/blog/${post.slug}`;
-  const ogImage = post.mainImage
-    ? urlFor(post.mainImage).width(1200).height(630).fit("crop").auto("format").url()
-    : null;
+  const ogImage = post.mainImage ? buildPostOgImageUrl(post.mainImage) : null;
 
   const structuredData = {
     "@context": "https://schema.org",

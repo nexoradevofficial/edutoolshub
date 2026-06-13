@@ -4,7 +4,7 @@ import { useState } from "react";
 import Button from "../components/ui/Button";
 import { IconArrowRight } from "../components/icons/ToolIcons";
 
-import { CONTACT_EMAIL, SITE_NAME, SITE_URL } from "../constants/site";
+import { CONTACT_EMAIL, SITE_NAME, SITE_URL, DEFAULT_LOGO_PATH } from "../constants/site";
 
 const SUBJECTS = [
   "General inquiry",
@@ -91,7 +91,7 @@ export default function Contact() {
     "@type": "Organization",
     name: SITE_NAME,
     url: SITE_URL,
-    logo: `${SITE_URL}/logo.png`,
+    logo: `${SITE_URL}${DEFAULT_LOGO_PATH}`,
     email: CONTACT_EMAIL,
     contactPoint: [
       {

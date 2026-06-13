@@ -4,7 +4,7 @@ import { getSanityServerClient } from "@/lib/sanity-server";
 import { recentPostsQuery } from "@/sanity/queries";
 import dynamic from "next/dynamic";
 import Hero from "@/components/Hero";
-import { SITE_NAME, SITE_URL } from "@/constants/site";
+import { SITE_NAME, SITE_URL, DEFAULT_LOGO_PATH } from "@/constants/site";
 
 const ToolsSection = dynamic(() => import("@/components/ToolsSection"));
 const HowItWorks = dynamic(() => import("@/components/HowItWorks"));
@@ -32,7 +32,7 @@ const websiteLd = {
     "@type": "Organization",
     name: SITE_NAME,
     url: SITE_URL,
-    logo: `${SITE_URL}/logo.png`,
+    logo: `${SITE_URL}${DEFAULT_LOGO_PATH}`,
   },
 };
 

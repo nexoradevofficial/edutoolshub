@@ -64,15 +64,15 @@ export async function fetchAllUniversitySlugs() {
 }
 
 /** Similar universities: same country, comparable min GPA, excluding current. */
-export async function fetchSimilarUniversities(university, limit = 4) {
-  if (!supabase || !university) {
+export async function fetchSimilarUniversities(university, limit = 4, client = supabase) {
+  if (!client || !university) {
     return { data: [], error: new Error("Supabase is not configured") };
   }
 
   const gpaLow = Number(university.min_gpa) - 0.2;
   const gpaHigh = Number(university.min_gpa) + 0.2;
 
-  const { data, error } = await supabase
+  const { data, error } = await client
     .from("universities")
     .select(UNIVERSITY_COLUMNS)
     .eq("country", university.country)
@@ -88,7 +88,7 @@ export async function fetchSimilarUniversities(university, limit = 4) {
     return { data: data ?? [], error: null };
   }
 
-  const { data: fallback, error: fallbackError } = await supabase
+  const { data: fallback, error: fallbackError } = await client
     .from("universities")
     .select(UNIVERSITY_COLUMNS)
     .eq("country", university.country)

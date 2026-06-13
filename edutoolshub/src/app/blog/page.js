@@ -1,4 +1,5 @@
 import { buildPageMetadata } from "@/lib/metadata";
+import { enrichPostsForBlogCard } from "@/lib/sanity-image";
 import { getSanityServerClient } from "@/lib/sanity-server";
 import { allPostsQuery } from "@/sanity/queries";
 import BlogListing from "@/components/blog/BlogListing";
@@ -19,7 +20,7 @@ export default async function BlogPage() {
   let posts = [];
   try {
     const client = getSanityServerClient();
-    posts = await client.fetch(allPostsQuery);
+    posts = enrichPostsForBlogCard(await client.fetch(allPostsQuery));
   } catch {
     posts = [];
   }

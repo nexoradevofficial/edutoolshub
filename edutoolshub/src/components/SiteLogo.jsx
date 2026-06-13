@@ -10,7 +10,7 @@ export default function SiteLogo({
     <picture>
       <source srcSet={webpSrc} type="image/webp" />
       <img
-        src="/logo.png"
+        src={webpSrc}
         alt="EduToolsHub logo"
         width={width}
         height={height}

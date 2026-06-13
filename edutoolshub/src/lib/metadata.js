@@ -1,6 +1,6 @@
-import { SITE_NAME, SITE_URL } from "@/constants/site";
+import { SITE_NAME, SITE_URL, DEFAULT_LOGO_PATH } from "@/constants/site";
 
-const DEFAULT_OG_IMAGE = `${SITE_URL}/logo.png`;
+const DEFAULT_OG_IMAGE = `${SITE_URL}${DEFAULT_LOGO_PATH}`;
 
 export function buildPageMetadata({
   title,
@@ -25,8 +25,8 @@ export function buildPageMetadata({
       images: [
         {
           url: DEFAULT_OG_IMAGE,
-          width: 1024,
-          height: 1024,
+          width: 72,
+          height: 72,
           alt: `${SITE_NAME} logo`,
         },
       ],

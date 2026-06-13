@@ -8,7 +8,7 @@ import {
 } from "../components/icons/ToolIcons";
 import { activeTools } from "../data/tools";
 
-import { CONTACT_EMAIL, SITE_NAME, SITE_URL } from "../constants/site";
+import { CONTACT_EMAIL, SITE_NAME, SITE_URL, DEFAULT_LOGO_PATH } from "../constants/site";
 
 const values = [
   {
@@ -55,7 +55,7 @@ export default function About() {
     "@type": "Organization",
     name: SITE_NAME,
     url: SITE_URL,
-    logo: `${SITE_URL}/logo.png`,
+    logo: `${SITE_URL}${DEFAULT_LOGO_PATH}`,
     email: CONTACT_EMAIL,
     sameAs: ["https://nexora-dev-official.vercel.app/"],
     description,

@@ -3,7 +3,7 @@ import "@/print.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import AnalyticsProvider from "@/components/providers/AnalyticsProvider";
-import { SITE_NAME, SITE_URL } from "@/constants/site";
+import { SITE_NAME, SITE_URL, DEFAULT_LOGO_PATH } from "@/constants/site";
 
 export const metadata = {
   metadataBase: new URL(SITE_URL),
@@ -18,14 +18,14 @@ export const metadata = {
   openGraph: {
     type: "website",
     siteName: SITE_NAME,
-    images: [{ url: "/logo.png", width: 1024, height: 1024 }],
+    images: [{ url: DEFAULT_LOGO_PATH, width: 72, height: 72 }],
   },
   icons: {
-    icon: "/logo.png",
+    icon: DEFAULT_LOGO_PATH,
   },
   twitter: {
     card: "summary_large_image",
-    images: ["/logo.png"],
+    images: [DEFAULT_LOGO_PATH],
   },
 };
 

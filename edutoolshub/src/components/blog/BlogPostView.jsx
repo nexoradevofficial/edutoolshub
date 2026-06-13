@@ -4,7 +4,6 @@ import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { PortableText } from "@portabletext/react";
 import { format, parseISO } from "date-fns";
-import { urlFor } from "@/sanity/image";
 import { portableTextComponents } from "@/sanity/portableTextComponents";
 import { estimateReadingTime } from "@/sanity/readingTime";
 import Button from "@/components/ui/Button";
@@ -26,18 +25,9 @@ export default function BlogPostView({ post }) {
   const seoDescription = post.metaDescription || post.excerpt || "";
   const canonicalSlug = post.slug;
 
-  const heroImageUrl = post.mainImage
-    ? urlFor(post.mainImage).width(1600).height(900).fit("crop").auto("format").url()
-    : null;
-  const heroImageSrcSet = post.mainImage
-    ? [
-        `${urlFor(post.mainImage).width(800).height(450).fit("crop").auto("format").url()} 800w`,
-        `${urlFor(post.mainImage).width(1200).height(675).fit("crop").auto("format").url()} 1200w`,
-        `${urlFor(post.mainImage).width(1600).height(900).fit("crop").auto("format").url()} 1600w`,
-        `${urlFor(post.mainImage).width(2000).height(1125).fit("crop").auto("format").url()} 2000w`,
-      ].join(", ")
-    : undefined;
-  const heroLqip = post.mainImage?.asset?.metadata?.lqip;
+  const heroImageUrl = post._heroImage?.src ?? null;
+  const heroImageSrcSet = post._heroImage?.srcSet;
+  const heroLqip = post._heroImage?.lqip;
   const readingMinutes = estimateReadingTime(post.body);
   const formattedDate = formatDate(post.publishedAt);
 
@@ -100,16 +90,16 @@ export default function BlogPostView({ post }) {
                 src={heroImageUrl}
                 srcSet={heroImageSrcSet}
                 sizes="(min-width: 1024px) 1024px, 100vw"
-                alt={post.mainImage?.alt || post.title}
+                alt={post._heroImage?.alt || post.title}
                 loading="eager"
                 decoding="async"
                 fetchPriority="high"
                 className="block aspect-[16/9] h-auto w-full object-cover"
               />
             </div>
-            {post.mainImage?.caption && (
+            {post._heroImage?.caption && (
               <figcaption className="mt-3 text-center text-sm italic text-text-muted">
-                {post.mainImage.caption}
+                {post._heroImage.caption}
               </figcaption>
             )}
           </figure>

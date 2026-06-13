@@ -12,7 +12,7 @@ if (!projectId && process.env.NODE_ENV === "development") {
 }
 
 export const sanityClient = createClient({
-  projectId: projectId || "missing-project-id",
+  projectId: projectId || "",
   dataset,
   apiVersion: "2025-01-01",
   // CDN is required for browser requests — the non-CDN API blocks cross-origin

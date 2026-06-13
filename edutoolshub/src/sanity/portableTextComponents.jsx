@@ -137,17 +137,22 @@ export const portableTextComponents = {
 
   types: {
     image: ({ value }) => {
-      if (!value?.asset) return null;
+      if (!value?.asset && !value?._computedImage?.src) return null;
       const alt = value.alt || "";
       const caption = value.caption;
-      const src = urlFor(value).width(1200).fit("max").auto("format").url();
-      const srcSet = [
-        `${urlFor(value).width(600).fit("max").auto("format").url()} 600w`,
-        `${urlFor(value).width(900).fit("max").auto("format").url()} 900w`,
-        `${urlFor(value).width(1200).fit("max").auto("format").url()} 1200w`,
-        `${urlFor(value).width(1600).fit("max").auto("format").url()} 1600w`,
-      ].join(", ");
-      const lqip = value.asset?.metadata?.lqip;
+      const computed = value._computedImage;
+      const src =
+        computed?.src ??
+        urlFor(value).width(1200).fit("max").auto("format").url();
+      const srcSet =
+        computed?.srcSet ??
+        [
+          `${urlFor(value).width(600).fit("max").auto("format").url()} 600w`,
+          `${urlFor(value).width(900).fit("max").auto("format").url()} 900w`,
+          `${urlFor(value).width(1200).fit("max").auto("format").url()} 1200w`,
+          `${urlFor(value).width(1600).fit("max").auto("format").url()} 1600w`,
+        ].join(", ");
+      const lqip = computed?.lqip ?? value.asset?.metadata?.lqip;
 
       return (
         <figure className="my-8 sm:my-10">

@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { notFound } from "next/navigation";
 import UniversityDetailContent from "@/components/tools/gpa-checker/UniversityDetailContent";
 import { SITE_URL } from "@/constants/site";
 import { getSupabaseServer } from "@/lib/supabase-server";
@@ -21,7 +21,8 @@ async function loadUniversity(slug) {
 }
 
 async function loadSimilar(university) {
-  const { data } = await fetchSimilarUniversities(university, 4);
+  const supabase = getSupabaseServer();
+  const { data } = await fetchSimilarUniversities(university, 4, supabase);
   return data ?? [];
 }
 
@@ -63,22 +64,7 @@ export default async function UniversityDetailPage({ params }) {
   const university = await loadUniversity(slug);
 
   if (!university) {
-    return (
-      <div className="min-h-[calc(100vh-4rem)] bg-surface-muted py-12">
-        <div className="mx-auto max-w-4xl px-4 text-center">
-          <h1 className="text-2xl font-bold text-text">University not found</h1>
-          <p className="mt-2 text-sm text-text-muted">
-            We could not find GPA data for &ldquo;{slug}&rdquo;.
-          </p>
-          <Link
-            href="/tools/college-university-gpa-requirement-checker"
-            className="mt-4 inline-block text-sm font-medium text-primary hover:underline"
-          >
-            ← Back to GPA Checker
-          </Link>
-        </div>
-      </div>
-    );
+    notFound();
   }
 
   const similar = await loadSimilar(university);

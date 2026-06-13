@@ -1,5 +1,6 @@
 import { normalizePostSlug } from "@/sanity/normalizeSlug";
 import { handlePostsRequest } from "@/lib/posts-handler";
+import { getSupabaseServer } from "@/lib/supabase-server";
 import { SITE_URL, STATIC_PAGES, TOOL_PAGES } from "@/lib/sitemap-data";
 
 function formatLastmod(date) {
@@ -48,5 +49,19 @@ export default async function sitemap() {
     blogEntries = [];
   }
 
-  return [...staticEntries, ...toolEntries, ...blogEntries];
+  let universityEntries = [];
+  try {
+    const supabase = getSupabaseServer();
+    const { data } = await supabase.from("universities").select("slug, updated_at");
+    universityEntries = (data ?? []).map((row) => ({
+      url: `${siteUrl}/tools/college-university-gpa-requirement-checker/${row.slug}`,
+      lastModified: formatLastmod(row.updated_at),
+      changeFrequency: "monthly",
+      priority: 0.6,
+    }));
+  } catch {
+    universityEntries = [];
+  }
+
+  return [...staticEntries, ...toolEntries, ...blogEntries, ...universityEntries];
 }
