@@ -44,9 +44,9 @@ npm run deploy   # deploys Studio to <project>.sanity.studio so the rest of your
 ## Where the content goes
 
 Once a post is **published** in this Studio, the Next.js frontend at
-`../` (repo root) reads it via `@sanity/client` using the same `projectId`
+`../edutoolshub/` reads it via `@sanity/client` using the same `projectId`
 and `dataset`. Make sure both projects point at the same project — see
-`../.env.example`.
+`../edutoolshub/.env.example`.
 
 ## Schema
 

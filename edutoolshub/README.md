@@ -8,15 +8,17 @@ Built with **Next.js 16 (App Router) + React 19 + Tailwind CSS 4**.
 ## Project layout
 
 ```
-edutoolshub/          ← repo root: Next.js frontend (you are here)
-└── studio/           ← Sanity Studio (CMS) — runs independently on :3333
+edutoolshub/          ← repo root
+├── edutoolshub/      ← Next.js frontend (Vercel Root Directory)
+└── studio/           ← Sanity Studio (CMS)
 ```
 
-Content is authored in `studio/` and consumed by the Next.js app via the Sanity Content Lake.
+Content is authored in `studio/` and consumed by `edutoolshub/` via the Sanity Content Lake.
 
 ## Local setup
 
 ```bash
+cd edutoolshub
 npm install
 copy .env.example .env.local
 # Fill in NEXT_PUBLIC_* and server-only vars (see .env.example)
@@ -59,7 +61,7 @@ See `.env.example`. Client vars must use the `NEXT_PUBLIC_` prefix:
 ## Deploying (Vercel)
 
 - **Framework:** Next.js
-- **Root directory:** leave empty (repo root)
+- **Root directory:** `edutoolshub`
 - **Build command:** `npm run build` (or leave blank)
 - **Output directory:** leave empty
 - Set env vars in Vercel dashboard (see `.env.example`)
