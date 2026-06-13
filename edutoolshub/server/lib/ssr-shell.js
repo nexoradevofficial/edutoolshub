@@ -41,6 +41,7 @@ export function buildSsrPage({ title, rootHtml, headHtml = "", ssrBootstrap }) {
   let html = readAppShell();
 
   html = html.replace(/<title>[^<]*<\/title>/i, `<title>${escapeHtml(title)}</title>`);
+  html = html.replace(/<html lang="en">/i, '<html lang="en" data-ssr="">');
 
   const bootstrapScript = ssrBootstrap
     ? `<script>window.__EDUTOOLSHUB_SSR__=${JSON.stringify(ssrBootstrap).replace(/</g, "\\u003c")}</script>`

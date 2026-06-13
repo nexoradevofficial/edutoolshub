@@ -1,14 +1,16 @@
 import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
+import { createRoot, hydrateRoot } from "react-dom/client";
 import { HelmetProvider } from "react-helmet-async";
 import "./index.css";
 import App from "./App.jsx";
 import { scheduleAnalytics } from "./utils/analytics.js";
 import { scheduleFontLoad } from "./utils/loadFonts.js";
+import { scheduleAppReveal } from "./utils/revealApp.js";
 
 scheduleFontLoad();
 
-createRoot(document.getElementById("root")).render(
+const rootEl = document.getElementById("root");
+const app = (
   <StrictMode>
     <HelmetProvider>
       <App />
@@ -16,6 +18,16 @@ createRoot(document.getElementById("root")).render(
   </StrictMode>
 );
 
-document.getElementById("app-shell")?.remove();
+const hasPrerenderedMarkup =
+  rootEl &&
+  rootEl.childNodes.length > 0 &&
+  rootEl.querySelector("header, main, section, nav");
 
+if (hasPrerenderedMarkup) {
+  hydrateRoot(rootEl, app);
+} else {
+  createRoot(rootEl).render(app);
+}
+
+scheduleAppReveal();
 scheduleAnalytics();

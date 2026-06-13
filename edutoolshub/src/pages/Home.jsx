@@ -1,10 +1,10 @@
 import { lazy, Suspense } from "react";
 import { Helmet } from "react-helmet-async";
 import Hero from "../components/Hero";
-import ToolsSection from "../components/ToolsSection";
-import HowItWorks from "../components/HowItWorks";
-import WhyUse from "../components/WhyUse";
 
+const ToolsSection = lazy(() => import("../components/ToolsSection"));
+const HowItWorks = lazy(() => import("../components/HowItWorks"));
+const WhyUse = lazy(() => import("../components/WhyUse"));
 const LatestInsights = lazy(() => import("../components/LatestInsights"));
 
 const SITE_URL = "https://edutoolshub.com";
@@ -52,13 +52,34 @@ export default function Home() {
       </Helmet>
 
       <Hero />
-      <ToolsSection />
-      <HowItWorks />
-      <WhyUse />
+      <Suspense fallback={<SectionPlaceholder rows={3} />}>
+        <ToolsSection />
+      </Suspense>
+      <Suspense fallback={<SectionPlaceholder rows={1} />}>
+        <HowItWorks />
+      </Suspense>
+      <Suspense fallback={<SectionPlaceholder rows={1} />}>
+        <WhyUse />
+      </Suspense>
       <Suspense fallback={<InsightsSectionPlaceholder />}>
         <LatestInsights />
       </Suspense>
     </>
+  );
+}
+
+function SectionPlaceholder({ rows = 1 }) {
+  return (
+    <section className="bg-surface-muted py-20 sm:py-24" aria-hidden="true">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto h-8 w-48 animate-pulse rounded-lg bg-white" />
+        <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {Array.from({ length: rows }).map((_, i) => (
+            <div key={i} className="h-40 animate-pulse rounded-2xl bg-white" />
+          ))}
+        </div>
+      </div>
+    </section>
   );
 }
 

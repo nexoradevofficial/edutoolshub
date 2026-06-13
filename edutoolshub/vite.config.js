@@ -20,6 +20,36 @@ function embedAppShellPlugin() {
   };
 }
 
+/** Non-blocking CSS + defer scripts to body for faster first paint. */
+function perfHtmlPlugin() {
+  return {
+    name: "perf-html",
+    transformIndexHtml: {
+      order: "post",
+      handler(html) {
+        let out = html.replace(
+          /<link rel="stylesheet" crossorigin href="(\/assets\/[^"]+\.css)">/g,
+          '<link rel="preload" as="style" href="$1" onload="this.onload=null;this.rel=\'stylesheet\'"><noscript><link rel="stylesheet" href="$1"></noscript>'
+        );
+
+        const scripts = out.match(/<script type="module"[^>]*><\/script>/g) ?? [];
+        const preloads = out.match(/<link rel="modulepreload"[^>]*>/g) ?? [];
+
+        for (const tag of [...scripts, ...preloads]) {
+          out = out.replace(tag, "");
+        }
+
+        out = out.replace(
+          "</body>",
+          `${preloads.join("\n    ")}\n    ${scripts.join("\n    ")}\n  </body>`
+        );
+
+        return out;
+      },
+    },
+  };
+}
+
 /** API routes for dev + `vite preview` (prerender uses preview; mirrors Vercel handlers). */
 function vercelApiDevPlugin(env) {
   function attachApiMiddleware(server) {
@@ -72,12 +102,15 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
 
   return {
-    plugins: [react(), tailwindcss(), embedAppShellPlugin(), vercelApiDevPlugin(env)],
+    plugins: [react(), tailwindcss(), perfHtmlPlugin(), embedAppShellPlugin(), vercelApiDevPlugin(env)],
     build: {
       target: "es2022",
       modulePreload: {
-        resolveDependencies: (_filename, deps) =>
-          deps.filter(
+        resolveDependencies: (_filename, deps, { hostType }) => {
+          if (hostType === "html") {
+            return deps.filter((dep) => !dep.includes("vendor-"));
+          }
+          return deps.filter(
             (dep) =>
               !dep.includes("vendor-sanity") &&
               !dep.includes("vendor-embla") &&
@@ -85,7 +118,8 @@ export default defineConfig(({ mode }) => {
               !dep.includes("vendor-date-fns") &&
               !dep.includes("vendor-jspdf") &&
               !dep.includes("vendor-html2canvas")
-          ),
+          );
+        },
       },
       rollupOptions: {
         output: {
