@@ -8,12 +8,11 @@ Built with **Next.js 16 (App Router) + React 19 + Tailwind CSS 4**.
 ## Project layout
 
 ```
-NEXORA DEV/edutoolshub/
-├── edutoolshub/      ← this folder: Next.js frontend (you are here)
+edutoolshub/          ← repo root: Next.js frontend (you are here)
 └── studio/           ← Sanity Studio (CMS) — runs independently on :3333
 ```
 
-Content is authored in `studio/` and consumed by `edutoolshub/` via the Sanity Content Lake.
+Content is authored in `studio/` and consumed by the Next.js app via the Sanity Content Lake.
 
 ## Local setup
 
@@ -27,7 +26,7 @@ npm run dev    # http://localhost:3000
 Studio (optional, for authoring):
 
 ```bash
-cd ../studio && npm run dev   # http://localhost:3333
+cd studio && npm run dev   # http://localhost:3333
 ```
 
 ## NPM scripts
@@ -60,16 +59,16 @@ See `.env.example`. Client vars must use the `NEXT_PUBLIC_` prefix:
 ## Deploying (Vercel)
 
 - **Framework:** Next.js
-- **Root directory:** `edutoolshub`
+- **Root directory:** leave empty (repo root)
 - **Build command:** `npm run build` (or leave blank)
-- **Output directory:** leave blank (not `dist`)
+- **Output directory:** leave empty
 - Set env vars in Vercel dashboard (see `.env.example`)
 - `vercel.json` only defines the monthly universities refresh cron
 
 ### Sanity CORS (production domain)
 
 ```bash
-cd ../studio
+cd studio
 npx sanity cors add https://edutoolshub.com --no-credentials
 npx sanity cors add https://www.edutoolshub.com --no-credentials
 npx sanity cors add "https://*.vercel.app" --no-credentials

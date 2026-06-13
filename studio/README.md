@@ -2,9 +2,9 @@
 
 Sanity Studio for managing blog content on **edutoolshub.com**.
 
-This Studio is a separate app from the Vite frontend — it runs on its own port
+This Studio is a separate app from the Next.js frontend — it runs on its own port
 (`http://localhost:3333` by default) and writes content to the Sanity Content Lake.
-The Vite app fetches that content at runtime.
+The Next.js app fetches that content at runtime.
 
 ## First-time setup (do this once)
 
@@ -43,10 +43,10 @@ npm run deploy   # deploys Studio to <project>.sanity.studio so the rest of your
 
 ## Where the content goes
 
-Once a post is **published** in this Studio, the Vite frontend at
-`../edutoolshub/` reads it via `@sanity/client` using the same `projectId`
+Once a post is **published** in this Studio, the Next.js frontend at
+`../` (repo root) reads it via `@sanity/client` using the same `projectId`
 and `dataset`. Make sure both projects point at the same project — see
-`../edutoolshub/.env.example`.
+`../.env.example`.
 
 ## Schema
 
