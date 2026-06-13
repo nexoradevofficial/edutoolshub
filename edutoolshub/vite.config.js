@@ -31,17 +31,7 @@ function perfHtmlPlugin() {
           `<link rel="stylesheet" href="${href}" media="print" onload="this.media='all';this.onload=null"><noscript><link rel="stylesheet" href="${href}"></noscript>`;
 
         let out = html.replace(
-          /<link rel="preload" as="style" href="(\/assets\/[^"]+\.css)" onload="[^"]*"><noscript><link rel="stylesheet" href="[^"]*"><\/noscript>/g,
-          (_, href) => asyncCss(href)
-        );
-
-        out = out.replace(
-          /<link rel="stylesheet" crossorigin href="(\/assets\/[^"]+\.css)">/g,
-          (_, href) => asyncCss(href)
-        );
-
-        out = out.replace(
-          /<link rel="stylesheet" href="(\/assets\/[^"]+\.css)">/g,
+          /<link rel="stylesheet"(?: crossorigin)? href="(\/assets\/[^"]+\.css)">/g,
           (_, href) => asyncCss(href)
         );
 
