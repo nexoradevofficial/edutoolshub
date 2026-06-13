@@ -442,6 +442,130 @@ export const toolSeoById = {
       },
     ],
   },
+
+  "tracing-sheet": {
+    id: "tracing-sheet",
+    name: "Tracing Sheet Generator",
+    path: "/tools/tracing-sheet-generator",
+    metaTitle: "Tracing Sheet Generator - Free Printable Alphabet & Numbers | EduToolsHub",
+    metaDescription:
+      "Free tracing sheet generator for kindergarten teachers — create printable alphabet, number, and name tracing worksheets with dotted guide lines. No login required.",
+    schemaDescription:
+      "Generate printable alphabet and number tracing sheets with dotted guide lines, custom words, and multiple practice rows for kindergarten handwriting.",
+    howToUse: [
+      "This tracing sheet generator helps kindergarten and playgroup teachers create handwriting practice worksheets in seconds. Choose letters A–Z, numbers 0–9, or type a custom name or word, then set uppercase, lowercase, or both.",
+      "Adjust how many dotted tracing rows appear under each solid guide letter, add an optional student name and sheet title, and preview the full page before printing. Everything runs in your browser with no account needed.",
+      "Early years teachers, homeschool parents, and special education aides use it for daily letter formation practice, name writing, and number tracing without buying workbooks.",
+    ],
+    faqs: [
+      {
+        question: "How do I make a tracing sheet for my class?",
+        answer:
+          "Select letters or numbers from the grid, or enter a custom word. Choose uppercase or lowercase, set tracing rows (2–5), add a title and student name, then click Print to open your browser print dialog.",
+      },
+      {
+        question: "Can I trace custom names or words?",
+        answer:
+          "Yes. Switch to Custom word mode and type any name or short word. Each letter gets a solid guide row plus dotted rows for students to trace.",
+      },
+      {
+        question: "What font style is used for tracing?",
+        answer:
+          "Characters render with dotted dashed outlines using SVG guide lines — ideal for pencil tracing. A solid reference letter appears above the dotted rows.",
+      },
+      {
+        question: "Is this tracing sheet generator free?",
+        answer:
+          "Completely free with unlimited sheets. No sign-up, no downloads, and no watermarks on printed output.",
+      },
+      {
+        question: "Does this tool store student data?",
+        answer:
+          "No. All choices stay in your browser session only. Nothing is sent to a server.",
+      },
+      {
+        question: "What paper size does it print on?",
+        answer:
+          "Sheets are formatted for A4 portrait printing with a clean white background. Use Save as PDF in the print dialog to keep a digital copy.",
+      },
+    ],
+    relatedTools: [
+      {
+        label: "Reward good behavior with the Behavior Star Chart Generator",
+        path: "/tools/behavior-chart-generator",
+      },
+      {
+        label: "Plan lessons with the free Lesson Planner for teachers",
+        path: "/tools/lesson-planner",
+      },
+      {
+        label: "Track class attendance with the Attendance Sheet Generator",
+        path: "/tools/attendance-sheet",
+      },
+    ],
+  },
+
+  "behavior-chart": {
+    id: "behavior-chart",
+    name: "Behavior Star Chart Generator",
+    path: "/tools/behavior-chart-generator",
+    metaTitle: "Behavior Star Chart Generator - Free Printable Reward Chart | EduToolsHub",
+    metaDescription:
+      "Free behavior chart generator for kindergarten — create weekly or monthly star charts for up to 30 students with reward icons. Print A4 sheets for stickers and stamps.",
+    schemaDescription:
+      "Generate printable weekly or monthly behavior reward charts with student names, optional behavior categories, and sticker-sized grid cells.",
+    howToUse: [
+      "This behavior chart generator creates classroom reward trackers teachers can print and hang on the wall. Add up to 30 student names, pick a weekly Mon–Fri chart or a monthly 1–31 day chart, and choose a reward icon like stars or hearts.",
+      "Enter your class name and week or month label, optionally add behavior categories such as Listening or Sharing, and watch the live preview update. Your progress saves automatically in the browser so you can return later.",
+      "Kindergarten teachers, preschool aides, and after-school program leaders use printed charts so children earn stickers for positive behavior each day.",
+    ],
+    faqs: [
+      {
+        question: "How many students can I add?",
+        answer:
+          "Up to 30 student names. Each student gets a row with blank cells teachers fill with stickers, stamps, or checkmarks during the week or month.",
+      },
+      {
+        question: "What is the difference between weekly and monthly charts?",
+        answer:
+          "Weekly charts show Monday through Friday in A4 landscape with large sticker-sized cells. Monthly charts show days 1–31 in A4 portrait for a full-month tracker.",
+      },
+      {
+        question: "Can I add behavior categories?",
+        answer:
+          "Yes. Enable behavior categories to add up to four row labels like Listening, Sharing, or Tidying Up. Each student then gets a sub-row per category.",
+      },
+      {
+        question: "Does my chart save automatically?",
+        answer:
+          "Yes. Student names, settings, and labels save in your browser localStorage. Use Clear saved data to reset. Data never leaves your device.",
+      },
+      {
+        question: "Which reward icons are available?",
+        answer:
+          "Choose from star, smiley, gold star, or heart icons shown in the chart header as a visual cue for children.",
+      },
+      {
+        question: "Is this behavior chart generator free?",
+        answer:
+          "Yes. Unlimited charts with no login. Print as many copies as you need for your classroom.",
+      },
+    ],
+    relatedTools: [
+      {
+        label: "Create handwriting worksheets with the Tracing Sheet Generator",
+        path: "/tools/tracing-sheet-generator",
+      },
+      {
+        label: "Track daily attendance with the Attendance Sheet Generator",
+        path: "/tools/attendance-sheet",
+      },
+      {
+        label: "Plan your week with the Lesson Planner",
+        path: "/tools/lesson-planner",
+      },
+    ],
+  },
 };
 
 /** Build WebApplication JSON-LD for a tool. */

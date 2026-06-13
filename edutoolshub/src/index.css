@@ -202,6 +202,85 @@
   }
 
   /* ----------------------------------------------------------- */
+  /* Tracing Sheet — portrait print layout                       */
+  /* ----------------------------------------------------------- */
+
+  #tracing-sheet-print,
+  .tracing-sheet {
+    border: 0 !important;
+    box-shadow: none !important;
+    margin: 0 auto !important;
+    max-width: 100% !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  #tracing-sheet-print header,
+  #tracing-sheet-print footer {
+    display: block !important;
+  }
+
+  #tracing-sheet-print .tracing-sheet__char-block {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  /* ----------------------------------------------------------- */
+  /* Behavior Chart — landscape (weekly) / portrait (monthly)    */
+  /* ----------------------------------------------------------- */
+
+  #behavior-chart-print,
+  .behavior-chart {
+    border: 0 !important;
+    box-shadow: none !important;
+    margin: 0 auto !important;
+    max-width: 100% !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  #behavior-chart-print header,
+  #behavior-chart-print footer {
+    display: block !important;
+  }
+
+  #behavior-chart-print .behavior-chart__table-wrap {
+    overflow: visible !important;
+  }
+
+  #behavior-chart-print .behavior-chart__table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+  }
+
+  #behavior-chart-print .behavior-chart__table thead {
+    display: table-header-group;
+  }
+
+  #behavior-chart-print .behavior-chart__row {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  #behavior-chart-print .behavior-chart__table--weekly .behavior-chart__cell {
+    min-width: 12mm !important;
+    min-height: 12mm !important;
+    width: 12mm !important;
+    height: 12mm !important;
+  }
+
+  #behavior-chart-print .behavior-chart__table--monthly .behavior-chart__cell {
+    min-width: 5mm !important;
+    min-height: 5mm !important;
+    width: 5mm !important;
+    height: 5mm !important;
+  }
+
+  /* ----------------------------------------------------------- */
   /* GPA Report — formal, ink-friendly print layout              */
   /* ----------------------------------------------------------- */
 

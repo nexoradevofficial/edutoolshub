@@ -6,6 +6,8 @@ import {
   IconGpaPercent,
   IconReceipt,
   IconReport,
+  IconStarChart,
+  IconTracing,
 } from "../components/icons/ToolIcons";
 
 export const tools = [
@@ -77,6 +79,26 @@ export const tools = [
     status: "active",
     path: "/tools/fee-receipt",
     color: "bg-accent/10 text-accent-dark",
+  },
+  {
+    id: "tracing-sheet",
+    name: "Tracing Sheet Generator",
+    description:
+      "Create printable alphabet and number tracing sheets with dotted guide lines — perfect for kindergarten handwriting practice.",
+    icon: IconTracing,
+    status: "active",
+    path: "/tools/tracing-sheet-generator",
+    color: "bg-amber-100/80 text-amber-800",
+  },
+  {
+    id: "behavior-chart",
+    name: "Behavior Star Chart Generator",
+    description:
+      "Build weekly or monthly reward star charts for up to 30 students — print clean A4 sheets for stickers and stamps.",
+    icon: IconStarChart,
+    status: "active",
+    path: "/tools/behavior-chart-generator",
+    color: "bg-violet-100/80 text-violet-800",
   },
 ];
 

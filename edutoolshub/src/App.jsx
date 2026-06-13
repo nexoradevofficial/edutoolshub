@@ -14,6 +14,8 @@ const ExamMarksNeededPage = lazy(() => import("./pages/ExamMarksNeededPage"));
 const GpaToPercentagePage = lazy(() => import("./pages/GpaToPercentagePage"));
 const LessonPlannerPage = lazy(() => import("./pages/LessonPlannerPage"));
 const FeeReceiptPage = lazy(() => import("./pages/FeeReceiptPage"));
+const TracingSheetPage = lazy(() => import("./pages/TracingSheetPage"));
+const BehaviorChartPage = lazy(() => import("./pages/BehaviorChartPage"));
 const AdminUniversitiesPage = lazy(() => import("./pages/AdminUniversitiesPage"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 const TermsOfService = lazy(() => import("./pages/TermsOfService"));
@@ -68,6 +70,8 @@ export default function App() {
           <Route path="tools/gpa-to-percentage" element={<GpaToPercentagePage />} />
           <Route path="tools/lesson-planner" element={<LessonPlannerPage />} />
           <Route path="tools/fee-receipt" element={<FeeReceiptPage />} />
+          <Route path="tools/tracing-sheet-generator" element={<TracingSheetPage />} />
+          <Route path="tools/behavior-chart-generator" element={<BehaviorChartPage />} />
           <Route path="admin/universities" element={<AdminUniversitiesPage />} />
           <Route path="about" element={<About />} />
           <Route path="contact" element={<Contact />} />

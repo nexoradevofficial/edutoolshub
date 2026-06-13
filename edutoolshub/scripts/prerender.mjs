@@ -84,6 +84,8 @@ const STATIC_ROUTES = [
   "/tools/gpa-to-percentage",
   "/tools/fee-receipt",
   "/tools/lesson-planner",
+  "/tools/tracing-sheet-generator",
+  "/tools/behavior-chart-generator",
   "/about",
   "/contact",
   "/privacy",
