@@ -8,14 +8,21 @@ export const maxDuration = 60;
 const MISTRAL_API_URL = "https://api.mistral.ai/v1/chat/completions";
 const UNSPLASH_API_URL = "https://api.unsplash.com/photos/random";
 
-const BLOG_PROMPT = `Generate a 1000 to 1300-word SEO-optimized blog post about a random trending education topic including educational free tools for students and teachers (choose different topics daily). Include: H1 title, H2 and H3 subheadings, meta description (150 chars), keyword focus. Format the response as clean paragraphs suitable for blog content.
+const BLOG_PROMPT = `Generate a 1000 -1300 words SEO blog about a random trending free educational tools for teachers and students or educational topic.
+Return ONLY valid JSON (no markdown, no extra text):
+{
+  "title": "SEO optimized title (50-60 chars, no special chars)",
+  "slug": "url-friendly-slug-with-hyphens-only",
+  "metaDescription": "Meta description (150-160 chars)",
+  "keyword": "main keyword phrase",
+  "content": "Full blog content with H2 and H3 headings using markdown format"
+}`;
 
-Structure your response EXACTLY like this:
-TITLE: [H1 title here]
-META_DESCRIPTION: [meta description, max 150 characters]
-KEYWORDS: [comma-separated focus keywords]
-
-Then write the blog body using markdown headings (## for H2, ### for H3) and plain paragraphs. Do not repeat the title or meta description in the body.`;
+const REPAIR_FIELDS_PROMPT = `Fix the blog title and slug. Return ONLY valid JSON (no markdown, no extra text):
+{
+  "title": "SEO optimized title (50-60 chars, no special chars)",
+  "slug": "url-friendly-slug-with-hyphens-only"
+}`;
 
 const EDUCATION_TOPICS = [
   "AI-powered study tools for high school students",
@@ -29,6 +36,9 @@ const EDUCATION_TOPICS = [
   "Formative assessment apps for K-12 teachers",
   "Career readiness resources for vocational students",
 ];
+
+const PLACEHOLDER_VALUES = new Set(["---", "--", "-", "…", "..."]);
+const SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
 function isAuthorized(request) {
   const cronSecret = process.env.CRON_SECRET;
@@ -90,6 +100,8 @@ function slugify(input) {
     .replace(/[^a-z0-9\s-]/g, "")
     .trim()
     .replace(/\s+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "")
     .slice(0, 96);
 }
 
@@ -97,6 +109,72 @@ function truncate(text, maxLength) {
   const trimmed = text.trim();
   if (trimmed.length <= maxLength) return trimmed;
   return `${trimmed.slice(0, maxLength - 3).trim()}...`;
+}
+
+function isPlaceholderValue(value) {
+  if (typeof value !== "string") return true;
+  const trimmed = value.trim();
+  if (!trimmed) return true;
+  if (PLACEHOLDER_VALUES.has(trimmed)) return true;
+  if (/^[-–—_\s.]+$/.test(trimmed)) return true;
+  return false;
+}
+
+function isValidTitle(title) {
+  if (isPlaceholderValue(title)) return false;
+  const length = title.trim().length;
+  return length >= 10 && length <= 100;
+}
+
+function isValidSlug(slug) {
+  if (isPlaceholderValue(slug)) return false;
+  const normalized = slug.trim().toLowerCase();
+  return normalized.length >= 3 && normalized.length <= 96 && SLUG_PATTERN.test(normalized);
+}
+
+function sanitizeTitle(title) {
+  return title
+    .replace(/[^\w\s:,-]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function extractJsonFromResponse(rawContent) {
+  const trimmed = rawContent.trim();
+
+  try {
+    return JSON.parse(trimmed);
+  } catch (directError) {
+    const fencedMatch = trimmed.match(/```(?:json)?\s*([\s\S]*?)```/i);
+    if (fencedMatch) {
+      return JSON.parse(fencedMatch[1].trim());
+    }
+
+    const start = trimmed.indexOf("{");
+    const end = trimmed.lastIndexOf("}");
+    if (start !== -1 && end > start) {
+      return JSON.parse(trimmed.slice(start, end + 1));
+    }
+
+    throw directError;
+  }
+}
+
+function extractTitleFromContent(content) {
+  if (typeof content !== "string") return "";
+
+  const h2Match = content.match(/^##\s+(.+)$/m);
+  if (h2Match?.[1]) return h2Match[1].trim();
+
+  const h3Match = content.match(/^###\s+(.+)$/m);
+  if (h3Match?.[1]) return h3Match[1].trim();
+
+  const firstLine = content
+    .split("\n")
+    .map((line) => line.trim())
+    .find((line) => line && !line.startsWith("#"));
+
+  return firstLine || "";
 }
 
 async function axiosWithRetry(config, label, maxRetries = 3) {
@@ -133,9 +211,8 @@ function pickDailyTopic() {
   return EDUCATION_TOPICS[dayIndex % EDUCATION_TOPICS.length];
 }
 
-async function generateBlogContent() {
+async function callMistral(messages, label) {
   const apiKey = requireEnv("MISTRAL_API_KEY");
-  const topic = pickDailyTopic();
 
   const response = await axiosWithRetry(
     {
@@ -147,18 +224,14 @@ async function generateBlogContent() {
       },
       data: {
         model: "mistral-tiny",
-        messages: [
-          {
-            role: "user",
-            content: `${BLOG_PROMPT}\n\nToday's focus topic: ${topic}`,
-          },
-        ],
+        messages,
         temperature: 0.7,
         max_tokens: 2000,
+        response_format: { type: "json_object" },
       },
       timeout: 45000,
     },
-    "Mistral API"
+    label
   );
 
   const content = response.data?.choices?.[0]?.message?.content;
@@ -166,79 +239,174 @@ async function generateBlogContent() {
     throw new Error("Mistral API returned an empty or invalid response.");
   }
 
-  return parseBlogContent(content);
+  return content;
 }
 
-function parseBlogContent(rawContent) {
-  const lines = rawContent
-    .split("\n")
-    .map((line) => line.trim())
-    .filter(Boolean);
+async function repairTitleAndSlug({ title, slug, keyword, content }) {
+  const repairContext = [
+    `Current title: ${title || "(missing)"}`,
+    `Current slug: ${slug || "(missing)"}`,
+    `Keyword: ${keyword || "(missing)"}`,
+    `Content excerpt: ${typeof content === "string" ? content.slice(0, 600) : "(missing)"}`,
+  ].join("\n");
 
-  let title = "";
-  let metaDescription = "";
-  let keywords = "";
-  const bodyLines = [];
-
-  for (const line of lines) {
-    const titleMatch = line.match(/^TITLE:\s*(.+)$/i);
-    const metaMatch = line.match(/^META_DESCRIPTION:\s*(.+)$/i);
-    const keywordsMatch = line.match(/^KEYWORDS:\s*(.+)$/i);
-
-    if (titleMatch) {
-      title = titleMatch[1].trim();
-      continue;
-    }
-    if (metaMatch) {
-      metaDescription = truncate(metaMatch[1].trim(), 160);
-      continue;
-    }
-    if (keywordsMatch) {
-      keywords = keywordsMatch[1].trim();
-      continue;
-    }
-
-    bodyLines.push(line);
-  }
-
-  if (!title) {
-    const headingLine = bodyLines.find((line) => /^#\s+/.test(line));
-    if (headingLine) {
-      title = headingLine.replace(/^#+\s*/, "").trim();
-    } else if (bodyLines.length > 0) {
-      title = bodyLines.shift().replace(/^#+\s*/, "").trim();
-    }
-  }
-
-  if (!title) {
-    throw new Error("Could not extract blog title from Mistral response.");
-  }
-
-  if (!metaDescription) {
-    const firstParagraph = bodyLines.find(
-      (line) => !line.startsWith("#") && line.length > 40
+  try {
+    const raw = await callMistral(
+      [
+        {
+          role: "user",
+          content: `${REPAIR_FIELDS_PROMPT}\n\n${repairContext}`,
+        },
+      ],
+      "Mistral field repair"
     );
-    metaDescription = truncate(firstParagraph || title, 160);
+
+    const repaired = extractJsonFromResponse(raw);
+    return {
+      title: typeof repaired.title === "string" ? repaired.title.trim() : title,
+      slug: typeof repaired.slug === "string" ? repaired.slug.trim().toLowerCase() : slug,
+    };
+  } catch (err) {
+    console.error("[publish-blog] Failed to repair title/slug via Mistral:", err.message);
+    return { title, slug };
+  }
+}
+
+function applyFieldFallbacks(parsed) {
+  let title = typeof parsed.title === "string" ? sanitizeTitle(parsed.title) : "";
+  let slug = typeof parsed.slug === "string" ? parsed.slug.trim().toLowerCase() : "";
+  const keyword = typeof parsed.keyword === "string" ? parsed.keyword.trim() : "";
+  const content = typeof parsed.content === "string" ? parsed.content.trim() : "";
+
+  if (!isValidTitle(title)) {
+    const fromContent = sanitizeTitle(extractTitleFromContent(content));
+    if (isValidTitle(fromContent)) {
+      title = fromContent;
+    } else if (keyword) {
+      title = sanitizeTitle(`${keyword}: A Complete Guide for Teachers and Students`);
+    } else {
+      title = "Free Educational Tools Guide for Teachers and Students";
+    }
   }
 
-  const body = markdownToPortableText(bodyLines.join("\n"));
+  title = truncate(title, 100);
 
+  if (!isValidSlug(slug)) {
+    slug = slugify(title);
+  }
+
+  if (!isValidSlug(slug) && keyword) {
+    slug = slugify(keyword);
+  }
+
+  if (!isValidSlug(slug)) {
+    slug = slugify("free-educational-tools-guide");
+  }
+
+  return { title, slug, keyword, content };
+}
+
+async function validateAndRepairBlogContent(parsed) {
+  const metaDescription =
+    typeof parsed.metaDescription === "string"
+      ? truncate(parsed.metaDescription.trim(), 160)
+      : "";
+  const keyword = typeof parsed.keyword === "string" ? parsed.keyword.trim() : "";
+  const content = typeof parsed.content === "string" ? parsed.content.trim() : "";
+
+  if (!content) {
+    throw new Error("Mistral JSON response is missing blog content.");
+  }
+
+  let { title, slug } = applyFieldFallbacks(parsed);
+
+  if (!isValidTitle(title) || !isValidSlug(slug)) {
+    const repaired = await repairTitleAndSlug({ title, slug, keyword, content });
+    title = typeof repaired.title === "string" ? sanitizeTitle(repaired.title) : title;
+    slug = typeof repaired.slug === "string" ? repaired.slug.trim().toLowerCase() : slug;
+    ({ title, slug } = applyFieldFallbacks({ title, slug, keyword, content }));
+  }
+
+  if (!isValidTitle(title) || !isValidSlug(slug)) {
+    throw new Error("Unable to produce a valid title and slug for blog publishing.");
+  }
+
+  const body = markdownToPortableText(content);
   if (body.length === 0) {
-    throw new Error("Could not extract blog body from Mistral response.");
+    throw new Error("Could not convert blog content to Portable Text blocks.");
   }
 
-  const excerpt = truncate(metaDescription, 200);
+  const resolvedMeta = metaDescription || truncate(extractTitleFromContent(content) || title, 160);
+  const excerptSource = resolvedMeta || title;
+  const excerpt = truncate(excerptSource, 200);
   const normalizedExcerpt =
-    excerpt.length >= 40 ? excerpt : truncate(`${title}. ${metaDescription}`, 200);
+    excerpt.length >= 40 ? excerpt : truncate(`${title}. ${resolvedMeta}`, 200);
 
   return {
-    title: truncate(title, 120),
-    metaDescription,
-    keywords,
+    title: truncate(title, 100),
+    slug,
+    metaDescription: resolvedMeta,
+    keyword,
     excerpt: normalizedExcerpt,
     body,
-    slug: slugify(title),
   };
+}
+
+function parseMistralJson(rawContent) {
+  try {
+    const parsed = extractJsonFromResponse(rawContent);
+    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+      throw new Error("Mistral JSON response must be an object.");
+    }
+    return parsed;
+  } catch (err) {
+    console.error("[publish-blog] JSON parse error:", err.message);
+    console.error("[publish-blog] Raw Mistral response preview:", rawContent.slice(0, 500));
+    throw err;
+  }
+}
+
+async function generateBlogContent() {
+  const topic = pickDailyTopic();
+  let lastParseError;
+
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      const rawContent = await callMistral(
+        [
+          {
+            role: "user",
+            content:
+              attempt === 0
+                ? `${BLOG_PROMPT}\n\nToday's focus topic: ${topic}`
+                : `${BLOG_PROMPT}\n\nIMPORTANT: Your previous response was not valid JSON. Return ONLY the JSON object with no markdown fences or commentary.\n\nToday's focus topic: ${topic}`,
+          },
+        ],
+        attempt === 0 ? "Mistral API" : "Mistral API retry"
+      );
+
+      const parsed = parseMistralJson(rawContent);
+      return await validateAndRepairBlogContent(parsed);
+    } catch (err) {
+      const isParseError =
+        err instanceof SyntaxError ||
+        err.name === "SyntaxError" ||
+        err.message.includes("JSON") ||
+        err.message.includes("valid JSON");
+
+      if (isParseError && attempt === 0) {
+        lastParseError = err;
+        console.error("[publish-blog] Retrying Mistral call after JSON parse failure.");
+        continue;
+      }
+
+      throw err;
+    }
+  }
+
+  throw new Error(
+    `Failed to parse Mistral JSON after retry: ${lastParseError?.message || "Unknown parse error"}`
+  );
 }
 
 function textToBlock(text, style = "normal") {
@@ -349,6 +517,10 @@ async function uploadImageToSanity(client, imageUrl, altText) {
 }
 
 async function publishToSanity(blogContent, unsplashImage) {
+  if (!isValidTitle(blogContent.title) || !isValidSlug(blogContent.slug)) {
+    throw new Error("Refusing to publish post with invalid title or slug.");
+  }
+
   const client = getSanityWriteClient();
   const mainImage = await uploadImageToSanity(
     client,
