@@ -5,6 +5,10 @@
     {
       "path": "/api/admin/refresh-universities",
       "schedule": "0 0 1 * *"
+    },
+    {
+      "path": "/api/cron/publish-blog",
+      "schedule": "0 8 * * *"
     }
   ]
 }
