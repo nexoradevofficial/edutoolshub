@@ -2,6 +2,13 @@ import { useCallback, useMemo, useState } from "react";
 import Button from "../ui/Button";
 import { IconPrint } from "../icons/ToolIcons";
 import { useTrackGenerateResult } from "../../utils/analytics";
+import {
+  GRADE_LEVELS,
+  WORKSHEET_SUBJECTS,
+  WORKSHEET_TYPES,
+  applyPreset,
+  filterPresets,
+} from "../../data/worksheetPresets";
 
 const inputClass =
   "w-full rounded-lg border border-border bg-white px-3 py-2 text-sm text-text outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-primary/20";
@@ -214,6 +221,10 @@ function buildCharacterList({ contentType, selectedLetters, selectedNumbers, cus
 }
 
 export default function TracingSheetGenerator() {
+  const [filterSubject, setFilterSubject] = useState("");
+  const [filterGrade, setFilterGrade] = useState("");
+  const [filterType, setFilterType] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
   const [contentType, setContentType] = useState("letters");
   const [selectedLetters, setSelectedLetters] = useState(["A", "B", "C"]);
   const [selectedNumbers, setSelectedNumbers] = useState(["0", "1", "2"]);
@@ -222,6 +233,27 @@ export default function TracingSheetGenerator() {
   const [rowsPerChar, setRowsPerChar] = useState(3);
   const [studentName, setStudentName] = useState("");
   const [title, setTitle] = useState("Tracing Practice");
+
+  const filteredPresets = useMemo(
+    () =>
+      filterPresets({
+        subject: filterSubject || undefined,
+        grade: filterGrade || undefined,
+        type: filterType || undefined,
+        query: searchQuery,
+      }),
+    [filterSubject, filterGrade, filterType, searchQuery]
+  );
+
+  const applyWorksheetPreset = useCallback((preset) => {
+    const next = applyPreset(preset);
+    setContentType(next.contentType);
+    setSelectedLetters(next.selectedLetters);
+    setSelectedNumbers(next.selectedNumbers);
+    setCustomText(next.customText);
+    setCaseMode(next.caseMode);
+    setTitle(next.title);
+  }, []);
 
   const characters = useMemo(
     () =>
@@ -270,7 +302,138 @@ export default function TracingSheetGenerator() {
 
       <div className="print:hidden space-y-8">
         <section className={sectionClass}>
-          <h2 className="mb-1 text-lg font-semibold text-text">What to trace</h2>
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <h2 className="text-lg font-semibold text-text">Worksheet library</h2>
+              <p className="mt-1 text-sm text-text-muted">
+                Browse printable tracing worksheets by subject, grade, and type — inspired by
+                early-literacy resource libraries.
+              </p>
+            </div>
+            <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
+              {filteredPresets.length} worksheet{filteredPresets.length === 1 ? "" : "s"}
+            </span>
+          </div>
+
+          <div className="mt-5 grid gap-4 lg:grid-cols-4">
+            <div className="space-y-3 rounded-xl border border-border bg-surface-muted/50 p-4 lg:col-span-1">
+              <p className="text-xs font-semibold uppercase tracking-wide text-text-muted">Filters</p>
+              <div>
+                <label htmlFor="ws-search" className="mb-1 block text-xs font-medium text-text">
+                  Search
+                </label>
+                <input
+                  id="ws-search"
+                  className={inputClass}
+                  placeholder="e.g. CVC, sight words"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+              </div>
+              <div>
+                <label htmlFor="ws-subject" className="mb-1 block text-xs font-medium text-text">
+                  Subject
+                </label>
+                <select
+                  id="ws-subject"
+                  className={inputClass}
+                  value={filterSubject}
+                  onChange={(e) => setFilterSubject(e.target.value)}
+                >
+                  <option value="">All subjects</option>
+                  {WORKSHEET_SUBJECTS.map((s) => (
+                    <option key={s.id} value={s.id}>
+                      {s.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label htmlFor="ws-grade" className="mb-1 block text-xs font-medium text-text">
+                  Grade level
+                </label>
+                <select
+                  id="ws-grade"
+                  className={inputClass}
+                  value={filterGrade}
+                  onChange={(e) => setFilterGrade(e.target.value)}
+                >
+                  <option value="">All grades</option>
+                  {GRADE_LEVELS.map((g) => (
+                    <option key={g.id} value={g.id}>
+                      {g.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label htmlFor="ws-type" className="mb-1 block text-xs font-medium text-text">
+                  Resource type
+                </label>
+                <select
+                  id="ws-type"
+                  className={inputClass}
+                  value={filterType}
+                  onChange={(e) => setFilterType(e.target.value)}
+                >
+                  <option value="">All types</option>
+                  {WORKSHEET_TYPES.map((t) => (
+                    <option key={t.id} value={t.id}>
+                      {t.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              {(filterSubject || filterGrade || filterType || searchQuery) && (
+                <button
+                  type="button"
+                  className="text-xs font-medium text-primary hover:underline"
+                  onClick={() => {
+                    setFilterSubject("");
+                    setFilterGrade("");
+                    setFilterType("");
+                    setSearchQuery("");
+                  }}
+                >
+                  Clear all filters
+                </button>
+              )}
+            </div>
+
+            <div className="grid gap-3 sm:grid-cols-2 lg:col-span-3">
+              {filteredPresets.map((preset) => (
+                <button
+                  key={preset.id}
+                  type="button"
+                  onClick={() => applyWorksheetPreset(preset)}
+                  className="rounded-xl border border-border bg-white p-4 text-left transition-all hover:border-primary hover:shadow-md hover:shadow-primary/10"
+                >
+                  <div className="flex flex-wrap gap-2">
+                    <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold uppercase text-primary">
+                      {WORKSHEET_SUBJECTS.find((s) => s.id === preset.subject)?.label}
+                    </span>
+                    {preset.grades.map((g) => (
+                      <span
+                        key={g}
+                        className="rounded-full bg-accent/10 px-2 py-0.5 text-[10px] font-semibold uppercase text-accent-dark"
+                      >
+                        {GRADE_LEVELS.find((gl) => gl.id === g)?.label ?? g}
+                      </span>
+                    ))}
+                  </div>
+                  <h3 className="mt-2 font-semibold text-text">{preset.title}</h3>
+                  <p className="mt-1 text-sm text-text-muted">{preset.description}</p>
+                  <span className="mt-3 inline-block text-xs font-semibold text-primary">
+                    Use this worksheet →
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className={sectionClass}>
+          <h2 className="mb-1 text-lg font-semibold text-text">Customize worksheet</h2>
           <p className="mb-5 text-sm text-text-muted">
             Pick letters, numbers, or type a custom name or word for your class.
           </p>

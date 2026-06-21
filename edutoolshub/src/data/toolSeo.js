@@ -566,6 +566,221 @@ export const toolSeoById = {
       },
     ],
   },
+
+  "percentage-to-gpa": {
+    id: "percentage-to-gpa",
+    name: "Percentage to GPA Converter",
+    path: "/tools/percentage-to-gpa",
+    metaTitle: "Percentage to GPA Converter - Free Online Tool | EduToolsHub",
+    metaDescription:
+      "Convert percentage to GPA instantly on 4.0, 5.0, or 10.0 scales. Free percentage to GPA calculator with letter grades and reference tables.",
+    schemaDescription:
+      "Convert percentage scores to equivalent GPA on popular international grading scales.",
+    howToUse: [
+      "Enter your percentage score and select the GPA scale used by your school or university.",
+      "The converter shows equivalent GPA, letter grade, and performance descriptor instantly.",
+      "Use the reference table for common percentage-to-GPA mappings on your selected scale.",
+    ],
+    faqs: [
+      {
+        question: "How do I convert percentage to GPA?",
+        answer:
+          "Enter your percentage (0–100) and choose your scale. On a 4.0 scale, GPA = (percentage ÷ 100) × 4. On a 10.0 scale, GPA ≈ percentage ÷ 9.5.",
+      },
+      {
+        question: "Is this the reverse of GPA to percentage?",
+        answer:
+          "Yes. Use our GPA to Percentage Converter for the opposite direction. Both tools use the same standard scale mappings.",
+      },
+      {
+        question: "Is this tool free?",
+        answer: "Yes. No sign-up required. All calculations run in your browser.",
+      },
+    ],
+    relatedTools: [
+      { label: "GPA to Percentage Converter", path: "/tools/gpa-to-percentage" },
+      { label: "GPA / CGPA Calculator", path: "/tools/gpa-calculator" },
+      { label: "Final Grade Calculator", path: "/tools/final-grade-calculator" },
+    ],
+  },
+
+  "citation-generator": {
+    id: "citation-generator",
+    name: "Citation & Bibliography Generator",
+    path: "/tools/citation-generator",
+    metaTitle: "Free APA & MLA Citation Generator | EduToolsHub",
+    metaDescription:
+      "Generate APA 7 and MLA 9 citations for websites, books, and journal articles. Copy bibliography entries and in-text citations instantly — no sign-up.",
+    schemaDescription:
+      "Create formatted APA and MLA citations for academic sources with copy-ready bibliography entries.",
+    howToUse: [
+      "Select APA 7 or MLA 9 and choose your source type: website, book, or journal article.",
+      "Fill in author names, title, and other required fields shown for that source type.",
+      "Copy the formatted citation and in-text reference into your essay or bibliography.",
+    ],
+    faqs: [
+      {
+        question: "Which citation styles are supported?",
+        answer: "APA 7th edition and MLA 9th edition for websites, books, and journal articles.",
+      },
+      {
+        question: "Do I need an account?",
+        answer: "No. Citations are generated instantly in your browser with no login.",
+      },
+      {
+        question: "Should I verify the citation before submitting?",
+        answer:
+          "Always double-check against your institution's style guide. This tool follows widely used APA and MLA conventions.",
+      },
+    ],
+    relatedTools: [
+      { label: "Study Time Calculator", path: "/tools/study-time-calculator" },
+      { label: "GPA Calculator", path: "/tools/gpa-calculator" },
+    ],
+  },
+
+  "study-time-calculator": {
+    id: "study-time-calculator",
+    name: "Study Time Calculator",
+    path: "/tools/study-time-calculator",
+    metaTitle: "Study Time Calculator — Plan Exam Revision | EduToolsHub",
+    metaDescription:
+      "Free study time calculator for students. Enter subjects, hours needed, and days until your exam to get a daily revision schedule.",
+    schemaDescription:
+      "Plan exam study schedules by subject with daily time breakdowns based on available study hours.",
+    howToUse: [
+      "Enter how many days remain before your exam and how many hours you can study each day.",
+      "Add each subject with the total hours you need to revise.",
+      "Review the daily breakdown and adjust subjects or hours until the plan is feasible.",
+    ],
+    faqs: [
+      {
+        question: "How does the study plan work?",
+        answer:
+          "The tool divides your daily study hours among subjects proportionally based on how many hours each subject needs.",
+      },
+      {
+        question: "What if I don't have enough time?",
+        answer:
+          "The calculator shows how many extra hours you need and the recommended daily total so you can adjust your schedule.",
+      },
+      {
+        question: "Is my data saved?",
+        answer: "No. Everything runs in your browser session — no account or server storage.",
+      },
+    ],
+    relatedTools: [
+      { label: "Final Grade Calculator", path: "/tools/final-grade-calculator" },
+      { label: "GPA Calculator", path: "/tools/gpa-calculator" },
+      { label: "Citation Generator", path: "/tools/citation-generator" },
+    ],
+  },
+
+  "report-card-comments": {
+    id: "report-card-comments",
+    name: "Report Card Comment Generator",
+    path: "/tools/report-card-comment-generator",
+    metaTitle: "Report Card Comment Generator for Teachers | EduToolsHub",
+    metaDescription:
+      "Free report card comment generator for teachers. Create professional comments for academics, behavior, participation, and work habits — copy and edit instantly.",
+    schemaDescription:
+      "Generate editable report card comments for teachers based on student performance levels.",
+    howToUse: [
+      "Enter the student's name, pronouns, and subject or learning area.",
+      "Select performance levels for academics, behavior, participation, and work habits.",
+      "Copy the generated comment and personalize it before adding to your report card system.",
+    ],
+    faqs: [
+      {
+        question: "Can I customize the generated comment?",
+        answer:
+          "Yes. The comment is a starting point — edit tone and details to match each student before pasting into your report system.",
+      },
+      {
+        question: "Does this replace professional judgment?",
+        answer:
+          "No. Use these comments as templates. Teachers should review and adjust every comment for accuracy and individuality.",
+      },
+      {
+        question: "Is this free for teachers?",
+        answer: "Yes. Unlimited comments with no login required.",
+      },
+    ],
+    relatedTools: [
+      { label: "Rubric Generator", path: "/tools/rubric-generator" },
+      { label: "Certificate Maker", path: "/tools/certificate-maker" },
+      { label: "Behavior Star Chart Generator", path: "/tools/behavior-chart-generator" },
+    ],
+  },
+
+  "rubric-generator": {
+    id: "rubric-generator",
+    name: "Rubric Generator",
+    path: "/tools/rubric-generator",
+    metaTitle: "Free Rubric Generator for Teachers | EduToolsHub",
+    metaDescription:
+      "Create printable assessment rubrics with custom criteria and performance levels. Free rubric generator for teachers — no sign-up.",
+    schemaDescription:
+      "Build and print customizable grading rubrics with criteria rows and performance level columns.",
+    howToUse: [
+      "Name your rubric and customize the performance level column headers.",
+      "Add criteria and describe expectations for each performance level.",
+      "Print a landscape rubric table ready for classroom use.",
+    ],
+    faqs: [
+      {
+        question: "Can I add my own criteria?",
+        answer: "Yes. Add, remove, and name as many criteria rows as you need.",
+      },
+      {
+        question: "How do I print the rubric?",
+        answer:
+          "Click Print rubric to open a landscape A4 print dialog with a clean table layout.",
+      },
+      {
+        question: "Is this rubric generator free?",
+        answer: "Yes. No account required.",
+      },
+    ],
+    relatedTools: [
+      { label: "Report Card Comment Generator", path: "/tools/report-card-comment-generator" },
+      { label: "Lesson Planner", path: "/tools/lesson-planner" },
+    ],
+  },
+
+  "certificate-maker": {
+    id: "certificate-maker",
+    name: "Certificate Maker",
+    path: "/tools/certificate-maker",
+    metaTitle: "Free Student Certificate Maker for Teachers | EduToolsHub",
+    metaDescription:
+      "Design printable student achievement certificates in seconds. Free certificate maker for teachers — custom names, titles, and styles.",
+    schemaDescription:
+      "Create printable student achievement certificates with customizable fields and styles.",
+    howToUse: [
+      "Enter the student name and achievement title.",
+      "Add optional school name, presenter, and date; choose a certificate style.",
+      "Print the landscape certificate and sign for your student.",
+    ],
+    faqs: [
+      {
+        question: "Can I print multiple certificates?",
+        answer: "Yes. Change the student name and print as many certificates as you need.",
+      },
+      {
+        question: "What styles are available?",
+        answer: "Classic blue, gold achievement, and academic green themes.",
+      },
+      {
+        question: "Do I need to create an account?",
+        answer: "No. Certificates are generated instantly in your browser.",
+      },
+    ],
+    relatedTools: [
+      { label: "Behavior Star Chart Generator", path: "/tools/behavior-chart-generator" },
+      { label: "Report Card Comment Generator", path: "/tools/report-card-comment-generator" },
+    ],
+  },
 };
 
 /** Build WebApplication JSON-LD for a tool. */

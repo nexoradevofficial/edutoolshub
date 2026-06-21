@@ -13,6 +13,7 @@ export const NAV_PAGES = [
 
 export const TOOL_PAGES = [
   { path: "/tools/gpa-to-percentage", priority: "0.8", changefreq: "monthly" },
+  { path: "/tools/percentage-to-gpa", priority: "0.8", changefreq: "monthly" },
   { path: "/tools/gpa-calculator", priority: "0.8", changefreq: "monthly" },
   {
     path: "/tools/college-university-gpa-requirement-checker",
@@ -22,6 +23,11 @@ export const TOOL_PAGES = [
   { path: "/tools/attendance-sheet", priority: "0.8", changefreq: "monthly" },
   { path: "/tools/lesson-planner", priority: "0.8", changefreq: "monthly" },
   { path: "/tools/final-grade-calculator", priority: "0.8", changefreq: "monthly" },
+  { path: "/tools/citation-generator", priority: "0.8", changefreq: "monthly" },
+  { path: "/tools/study-time-calculator", priority: "0.8", changefreq: "monthly" },
+  { path: "/tools/report-card-comment-generator", priority: "0.8", changefreq: "monthly" },
+  { path: "/tools/rubric-generator", priority: "0.8", changefreq: "monthly" },
+  { path: "/tools/certificate-maker", priority: "0.8", changefreq: "monthly" },
   { path: "/tools/fee-receipt", priority: "0.8", changefreq: "monthly" },
   { path: "/tools/tracing-sheet-generator", priority: "0.8", changefreq: "monthly" },
   { path: "/tools/behavior-chart-generator", priority: "0.8", changefreq: "monthly" },
