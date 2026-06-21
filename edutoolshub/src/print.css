@@ -154,10 +154,36 @@
     box-shadow: none !important;
     margin: 0 auto !important;
     max-width: 100% !important;
-    background: #ffffff !important;
-    color: #000000 !important;
+    overflow: visible !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
+  }
+
+  #certificate-print,
+  #certificate-print .certificate-inner,
+  #certificate-print .certificate-bg,
+  #certificate-print .certificate-shape,
+  #certificate-print .certificate-icon {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Preserve gradients, shapes, and icons when printing */
+  #certificate-print .certificate-inner {
+    min-height: auto !important;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  #certificate-print .certificate-shape,
+  #certificate-print .certificate-icon {
+    opacity: 1 !important;
+    transform: none !important;
+    visibility: visible !important;
+  }
+
+  #certificate-print .certificate-name {
+    color: #0f172a !important;
   }
 
   #rubric-print table {

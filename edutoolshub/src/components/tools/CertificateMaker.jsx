@@ -3,25 +3,14 @@ import Button from "../ui/Button";
 import { IconPrint } from "../icons/ToolIcons";
 import { useTrackGenerateResult } from "../../utils/analytics";
 import { inputClass, labelClass, sectionClass } from "./shared/toolFormStyles";
-
-const STYLES = [
-  { value: "classic", label: "Classic blue" },
-  { value: "gold", label: "Gold achievement" },
-  { value: "green", label: "Academic green" },
-];
-
-const STYLE_CLASSES = {
-  classic: "border-primary bg-gradient-to-br from-primary/10 via-white to-primary/5",
-  gold: "border-amber-400 bg-gradient-to-br from-amber-50 via-white to-amber-100/50",
-  green: "border-accent bg-gradient-to-br from-accent/10 via-white to-accent/5",
-};
+import { CERTIFICATE_THEMES, CertificatePreview } from "./certificate/CertificatePreview";
 
 function printCertificate() {
   const id = "certificate-print-page-rule";
   document.getElementById(id)?.remove();
   const style = document.createElement("style");
   style.id = id;
-  style.textContent = `@page { size: A4 landscape; margin: 10mm; }`;
+  style.textContent = `@page { size: A4 landscape; margin: 8mm; }`;
   document.head.appendChild(style);
   const cleanup = () => {
     document.getElementById(id)?.remove();
@@ -121,7 +110,7 @@ export default function CertificateMaker() {
                 value={style}
                 onChange={(e) => setStyle(e.target.value)}
               >
-                {STYLES.map((s) => (
+                {CERTIFICATE_THEMES.map((s) => (
                   <option key={s.value} value={s.value}>
                     {s.label}
                   </option>
@@ -141,40 +130,14 @@ export default function CertificateMaker() {
           </Button>
         </div>
 
-        <div
-          id="certificate-print"
-          className={`certificate mx-auto flex min-h-[420px] max-w-4xl flex-col items-center justify-center rounded-2xl border-4 p-8 text-center shadow-sm sm:p-12 print:min-h-0 print:rounded-none print:border-4 print:shadow-none ${STYLE_CLASSES[style] ?? STYLE_CLASSES.classic}`}
-        >
-          {schoolName ? (
-            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-text-muted">
-              {schoolName}
-            </p>
-          ) : null}
-          <p className="mt-2 text-sm font-semibold uppercase tracking-[0.35em] text-primary">
-            Certificate of Achievement
-          </p>
-          <p className="mt-6 text-base text-text-muted">This certificate is proudly presented to</p>
-          <h2 className="mt-3 font-serif text-4xl font-bold text-text sm:text-5xl print:text-black">
-            {studentName || "Student Name"}
-          </h2>
-          <p className="mt-6 max-w-2xl text-base leading-relaxed text-text-muted sm:text-lg">
-            For {achievement || "outstanding effort and achievement"}
-          </p>
-          <div className="mt-10 flex w-full max-w-xl items-end justify-between gap-8 text-sm text-text-muted">
-            <div className="flex-1 border-t border-border pt-2">
-              {presentedBy || "Teacher / Principal"}
-            </div>
-            <div className="flex-1 border-t border-border pt-2">
-              {date
-                ? new Date(date + "T12:00:00").toLocaleDateString(undefined, {
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                  })
-                : "Date"}
-            </div>
-          </div>
-        </div>
+        <CertificatePreview
+          studentName={studentName}
+          achievement={achievement}
+          presentedBy={presentedBy}
+          schoolName={schoolName}
+          date={date}
+          themeKey={style}
+        />
       </section>
     </div>
   );
