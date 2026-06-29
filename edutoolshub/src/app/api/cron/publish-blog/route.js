@@ -25,7 +25,7 @@ The topic must be relevant to 2026 search trends and target low-competition, hig
 Requirements:
 
 Generate a compelling SEO title (under 60 characters).
-Include a primary keyword and 5-10 related secondary keywords naturally throughout the article.
+Include a primary keyword and related keywords naturally throughout the article.
 Create an engaging introduction with the primary keyword in the first paragraph.
 Use proper heading structure (H1, H2, H3).
 Include:
@@ -46,7 +46,9 @@ Return ONLY valid JSON (no markdown, no extra text):
   "title": "SEO optimized title (50-60 chars, no special chars)",
   "slug": "url-friendly-slug-with-hyphens-only",
   "metaDescription": "Meta description (150-160 chars)",
-  "keyword": "main keyword phrase",
+  "primaryKeyword": "main keyword phrase",
+  "excerpt": "Excerpt (150-160 chars)",
+  "featuredImagePrompt": "Prompt for Unsplash image generation",
   "content": "Full blog content with H2 and H3 headings using markdown format"
 }`;
 
@@ -54,15 +56,6 @@ const REPAIR_FIELDS_PROMPT = `Fix the blog title and slug. Return ONLY valid JSO
 {
   "title": "SEO optimized title (50-60 chars, no special chars)",
   "slug": "url-friendly-slug-with-hyphens-only"
-  "metaDescription": "Meta description (150-160 chars)",
-  "primaryKeyword": "main keyword phrase",
-  "secondaryKeywords": ["related keyword phrase 1", "related keyword phrase 2", "related keyword phrase 3"],
-  "excerpt": "Excerpt (150-160 chars)",
-  "featuredImagePrompt": "Prompt for Unsplash image generation",
-  "tags": ["free educational tools", "education", "2026"],
-  "category": "free educational tools",
-  "readingTime": "Estimated reading time (in minutes)",
-  "content": "Full blog content with H2 and H3 headings using markdown format"
 }`;
 
 const EDUCATION_TOPICS = [
@@ -265,6 +258,39 @@ function pickDailyTopic() {
   return EDUCATION_TOPICS[dayIndex % EDUCATION_TOPICS.length];
 }
 
+function getPrimaryKeyword(parsed) {
+  if (typeof parsed.primaryKeyword === "string" && parsed.primaryKeyword.trim()) {
+    return parsed.primaryKeyword.trim();
+  }
+  if (typeof parsed.keyword === "string" && parsed.keyword.trim()) {
+    return parsed.keyword.trim();
+  }
+  return "";
+}
+
+function resolveExcerpt(parsed, title, resolvedMeta) {
+  const fromAi = typeof parsed.excerpt === "string" ? parsed.excerpt.trim() : "";
+  if (fromAi.length >= 40 && fromAi.length <= 200) {
+    return truncate(fromAi, 200);
+  }
+
+  const excerptSource = resolvedMeta || title;
+  const excerpt = truncate(excerptSource, 200);
+  return excerpt.length >= 40 ? excerpt : truncate(`${title}. ${resolvedMeta}`, 200);
+}
+
+function getImageSearchQuery(parsed, keyword) {
+  const fromPrompt =
+    typeof parsed.featuredImagePrompt === "string" ? parsed.featuredImagePrompt.trim() : "";
+  if (fromPrompt && !isPlaceholderValue(fromPrompt)) {
+    return truncate(fromPrompt, 100);
+  }
+  if (keyword) {
+    return truncate(keyword, 100);
+  }
+  return "education classroom";
+}
+
 async function callMistral(messages, label) {
   const apiKey = requireEnv("MISTRAL_API_KEY");
 
@@ -280,7 +306,7 @@ async function callMistral(messages, label) {
         model: "mistral-tiny",
         messages,
         temperature: 0.7,
-        max_tokens: 2000,
+        max_tokens: 4096,
         response_format: { type: "json_object" },
       },
       timeout: 45000,
@@ -329,7 +355,7 @@ async function repairTitleAndSlug({ title, slug, keyword, content }) {
 function applyFieldFallbacks(parsed) {
   let title = typeof parsed.title === "string" ? sanitizeTitle(parsed.title) : "";
   let slug = typeof parsed.slug === "string" ? parsed.slug.trim().toLowerCase() : "";
-  const keyword = typeof parsed.keyword === "string" ? parsed.keyword.trim() : "";
+  const keyword = getPrimaryKeyword(parsed);
   const content = typeof parsed.content === "string" ? parsed.content.trim() : "";
 
   if (!isValidTitle(title)) {
@@ -365,7 +391,7 @@ async function validateAndRepairBlogContent(parsed) {
     typeof parsed.metaDescription === "string"
       ? truncate(parsed.metaDescription.trim(), 160)
       : "";
-  const keyword = typeof parsed.keyword === "string" ? parsed.keyword.trim() : "";
+  const keyword = getPrimaryKeyword(parsed);
   const content = typeof parsed.content === "string" ? parsed.content.trim() : "";
 
   if (!content) {
@@ -391,10 +417,7 @@ async function validateAndRepairBlogContent(parsed) {
   }
 
   const resolvedMeta = metaDescription || truncate(extractTitleFromContent(content) || title, 160);
-  const excerptSource = resolvedMeta || title;
-  const excerpt = truncate(excerptSource, 200);
-  const normalizedExcerpt =
-    excerpt.length >= 40 ? excerpt : truncate(`${title}. ${resolvedMeta}`, 200);
+  const normalizedExcerpt = resolveExcerpt(parsed, title, resolvedMeta);
 
   return {
     title: truncate(title, 100),
@@ -403,6 +426,7 @@ async function validateAndRepairBlogContent(parsed) {
     keyword,
     excerpt: normalizedExcerpt,
     body,
+    imageSearchQuery: getImageSearchQuery(parsed, keyword),
   };
 }
 
@@ -506,15 +530,16 @@ function markdownToPortableText(markdown) {
   return blocks;
 }
 
-async function fetchUnsplashImage() {
+async function fetchUnsplashImage(query = "education classroom") {
   const accessKey = requireEnv("UNSPLASH_ACCESS_KEY");
+  const searchQuery = query?.trim() || "education classroom";
 
   const response = await axiosWithRetry(
     {
       method: "GET",
       url: UNSPLASH_API_URL,
       params: {
-        query: "education",
+        query: searchQuery,
         count: 1,
       },
       headers: {
@@ -603,7 +628,7 @@ async function publishToSanity(blogContent, unsplashImage) {
 
 async function runPublishJob() {
   const blogContent = await generateBlogContent();
-  const unsplashImage = await fetchUnsplashImage();
+  const unsplashImage = await fetchUnsplashImage(blogContent.imageSearchQuery);
   const post = await publishToSanity(blogContent, unsplashImage);
 
   return {
