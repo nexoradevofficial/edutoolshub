@@ -8,7 +8,39 @@ export const maxDuration = 60;
 const MISTRAL_API_URL = "https://api.mistral.ai/v1/chat/completions";
 const UNSPLASH_API_URL = "https://api.unsplash.com/photos/random";
 
-const BLOG_PROMPT = `Generate a 1000 -1300 words SEO blog about a random trending free educational tools for teachers and students or educational topic.
+const BLOG_PROMPT = `
+Generate a 1000-1500 word, high-quality, SEO-optimized blog article about a RANDOM trending topic related to:
+
+Free educational tools for teachers
+Free educational tools for students
+AI tools for education
+Online learning platforms
+Classroom technology
+Study productivity tools
+Educational technology (EdTech) trends in 2026
+Digital teaching and learning resources
+
+The topic must be relevant to 2026 search trends and target low-competition, high-search-volume keywords.
+
+Requirements:
+
+Generate a compelling SEO title (under 60 characters).
+Include a primary keyword and 5-10 related secondary keywords naturally throughout the article.
+Create an engaging introduction with the primary keyword in the first paragraph.
+Use proper heading structure (H1, H2, H3).
+Include:
+Features
+Benefits
+Pros and Cons (if discussing a tool)
+Comparison table (when relevant)
+Frequently Asked Questions (FAQ)
+Conclusion with a call-to-action.
+Maintain keyword density of approximately 1-2%.
+Write in a human, conversational, and informative style.
+Optimize for Google's Helpful Content and E-E-A-T guidelines.
+Ensure the content is unique, factually accurate, and not generic.
+Include practical examples and actionable tips.
+The article should be evergreen and suitable for ranking on Google in 2026.
 Return ONLY valid JSON (no markdown, no extra text):
 {
   "title": "SEO optimized title (50-60 chars, no special chars)",
@@ -22,6 +54,15 @@ const REPAIR_FIELDS_PROMPT = `Fix the blog title and slug. Return ONLY valid JSO
 {
   "title": "SEO optimized title (50-60 chars, no special chars)",
   "slug": "url-friendly-slug-with-hyphens-only"
+  "metaDescription": "Meta description (150-160 chars)",
+  "primaryKeyword": "main keyword phrase",
+  "secondaryKeywords": ["related keyword phrase 1", "related keyword phrase 2", "related keyword phrase 3"],
+  "excerpt": "Excerpt (150-160 chars)",
+  "featuredImagePrompt": "Prompt for Unsplash image generation",
+  "tags": ["free educational tools", "education", "2026"],
+  "category": "free educational tools",
+  "readingTime": "Estimated reading time (in minutes)",
+  "content": "Full blog content with H2 and H3 headings using markdown format"
 }`;
 
 const EDUCATION_TOPICS = [
@@ -35,6 +76,19 @@ const EDUCATION_TOPICS = [
   "Collaborative project tools for group assignments",
   "Formative assessment apps for K-12 teachers",
   "Career readiness resources for vocational students",
+  "Top 20 online study Tools Every Student Should Use in 2026",
+  "Top Tools for Research Papers and Assignments",
+  "The Best Tutors and Personalized Learning Platforms",
+  "Top Chrome Extensions Every Student Should Install in 2026",
+  "Best Free Online Teaching Tools for Virtual Classrooms",
+  "How Teachers Can Use online tools to Create Lesson Plans",
+  "How AI is Transforming Education in 2026",
+  "ChatGPT vs Google Gemini for Students: Which One is Better in 2026?",
+  "Can AI Replace Traditional Learning Methods",
+  "How to Use AI Responsibly in Education",
+  "educational technology trends 2026",
+  "Best Homework Helper Websites",
+  "Future of Online Education in 2026",
 ];
 
 const PLACEHOLDER_VALUES = new Set(["---", "--", "-", "…", "..."]);
