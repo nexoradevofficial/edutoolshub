@@ -3,7 +3,7 @@ import { createClient } from "@sanity/client";
 
 /** Vercel Cron schedule: daily at 8:00 AM UTC — configured in vercel.json */
 export const dynamic = "force-dynamic";
-export const maxDuration = 60;
+export const maxDuration = 300;
 
 const MISTRAL_API_URL = "https://api.mistral.ai/v1/chat/completions";
 const UNSPLASH_API_URL = "https://api.unsplash.com/photos/random";
@@ -88,15 +88,27 @@ const PLACEHOLDER_VALUES = new Set(["---", "--", "-", "…", "..."]);
 const SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
 function isAuthorized(request) {
-  const cronSecret = process.env.CRON_SECRET;
+  const cronSecret = process.env.CRON_SECRET?.trim();
   const authHeader = request.headers.get("authorization") || "";
-  const bearer = authHeader.startsWith("Bearer ") ? authHeader.slice(7) : null;
-  const headerSecret = request.headers.get("x-cron-secret");
+  const bearer = authHeader.startsWith("Bearer ") ? authHeader.slice(7).trim() : null;
+  const headerSecret = request.headers.get("x-cron-secret")?.trim();
   const { searchParams } = new URL(request.url);
-  const querySecret = searchParams.get("secret");
+  const querySecret = searchParams.get("secret")?.trim();
+  const isVercelCron = request.headers.get("x-vercel-cron") === "1";
 
   if (cronSecret) {
-    return bearer === cronSecret || headerSecret === cronSecret || querySecret === cronSecret;
+    const authorized =
+      bearer === cronSecret || headerSecret === cronSecret || querySecret === cronSecret;
+    if (!authorized && isVercelCron) {
+      console.error("[publish-blog] Vercel cron invoked but CRON_SECRET did not match.");
+    }
+    return authorized;
+  }
+
+  if (isVercelCron) {
+    console.error(
+      "[publish-blog] Vercel cron invoked but CRON_SECRET is not set in this environment."
+    );
   }
 
   return process.env.ALLOW_OPEN_ADMIN_REFRESH === "true";
@@ -643,17 +655,21 @@ async function runPublishJob() {
 
 export async function GET(request) {
   if (!isAuthorized(request)) {
+    console.warn("[publish-blog] Unauthorized cron request.");
     return Response.json({ success: false, error: "Unauthorized" }, { status: 401 });
   }
 
+  const startedAt = new Date().toISOString();
+  console.info("[publish-blog] Cron job started at", startedAt);
+
   try {
     const result = await runPublishJob();
-    console.info("[publish-blog] Published post:", result.postId, result.title);
-    return Response.json(result);
+    console.info("[publish-blog] Published post:", result.postId, result.title, "startedAt:", startedAt);
+    return Response.json({ ...result, startedAt });
   } catch (err) {
     const errorMessage = err.response?.data?.message || err.message || "Unknown error";
-    console.error("[publish-blog] Job failed:", errorMessage, err.response?.data ?? "");
-    return Response.json({ success: false, error: errorMessage }, { status: 500 });
+    console.error("[publish-blog] Job failed:", errorMessage, "startedAt:", startedAt, err.response?.data ?? "");
+    return Response.json({ success: false, error: errorMessage, startedAt }, { status: 500 });
   }
 }
 
