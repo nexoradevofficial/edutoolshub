@@ -8,39 +8,26 @@ export const maxDuration = 300;
 const MISTRAL_API_URL = "https://api.mistral.ai/v1/chat/completions";
 const UNSPLASH_API_URL = "https://api.unsplash.com/photos/random";
 
-const BLOG_PROMPT = `
-Generate a 1000-1500 word, high-quality, SEO-optimized blog article about a RANDOM trending topic related to:
-
-Free educational tools for teachers
-Free educational tools for students
-AI tools for education
-Online learning platforms
-Classroom technology
-Study productivity tools
-Educational technology (EdTech) trends in 2026
-Digital teaching and learning resources
-
-The topic must be relevant to 2026 search trends and target low-competition, high-search-volume keywords.
+const BLOG_ARTICLE_REQUIREMENTS = `
+Write a high-quality, SEO-optimized article relevant to 2026 search trends.
 
 Requirements:
+- Include the primary keyword and related keywords naturally throughout the article.
+- Start with an engaging introduction that uses the primary keyword in the first paragraph.
+- Use proper heading structure (H2 and H3 only — do not include an H1).
+- Include features, benefits, pros and cons (when relevant), a comparison table (when relevant), FAQ, and a conclusion with a call-to-action.
+- Maintain keyword density of approximately 1-2%.
+- Write in a human, conversational, and informative style.
+- Optimize for Google's Helpful Content and E-E-A-T guidelines.
+- Include practical examples and actionable tips.
+- Keep the article evergreen and suitable for ranking on Google in 2026.`;
 
-Generate a compelling SEO title (under 60 characters).
-Include a primary keyword and related keywords naturally throughout the article.
-Create an engaging introduction with the primary keyword in the first paragraph.
-Use proper heading structure (H1, H2, H3).
-Include:
-Features
-Benefits
-Pros and Cons (if discussing a tool)
-Comparison table (when relevant)
-Frequently Asked Questions (FAQ)
-Conclusion with a call-to-action.
-Maintain keyword density of approximately 1-2%.
-Write in a human, conversational, and informative style.
-Optimize for Google's Helpful Content and E-E-A-T guidelines.
-Ensure the content is unique, factually accurate, and not generic.
-Include practical examples and actionable tips.
-The article should be evergreen and suitable for ranking on Google in 2026.
+const BLOG_METADATA_PROMPT = `
+Generate SEO metadata for a blog article about a trending topic related to:
+Free educational tools for teachers, free educational tools for students, AI tools for education,
+online learning platforms, classroom technology, study productivity tools, EdTech trends in 2026,
+or digital teaching and learning resources.
+
 Return ONLY valid JSON (no markdown, no extra text):
 {
   "title": "SEO optimized title (50-60 chars, no special chars)",
@@ -48,9 +35,19 @@ Return ONLY valid JSON (no markdown, no extra text):
   "metaDescription": "Meta description (150-160 chars)",
   "primaryKeyword": "main keyword phrase",
   "excerpt": "Excerpt (150-160 chars)",
-  "featuredImagePrompt": "Prompt for Unsplash image generation",
-  "content": "Full blog content with H2 and H3 headings using markdown format"
-}`;
+  "featuredImagePrompt": "Short Unsplash search query for a relevant image"
+}
+
+Do NOT include the article body in this response.`;
+
+const BLOG_CONTENT_PROMPT = `${BLOG_ARTICLE_REQUIREMENTS}
+
+Return ONLY valid JSON (no markdown fences, no extra text):
+{
+  "content": "Full blog article in markdown with H2 and H3 headings"
+}
+
+Escape all quotes and newlines inside the content string so the JSON is valid.`;
 
 const REPAIR_FIELDS_PROMPT = `Fix the blog title and slug. Return ONLY valid JSON (no markdown, no extra text):
 {
@@ -303,7 +300,8 @@ function getImageSearchQuery(parsed, keyword) {
   return "education classroom";
 }
 
-async function callMistral(messages, label) {
+async function callMistral(messages, label, options = {}) {
+  const { maxTokens = 4096, timeout = 45000 } = options;
   const apiKey = requireEnv("MISTRAL_API_KEY");
 
   const response = await axiosWithRetry(
@@ -318,10 +316,10 @@ async function callMistral(messages, label) {
         model: "mistral-tiny",
         messages,
         temperature: 0.7,
-        max_tokens: 4096,
+        max_tokens: maxTokens,
         response_format: { type: "json_object" },
       },
-      timeout: 45000,
+      timeout,
     },
     label
   );
@@ -331,7 +329,50 @@ async function callMistral(messages, label) {
     throw new Error("Mistral API returned an empty or invalid response.");
   }
 
+  if (response.data?.choices?.[0]?.finish_reason === "length") {
+    console.warn(`[publish-blog] ${label} response was truncated (finish_reason=length).`);
+  }
+
   return content;
+}
+
+async function callMistralJson(messages, label, options = {}) {
+  let lastParseError;
+
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      const rawContent = await callMistral(
+        messages,
+        attempt === 0 ? label : `${label} retry`,
+        options
+      );
+      return parseMistralJson(rawContent);
+    } catch (err) {
+      const isParseError =
+        err instanceof SyntaxError ||
+        err.name === "SyntaxError" ||
+        err.message.includes("JSON") ||
+        err.message.includes("valid JSON");
+
+      if (isParseError && attempt === 0) {
+        lastParseError = err;
+        console.error(`[publish-blog] Retrying ${label} after JSON parse failure.`);
+        messages = [
+          {
+            role: "user",
+            content: `${messages[0].content}\n\nIMPORTANT: Your previous response was not valid JSON. Return ONLY a complete JSON object with properly escaped string values.`,
+          },
+        ];
+        continue;
+      }
+
+      throw err;
+    }
+  }
+
+  throw new Error(
+    `Failed to parse ${label} JSON after retry: ${lastParseError?.message || "Unknown parse error"}`
+  );
 }
 
 async function repairTitleAndSlug({ title, slug, keyword, content }) {
@@ -350,7 +391,8 @@ async function repairTitleAndSlug({ title, slug, keyword, content }) {
           content: `${REPAIR_FIELDS_PROMPT}\n\n${repairContext}`,
         },
       ],
-      "Mistral field repair"
+      "Mistral field repair",
+      { maxTokens: 512, timeout: 30000 }
     );
 
     const repaired = extractJsonFromResponse(raw);
@@ -458,45 +500,46 @@ function parseMistralJson(rawContent) {
 
 async function generateBlogContent() {
   const topic = pickDailyTopic();
-  let lastParseError;
 
-  for (let attempt = 0; attempt < 2; attempt++) {
-    try {
-      const rawContent = await callMistral(
-        [
-          {
-            role: "user",
-            content:
-              attempt === 0
-                ? `${BLOG_PROMPT}\n\nToday's focus topic: ${topic}`
-                : `${BLOG_PROMPT}\n\nIMPORTANT: Your previous response was not valid JSON. Return ONLY the JSON object with no markdown fences or commentary.\n\nToday's focus topic: ${topic}`,
-          },
-        ],
-        attempt === 0 ? "Mistral API" : "Mistral API retry"
-      );
+  const metadata = await callMistralJson(
+    [
+      {
+        role: "user",
+        content: `${BLOG_METADATA_PROMPT}\n\nToday's focus topic: ${topic}`,
+      },
+    ],
+    "Mistral metadata",
+    { maxTokens: 1024, timeout: 30000 }
+  );
 
-      const parsed = parseMistralJson(rawContent);
-      return await validateAndRepairBlogContent(parsed);
-    } catch (err) {
-      const isParseError =
-        err instanceof SyntaxError ||
-        err.name === "SyntaxError" ||
-        err.message.includes("JSON") ||
-        err.message.includes("valid JSON");
+  const title = typeof metadata.title === "string" ? metadata.title : topic;
+  const primaryKeyword =
+    typeof metadata.primaryKeyword === "string" ? metadata.primaryKeyword : topic;
 
-      if (isParseError && attempt === 0) {
-        lastParseError = err;
-        console.error("[publish-blog] Retrying Mistral call after JSON parse failure.");
-        continue;
-      }
+  const contentResult = await callMistralJson(
+    [
+      {
+        role: "user",
+        content: `${BLOG_CONTENT_PROMPT}
 
-      throw err;
-    }
+Today's focus topic: ${topic}
+Title: ${title}
+Primary keyword: ${primaryKeyword}
+Target length: 1000-1200 words.`,
+      },
+    ],
+    "Mistral content",
+    { maxTokens: 8192, timeout: 120000 }
+  );
+
+  const content =
+    typeof contentResult.content === "string" ? contentResult.content.trim() : "";
+
+  if (!content) {
+    throw new Error("Mistral content response is missing the article body.");
   }
 
-  throw new Error(
-    `Failed to parse Mistral JSON after retry: ${lastParseError?.message || "Unknown parse error"}`
-  );
+  return validateAndRepairBlogContent({ ...metadata, content });
 }
 
 function textToBlock(text, style = "normal") {
