@@ -44,10 +44,14 @@ const BLOG_CONTENT_PROMPT = `${BLOG_ARTICLE_REQUIREMENTS}
 
 Return ONLY valid JSON (no markdown fences, no extra text):
 {
-  "content": "Full blog article in markdown with H2 and H3 headings"
+  "content": "Full blog article in markdown with ## H2 and ### H3 headings"
 }
 
-Escape all quotes and newlines inside the content string so the JSON is valid.`;
+Rules:
+- Use the key "content" only (never "article" or "body").
+- Use markdown only: ## headings, ### subheadings, - bullet lists, 1. numbered lists.
+- Do NOT use HTML tags such as <p>, <h2>, <ul>, <table>, or <a>.
+- Escape quotes and newlines inside the content string so the JSON is valid.`;
 
 const REPAIR_FIELDS_PROMPT = `Fix the blog title and slug. Return ONLY valid JSON (no markdown, no extra text):
 {
@@ -410,7 +414,7 @@ function applyFieldFallbacks(parsed) {
   let title = typeof parsed.title === "string" ? sanitizeTitle(parsed.title) : "";
   let slug = typeof parsed.slug === "string" ? parsed.slug.trim().toLowerCase() : "";
   const keyword = getPrimaryKeyword(parsed);
-  const content = typeof parsed.content === "string" ? parsed.content.trim() : "";
+  const content = extractArticleBody(parsed);
 
   if (!isValidTitle(title)) {
     const fromContent = sanitizeTitle(extractTitleFromContent(content));
@@ -446,7 +450,7 @@ async function validateAndRepairBlogContent(parsed) {
       ? truncate(parsed.metaDescription.trim(), 160)
       : "";
   const keyword = getPrimaryKeyword(parsed);
-  const content = typeof parsed.content === "string" ? parsed.content.trim() : "";
+  const content = extractArticleBody(parsed);
 
   if (!content) {
     throw new Error("Mistral JSON response is missing blog content.");
@@ -465,7 +469,7 @@ async function validateAndRepairBlogContent(parsed) {
     throw new Error("Unable to produce a valid title and slug for blog publishing.");
   }
 
-  const body = markdownToPortableText(content);
+  const body = articleTextToPortableText(content);
   if (body.length === 0) {
     throw new Error("Could not convert blog content to Portable Text blocks.");
   }
@@ -532,14 +536,115 @@ Target length: 1000-1200 words.`,
     { maxTokens: 8192, timeout: 120000 }
   );
 
-  const content =
-    typeof contentResult.content === "string" ? contentResult.content.trim() : "";
+  const content = extractArticleBody(contentResult);
 
   if (!content) {
     throw new Error("Mistral content response is missing the article body.");
   }
 
   return validateAndRepairBlogContent({ ...metadata, content });
+}
+
+const ARTICLE_BODY_KEYS = ["content", "article", "body", "text"];
+
+function extractArticleBody(value) {
+  if (typeof value === "string") {
+    return normalizeArticleText(value);
+  }
+
+  if (!value || typeof value !== "object") {
+    return "";
+  }
+
+  for (const key of ARTICLE_BODY_KEYS) {
+    const candidate = value[key];
+    if (typeof candidate === "string" && candidate.trim()) {
+      return normalizeArticleText(candidate);
+    }
+  }
+
+  return "";
+}
+
+function normalizeArticleText(text) {
+  const trimmed = text.trim();
+  if (!trimmed) return "";
+
+  if (trimmed.startsWith("{")) {
+    try {
+      const parsed = JSON.parse(trimmed);
+      const nested = extractArticleBody(parsed);
+      if (nested) return nested;
+    } catch {
+      // Fall through — may be markdown that starts with "{" or truncated JSON.
+    }
+  }
+
+  return trimmed;
+}
+
+function isHtmlContent(text) {
+  return /<\/?[a-z][\s\S]*?>/i.test(text);
+}
+
+function stripHtmlTags(text) {
+  return text.replace(/<[^>]+>/g, "").trim();
+}
+
+function inlineHtmlToMarkdown(text) {
+  return text
+    .replace(/<strong[^>]*>([\s\S]*?)<\/strong>/gi, "**$1**")
+    .replace(/<b[^>]*>([\s\S]*?)<\/b>/gi, "**$1**")
+    .replace(/<em[^>]*>([\s\S]*?)<\/em>/gi, "*$1*")
+    .replace(/<i[^>]*>([\s\S]*?)<\/i>/gi, "*$1*")
+    .replace(/<a[^>]*href=["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi, "[$2]($1)")
+    .replace(/<br\s*\/?>/gi, "\n")
+    .replace(/<[^>]+>/g, "")
+    .replace(/&nbsp;/gi, " ")
+    .replace(/&amp;/gi, "&")
+    .replace(/&lt;/gi, "<")
+    .replace(/&gt;/gi, ">")
+    .replace(/&quot;/gi, '"')
+    .trim();
+}
+
+function htmlToMarkdown(html) {
+  let source = html.trim();
+
+  source = source.replace(/<table[\s\S]*?<\/table>/gi, (tableHtml) => {
+    const rows = tableHtml.match(/<tr[\s\S]*?<\/tr>/gi) || [];
+    const lines = rows.map((row) => {
+      const cells = row.match(/<t[hd][\s\S]*?<\/t[hd]>/gi) || [];
+      return cells.map((cell) => inlineHtmlToMarkdown(cell)).join(" | ");
+    });
+    return `\n\n${lines.join("\n")}\n\n`;
+  });
+
+  source = source.replace(/<h2[^>]*>([\s\S]*?)<\/h2>/gi, (_, inner) => {
+    return `\n\n## ${inlineHtmlToMarkdown(inner)}\n\n`;
+  });
+  source = source.replace(/<h3[^>]*>([\s\S]*?)<\/h3>/gi, (_, inner) => {
+    return `\n\n### ${inlineHtmlToMarkdown(inner)}\n\n`;
+  });
+  source = source.replace(/<h4[^>]*>([\s\S]*?)<\/h4>/gi, (_, inner) => {
+    return `\n\n### ${inlineHtmlToMarkdown(inner)}\n\n`;
+  });
+  source = source.replace(/<p[^>]*>([\s\S]*?)<\/p>/gi, (_, inner) => {
+    return `\n\n${inlineHtmlToMarkdown(inner)}\n\n`;
+  });
+  source = source.replace(/<li[^>]*>([\s\S]*?)<\/li>/gi, (_, inner) => {
+    return `\n- ${inlineHtmlToMarkdown(inner)}`;
+  });
+
+  return inlineHtmlToMarkdown(source);
+}
+
+function articleTextToPortableText(text) {
+  const normalized = normalizeArticleText(text);
+  if (!normalized) return [];
+
+  const markdown = isHtmlContent(normalized) ? htmlToMarkdown(normalized) : normalized;
+  return markdownToPortableText(markdown);
 }
 
 function textToBlock(text, style = "normal") {
