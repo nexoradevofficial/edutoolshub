@@ -1,17 +1,16 @@
 import { notFound, redirect } from "next/navigation";
 import BlogPostView from "@/components/blog/BlogPostView";
 import { SITE_NAME, SITE_URL } from "@/constants/site";
-import { getSanityServerClient } from "@/lib/sanity-server";
+import { POSTS_TAG, postTag, sanityServerFetch } from "@/lib/sanity-server";
 import { buildPostOgImageUrl, enrichPostForBlogView } from "@/lib/sanity-image";
 import { normalizePost, normalizePostSlug } from "@/sanity/normalizeSlug";
 import { allPostSlugsQuery, postBySlugQuery } from "@/sanity/queries";
 
-export const revalidate = 120;
+export const revalidate = 300;
 
 export async function generateStaticParams() {
   try {
-    const client = getSanityServerClient();
-    const slugs = await client.fetch(allPostSlugsQuery);
+    const slugs = await sanityServerFetch(allPostSlugsQuery, {}, { tags: [POSTS_TAG] });
     return (Array.isArray(slugs) ? slugs : [])
       .map((slug) => normalizePostSlug(slug))
       .filter(Boolean)
@@ -27,8 +26,11 @@ export async function generateMetadata({ params }) {
   if (!slug || slug === "null") return { title: `Blog | ${SITE_NAME}` };
 
   try {
-    const client = getSanityServerClient();
-    const rawPost = await client.fetch(postBySlugQuery, { slug });
+    const rawPost = await sanityServerFetch(
+      postBySlugQuery,
+      { slug },
+      { tags: [POSTS_TAG, postTag(slug)] }
+    );
     const post = normalizePost(rawPost);
     if (!post) return { title: `Article not found | ${SITE_NAME}` };
 
@@ -70,8 +72,11 @@ export default async function BlogPostPage({ params }) {
     redirect("/blog");
   }
 
-  const client = getSanityServerClient();
-  const rawPost = await client.fetch(postBySlugQuery, { slug });
+  const rawPost = await sanityServerFetch(
+    postBySlugQuery,
+    { slug },
+    { tags: [POSTS_TAG, postTag(slug)] }
+  );
   const post = enrichPostForBlogView(normalizePost(rawPost));
 
   if (!post) {

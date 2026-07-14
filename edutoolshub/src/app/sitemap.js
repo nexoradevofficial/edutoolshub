@@ -2,8 +2,9 @@ import { normalizePostSlug } from "@/sanity/normalizeSlug";
 import { handlePostsRequest } from "@/lib/posts-handler";
 import { SITE_URL, NAV_PAGES, TOOL_PAGES } from "@/lib/sitemap-data";
 
-/** Regenerate sitemap when Sanity publishes new posts (matches blog ISR). */
-export const revalidate = 120;
+/** Blog entries are cached under the shared `posts` tag, so publishing a post
+ *  busts this sitemap instantly. This time-based value is only a fallback. */
+export const revalidate = 300;
 
 function formatLastmod(date) {
   if (!date) return new Date().toISOString().slice(0, 10);

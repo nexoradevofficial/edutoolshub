@@ -1,5 +1,7 @@
 import axios from "axios";
 import { createClient } from "@sanity/client";
+import { revalidateTag, revalidatePath } from "next/cache";
+import { POSTS_TAG, postTag } from "@/lib/sanity-server";
 
 /** Vercel Cron schedule: daily at 8:00 AM UTC — configured in vercel.json */
 export const dynamic = "force-dynamic";
@@ -786,10 +788,34 @@ async function publishToSanity(blogContent, unsplashImage) {
   return created;
 }
 
+/**
+ * Bust every cache that lists or renders blog posts so a freshly published
+ * article shows up immediately on the home page, blog listing, its own page,
+ * and the sitemap — without waiting for time-based revalidation.
+ */
+function revalidateBlogCaches(slug) {
+  try {
+    revalidateTag(POSTS_TAG, "max");
+    if (slug) {
+      revalidateTag(postTag(slug), "max");
+    }
+    revalidatePath("/");
+    revalidatePath("/blog");
+    revalidatePath("/sitemap.xml");
+    if (slug) {
+      revalidatePath(`/blog/${slug}`);
+    }
+  } catch (err) {
+    console.error("[publish-blog] Cache revalidation failed:", err.message);
+  }
+}
+
 async function runPublishJob() {
   const blogContent = await generateBlogContent();
   const unsplashImage = await fetchUnsplashImage(blogContent.imageSearchQuery);
   const post = await publishToSanity(blogContent, unsplashImage);
+
+  revalidateBlogCaches(blogContent.slug);
 
   return {
     success: true,

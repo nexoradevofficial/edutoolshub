@@ -1,6 +1,6 @@
 import { buildPageMetadata } from "@/lib/metadata";
 import { enrichPostsForInsightSlide } from "@/lib/sanity-image";
-import { getSanityServerClient } from "@/lib/sanity-server";
+import { POSTS_TAG, sanityServerFetch } from "@/lib/sanity-server";
 import { recentPostsQuery } from "@/sanity/queries";
 import dynamic from "next/dynamic";
 import Hero from "@/components/Hero";
@@ -22,6 +22,9 @@ export const metadata = {
   keywords: KEYWORDS,
 };
 
+/** Fallback refresh cadence; a Sanity publish busts the cache instantly. */
+export const revalidate = 300;
+
 const websiteLd = {
   "@context": "https://schema.org",
   "@type": "WebSite",
@@ -39,8 +42,7 @@ const websiteLd = {
 export default async function HomePage() {
   let recentPosts = [];
   try {
-    const client = getSanityServerClient();
-    const raw = await client.fetch(recentPostsQuery);
+    const raw = await sanityServerFetch(recentPostsQuery, {}, { tags: [POSTS_TAG] });
     recentPosts = enrichPostsForInsightSlide(raw);
   } catch {
     recentPosts = [];

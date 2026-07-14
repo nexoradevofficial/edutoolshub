@@ -3,26 +3,28 @@ import {
   postBySlugQuery,
   recentPostsQuery,
 } from "@/sanity/queries";
-import { getSanityServerClient } from "@/lib/sanity-server";
+import { POSTS_TAG, postTag, sanityServerFetch } from "@/lib/sanity-server";
 
 export const CACHE_MAX_AGE = 120;
 
 export async function handlePostsRequest(scope, slug) {
-  const client = getSanityServerClient();
-
   if (scope === "all") {
-    return client.fetch(allPostsQuery);
+    return sanityServerFetch(allPostsQuery, {}, { tags: [POSTS_TAG] });
   }
 
   if (scope === "recent") {
-    return client.fetch(recentPostsQuery);
+    return sanityServerFetch(recentPostsQuery, {}, { tags: [POSTS_TAG] });
   }
 
   if (scope === "post") {
     if (!slug) {
       throw new Error("Missing slug parameter.");
     }
-    return client.fetch(postBySlugQuery, { slug });
+    return sanityServerFetch(
+      postBySlugQuery,
+      { slug },
+      { tags: [POSTS_TAG, postTag(slug)] }
+    );
   }
 
   throw new Error(`Invalid scope "${scope}". Use all, recent, or post.`);
