@@ -12,6 +12,11 @@
 **/.env.*.local
 *.local
 
+# Secrets / account recovery (NEVER commit these)
+recovery-codes*.txt
+*recovery-codes*
+*secret*.txt
+
 # Sanity local cache
 **/.sanity/
 
