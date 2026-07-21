@@ -3,6 +3,7 @@ import { enrichPostsForInsightSlide } from "@/lib/sanity-image";
 import { POSTS_TAG, sanityServerFetch } from "@/lib/sanity-server";
 import { recentPostsQuery } from "@/sanity/queries";
 import dynamic from "next/dynamic";
+import { Suspense } from "react";
 import Hero from "@/components/Hero";
 import { SITE_NAME, SITE_URL, DEFAULT_LOGO_PATH } from "@/constants/site";
 
@@ -39,7 +40,7 @@ const websiteLd = {
   },
 };
 
-export default async function HomePage() {
+async function LatestInsightsSection() {
   let recentPosts = [];
   try {
     const raw = await sanityServerFetch(recentPostsQuery, {}, { tags: [POSTS_TAG] });
@@ -48,6 +49,10 @@ export default async function HomePage() {
     recentPosts = [];
   }
 
+  return <LatestInsights initialPosts={recentPosts} />;
+}
+
+export default function HomePage() {
   return (
     <>
       <script
@@ -58,7 +63,9 @@ export default async function HomePage() {
       <ToolsSection />
       <HowItWorks />
       <WhyUse />
-      <LatestInsights initialPosts={recentPosts} />
+      <Suspense fallback={null}>
+        <LatestInsightsSection />
+      </Suspense>
     </>
   );
 }

@@ -1,5 +1,6 @@
 import "@/app/globals.css";
 import "@/print.css";
+import Script from "next/script";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import AnalyticsProvider from "@/components/providers/AnalyticsProvider";
@@ -37,10 +38,11 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <head>
-        <script
-          async
+        <Script
+          id="google-adsense"
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6260606959172709"
           crossOrigin="anonymous"
+          strategy="afterInteractive"
         />
       </head>
       <body>

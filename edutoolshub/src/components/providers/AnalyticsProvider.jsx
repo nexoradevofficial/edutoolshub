@@ -5,7 +5,7 @@ import { scheduleAnalytics } from "@/utils/analytics";
 
 export default function AnalyticsProvider({ children }) {
   useEffect(() => {
-    scheduleAnalytics();
+    return scheduleAnalytics();
   }, []);
 
   return children;

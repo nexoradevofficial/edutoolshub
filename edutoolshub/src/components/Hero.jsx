@@ -10,11 +10,11 @@ export default function Hero() {
       className="relative overflow-hidden bg-gradient-to-b from-slate-50 via-white to-white pt-12 pb-16 sm:pt-16 sm:pb-20"
     >
       <div
-        className="pointer-events-none absolute -top-24 right-0 h-96 w-96 rounded-full bg-primary/10 blur-3xl"
+        className="pointer-events-none absolute -top-24 right-0 hidden h-96 w-96 rounded-full bg-primary/10 blur-3xl sm:block"
         aria-hidden
       />
       <div
-        className="pointer-events-none absolute bottom-0 left-0 h-72 w-72 rounded-full bg-accent/10 blur-3xl"
+        className="pointer-events-none absolute bottom-0 left-0 hidden h-72 w-72 rounded-full bg-accent/10 blur-3xl sm:block"
         aria-hidden
       />
 

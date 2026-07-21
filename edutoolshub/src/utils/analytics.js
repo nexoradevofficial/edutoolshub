@@ -22,14 +22,41 @@ export function initAnalytics() {
 }
 
 export function scheduleAnalytics() {
-  if (typeof window === "undefined") return;
+  if (typeof window === "undefined") return undefined;
 
-  const run = () => initAnalytics();
-  if ("requestIdleCallback" in window) {
-    requestIdleCallback(run, { timeout: 4000 });
+  let timeoutId;
+  const interactionEvents = ["pointerdown", "keydown", "touchstart", "scroll"];
+
+  const cleanup = () => {
+    window.removeEventListener("load", scheduleFallback);
+    interactionEvents.forEach((eventName) => {
+      window.removeEventListener(eventName, run);
+    });
+    if (timeoutId) window.clearTimeout(timeoutId);
+  };
+
+  const run = () => {
+    cleanup();
+    initAnalytics();
+  };
+
+  // Keep analytics out of the critical rendering window. Real interactions
+  // initialize it immediately; otherwise it starts shortly after page load.
+  const scheduleFallback = () => {
+    timeoutId = window.setTimeout(run, 4000);
+  };
+
+  interactionEvents.forEach((eventName) => {
+    window.addEventListener(eventName, run, { once: true, passive: true });
+  });
+
+  if (document.readyState === "complete") {
+    scheduleFallback();
   } else {
-    window.addEventListener("load", run, { once: true });
+    window.addEventListener("load", scheduleFallback, { once: true });
   }
+
+  return cleanup;
 }
 
 export const trackToolUsed = (toolName, toolCategory = "") => {
