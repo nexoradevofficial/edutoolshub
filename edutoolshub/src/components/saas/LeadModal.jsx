@@ -6,11 +6,11 @@ import { Clock, MessageCircle, X } from "lucide-react";
 import { SAAS_LEADS_EMAIL, SAAS_WHATSAPP_URL } from "@/constants/site";
 import {
   DEFAULT_WA_SUBSCRIPTION_MESSAGE,
-  PHONE_COUNTRIES,
   formatNationalNumber,
   getPhoneCountry,
   toE164,
 } from "@/lib/phoneCountries";
+import CountryPhoneSelect from "./CountryPhoneSelect";
 
 const INSTITUTE_TYPES = [
   "School",
@@ -72,8 +72,7 @@ export default function LeadModal({ open, mode = "quote", productTitle, onClose 
 
   const update = (key) => (e) => setForm((f) => ({ ...f, [key]: e.target.value }));
 
-  const onCountryChange = (e) => {
-    const nextCode = e.target.value;
+  const onCountryChange = (nextCode) => {
     const nextCountry = getPhoneCountry(nextCode);
     setForm((f) => ({
       ...f,
@@ -265,20 +264,12 @@ export default function LeadModal({ open, mode = "quote", productTitle, onClose 
                       <label className={labelClass} htmlFor="lead-country">
                         WhatsApp number *
                       </label>
-                      <div className="flex flex-col gap-2 xs:flex-row sm:flex-row">
-                        <select
+                      <div className="flex flex-col gap-2 sm:flex-row">
+                        <CountryPhoneSelect
                           id="lead-country"
-                          className={`${inputClass} sm:max-w-[11.5rem] sm:shrink-0`}
                           value={form.countryCode}
                           onChange={onCountryChange}
-                          aria-label="Country code"
-                        >
-                          {PHONE_COUNTRIES.map((c) => (
-                            <option key={c.code} value={c.code}>
-                              {c.flag} {c.name} (+{c.dial})
-                            </option>
-                          ))}
-                        </select>
+                        />
                         <div className="relative min-w-0 flex-1">
                           <span className="pointer-events-none absolute left-3.5 top-1/2 z-[1] -translate-y-1/2 text-sm font-medium tabular-nums text-slate-400">
                             +{country.dial}
@@ -300,7 +291,8 @@ export default function LeadModal({ open, mode = "quote", productTitle, onClose 
                         </div>
                       </div>
                       <p id="lead-whatsapp-hint" className="mt-1.5 text-[11px] text-slate-400">
-                        Select country first — number formats automatically. Preview:{" "}
+                        Search &amp; select country first — number format updates automatically.
+                        Preview:{" "}
                         <span className="font-medium text-slate-600">
                           {e164 || `+${country.dial} …`}
                         </span>
