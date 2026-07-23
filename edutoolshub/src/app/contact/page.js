@@ -1,13 +1,22 @@
 import Contact from "@/views/Contact";
+import SaasPromoSection from "@/components/SaasPromoSection";
 import { buildPageMetadata } from "@/lib/metadata";
 
 export const metadata = buildPageMetadata({
-  title: "Contact EduToolsHub — Get in Touch",
+  title: "Contact EduToolsHub — Tools, Support & School SaaS Demo",
   description:
-    "Contact the EduToolsHub team with questions, feedback, or partnership inquiries. We read every message.",
+    "Contact EduToolsHub for tool feedback, partnerships, or a School & College Management System demo. WhatsApp and email support available.",
   path: "/contact",
+  keywords:
+    "contact EduToolsHub, school management demo, education SaaS support, tool feedback",
 });
 
 export default function ContactPage() {
-  return <Contact />;
+  return (
+    <>
+      <SaasPromoSection variant="banner" />
+      <Contact />
+      <SaasPromoSection variant="compact" id="contact-saas" />
+    </>
+  );
 }

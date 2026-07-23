@@ -10,6 +10,8 @@ const SUBJECTS = [
   "General inquiry",
   "Tool suggestion",
   "Bug report",
+  "School / College Management SaaS demo",
+  "SaaS pricing / subscription",
   "Partnership / collaboration",
   "Press / media",
   "Other",
@@ -132,8 +134,14 @@ export default function Contact() {
           </h1>
 
           <p className="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-text-muted">
-            Got a question, a tool idea, or a bug to report? Drop us a line and
-            we’ll get back to you within 1–2 business days.
+            Got a question, a tool idea, a bug to report, or want a demo of our{" "}
+            <a
+              href="/saas/school-college-management-system"
+              className="font-medium text-primary underline-offset-2 hover:underline"
+            >
+              School &amp; College Management System
+            </a>
+            ? Drop us a line — WhatsApp queries are handled quickly; email within 24 hours for SaaS.
           </p>
           <p className="mt-4 text-base font-medium text-text">
             Or email us directly at{" "}
@@ -394,10 +402,13 @@ export default function Contact() {
             <p className="mx-auto mt-4 max-w-2xl text-lg text-text-muted">
               The fastest way to know if {SITE_NAME} is right for you — try it.
             </p>
-            <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row sm:flex-wrap">
               <Button href="/tools" size="lg">
                 Browse all tools
                 <IconArrowRight />
+              </Button>
+              <Button href="/saas/school-college-management-system" variant="secondary" size="lg">
+                School Management SaaS
               </Button>
               <Button href="/about" variant="secondary" size="lg">
                 Learn about us

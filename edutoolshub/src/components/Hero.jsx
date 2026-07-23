@@ -34,7 +34,7 @@ export default function Hero() {
           and educational utilities for modern learners and educators.
         </p>
 
-        <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+        <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row sm:flex-wrap">
           <Button href="/tools/college-university-gpa-requirement-checker" size="lg">
             College / University GPA Requirement Checker
             <IconArrowRight />
@@ -42,10 +42,17 @@ export default function Hero() {
           <Button href="/tools" variant="secondary" size="lg">
             View All Tools
           </Button>
+          <Button href="/saas/school-college-management-system" variant="secondary" size="lg">
+            School Management SaaS
+            <IconArrowRight />
+          </Button>
         </div>
 
         <p className="mt-6 text-sm text-text-muted">
-          No login required · 100% free · Available worldwide
+          No login required for free tools · Also explore{" "}
+          <a href="/saas" className="font-medium text-primary hover:underline">
+            SaaS Solutions
+          </a>
         </p>
       </div>
     </section>

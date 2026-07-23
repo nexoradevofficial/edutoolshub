@@ -1,4 +1,5 @@
 import Button from "../components/ui/Button";
+import SaasPromoSection from "../components/SaasPromoSection";
 import {
   IconArrowRight,
   IconGift,
@@ -95,9 +96,13 @@ export default function About() {
             more time on learning.
           </p>
 
-          <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+          <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row sm:flex-wrap">
             <Button href="/tools" size="lg">
               Explore the tools
+              <IconArrowRight />
+            </Button>
+            <Button href="/saas/school-college-management-system" variant="secondary" size="lg">
+              School Management SaaS
               <IconArrowRight />
             </Button>
             <Button href="/blog" variant="secondary" size="lg">
@@ -106,6 +111,8 @@ export default function About() {
           </div>
         </div>
       </section>
+
+      <SaasPromoSection variant="banner" />
 
       <section className="py-16 sm:py-20">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
@@ -129,7 +136,15 @@ export default function About() {
                 We started {SITE_NAME} to fix that. Our goal is simple: ship
                 fast, focused tools that you can open in one click, use
                 immediately, and trust with your data. No accounts, no upsells,
-                no learning curve.
+                no learning curve. For institutes that need full automation, we
+                also offer a{" "}
+                <a
+                  href="/saas/school-college-management-system"
+                  className="font-medium text-primary underline-offset-2 hover:underline"
+                >
+                  School &amp; College Management System
+                </a>{" "}
+                cloud SaaS.
               </p>
               <p>
                 Every tool is designed around real classroom workflows{" "}
@@ -244,6 +259,8 @@ export default function About() {
         </div>
       </section>
 
+      <SaasPromoSection variant="compact" id="about-saas" />
+
       <section className="py-20 sm:py-24">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
           <div className="rounded-3xl border border-border bg-gradient-to-br from-primary/5 via-white to-accent/5 p-8 text-center shadow-sm sm:p-12">
@@ -255,10 +272,13 @@ export default function About() {
               love to automate, tell us — your suggestion might be the next
               tool we ship.
             </p>
-            <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row sm:flex-wrap">
               <Button href={`mailto:${CONTACT_EMAIL}`} size="lg">
                 Email us
                 <IconArrowRight />
+              </Button>
+              <Button href="/saas" variant="secondary" size="lg">
+                Explore SaaS Solutions
               </Button>
               <Button href="/tools" variant="secondary" size="lg">
                 Browse all tools
