@@ -10,6 +10,7 @@ import { IconArrowRight, IconClose, IconMenu } from "./icons/ToolIcons";
 const navLinks = [
   { label: "Home", href: "/", end: true },
   { label: "Tools", href: "/tools" },
+  { label: "SaaS Solutions", href: "/saas" },
   { label: "Blog", href: "/blog" },
   { label: "About Us", href: "/about" },
   { label: "Contact", href: "/contact" },

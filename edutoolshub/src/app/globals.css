@@ -10,7 +10,16 @@
   --color-border: #e2e8f0;
   --color-text: #0f172a;
   --color-text-muted: #64748b;
+  /* SaaS marketplace identity — deep ink + refined teal */
+  --color-saas-ink: #0b1220;
+  --color-saas-ink-soft: #141c2e;
+  --color-saas-teal: #0d9488;
+  --color-saas-teal-dark: #0f766e;
+  --color-saas-sky: #38bdf8;
+  --color-saas-mist: #f1f5f9;
+  --color-saas-glass: rgba(255, 255, 255, 0.72);
   --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-display: "Segoe UI", system-ui, -apple-system, sans-serif;
 }
 
 @layer base {
@@ -40,6 +49,83 @@
 
   svg {
     flex-shrink: 0;
+  }
+
+  @keyframes saas-gradient-shift {
+    0%,
+    100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+  }
+
+  @keyframes saas-float {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-12px);
+    }
+  }
+
+  @keyframes saas-border-spin {
+    to {
+      --saas-angle: 360deg;
+    }
+  }
+
+  .saas-animated-gradient {
+    background-size: 200% 200%;
+    animation: saas-gradient-shift 12s ease infinite;
+  }
+
+  .saas-float {
+    animation: saas-float 6s ease-in-out infinite;
+  }
+
+  .saas-glass {
+    background: var(--color-saas-glass);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+
+  .saas-grid-bg {
+    background-image:
+      linear-gradient(to right, rgba(15, 23, 42, 0.04) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(15, 23, 42, 0.04) 1px, transparent 1px);
+    background-size: 48px 48px;
+  }
+
+  .saas-gradient-border {
+    position: relative;
+    isolation: isolate;
+  }
+
+  .saas-gradient-border::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(
+      135deg,
+      rgba(13, 148, 136, 0.55),
+      rgba(37, 99, 235, 0.35),
+      rgba(56, 189, 248, 0.45)
+    );
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    z-index: -1;
   }
 }
 

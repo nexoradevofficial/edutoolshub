@@ -8,8 +8,15 @@ export function buildPageMetadata({
   path = "",
   keywords,
   noIndex = false,
+  ogImage,
+  ogType = "website",
 }) {
   const url = path ? `${SITE_URL}${path}` : SITE_URL;
+  const imageUrl = ogImage
+    ? ogImage.startsWith("http")
+      ? ogImage
+      : `${SITE_URL}${ogImage}`
+    : DEFAULT_OG_IMAGE;
 
   return {
     title,
@@ -17,17 +24,18 @@ export function buildPageMetadata({
     keywords,
     alternates: { canonical: url },
     openGraph: {
-      type: "website",
+      type: ogType,
       siteName: SITE_NAME,
       title,
       description,
       url,
+      locale: "en_US",
       images: [
         {
-          url: DEFAULT_OG_IMAGE,
-          width: 72,
-          height: 72,
-          alt: `${SITE_NAME} logo`,
+          url: imageUrl,
+          width: ogImage ? 1200 : 72,
+          height: ogImage ? 630 : 72,
+          alt: title,
         },
       ],
     },
@@ -35,8 +43,10 @@ export function buildPageMetadata({
       card: "summary_large_image",
       title,
       description,
-      images: [DEFAULT_OG_IMAGE],
+      images: [imageUrl],
     },
-    robots: noIndex ? { index: false, follow: false } : { index: true, follow: true },
+    robots: noIndex
+      ? { index: false, follow: false }
+      : { index: true, follow: true, googleBot: { index: true, follow: true } },
   };
 }

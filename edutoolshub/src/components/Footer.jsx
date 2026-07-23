@@ -15,13 +15,16 @@ export default function Footer() {
               </span>
             </Link>
             <p className="mt-3 max-w-sm text-sm text-text-muted">
-              Free education tools for students and teachers worldwide.
+              Free education tools and enterprise SaaS solutions for institutes worldwide.
             </p>
           </div>
 
           <nav className="flex flex-wrap justify-center gap-6 text-sm">
             <Link href="/tools" className="text-text-muted transition-colors hover:text-primary">
               Tools
+            </Link>
+            <Link href="/saas" className="text-text-muted transition-colors hover:text-primary">
+              SaaS Solutions
             </Link>
             <Link href="/blog" className="text-text-muted transition-colors hover:text-primary">
               Blog
