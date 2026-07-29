@@ -147,6 +147,7 @@ export default {
             {name: 'caption', title: 'Caption', type: 'string'},
           ],
         },
+        {type: 'contentTable'},
       ],
       validation: (Rule) => Rule.required().min(1),
     },

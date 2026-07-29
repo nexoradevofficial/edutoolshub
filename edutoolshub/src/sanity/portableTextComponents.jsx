@@ -1,4 +1,5 @@
 import { urlFor } from "./image";
+import ContentTable from "@/components/blog/ContentTable";
 
 /**
  * Component map passed to @portabletext/react's <PortableText components={...} />.
@@ -178,5 +179,6 @@ export const portableTextComponents = {
         </figure>
       );
     },
+    contentTable: ({ value }) => <ContentTable value={value} />,
   },
 };
