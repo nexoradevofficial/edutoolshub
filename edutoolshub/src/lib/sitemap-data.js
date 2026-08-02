@@ -11,6 +11,7 @@ export const NAV_PAGES = [
   { path: "/contact", priority: "0.6", changefreq: "monthly" },
   { path: "/privacy", priority: "0.3", changefreq: "yearly" },
   { path: "/terms", priority: "0.3", changefreq: "yearly" },
+  { path: "/cookies", priority: "0.3", changefreq: "yearly" },
 ];
 
 /**

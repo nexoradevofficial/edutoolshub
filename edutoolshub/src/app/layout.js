@@ -2,6 +2,7 @@ import "@/app/globals.css";
 import "@/print.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import CookieConsent from "@/components/CookieConsent";
 import AnalyticsProvider from "@/components/providers/AnalyticsProvider";
 import { SITE_NAME, SITE_URL, DEFAULT_LOGO_PATH } from "@/constants/site";
 
@@ -49,6 +50,7 @@ export default function RootLayout({ children }) {
             <Navbar />
             <main className="flex-1">{children}</main>
             <Footer />
+            <CookieConsent />
           </div>
         </AnalyticsProvider>
       </body>

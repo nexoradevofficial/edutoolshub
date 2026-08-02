@@ -76,6 +76,7 @@ export default function ToolPageLayout({
             howToUse={seo.howToUse}
             faqs={seo.faqs}
             relatedTools={seo.relatedTools}
+            guideSections={seo.guideSections}
           />
         )}
       </div>

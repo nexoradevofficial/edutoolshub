@@ -263,9 +263,16 @@ export default function PrivacyPolicy() {
               </UL>
               <P>
                 You can control cookies through your browser settings (for
-                example, blocking or deleting cookies) and through any cookie
-                banner or consent tool we provide. Blocking some cookies may
-                affect how the Service works.
+                example, blocking or deleting cookies) and through the cookie
+                consent banner on EduToolsHub. For full details, see our{" "}
+                <Link
+                  href="/cookies"
+                  className="font-medium text-primary underline-offset-2 hover:underline"
+                >
+                  Cookie Policy
+                </Link>
+                . Blocking some cookies may affect advertising measurement but
+                will not remove access to free tools.
               </P>
             </section>
 
@@ -276,7 +283,18 @@ export default function PrivacyPolicy() {
               <P>
                 We may use third-party advertising partners, including Google,
                 to display ads on the Service. Such advertising helps us keep
-                the tools free for everyone.
+                the tools free for everyone. To learn how Google uses data when
+                you use our partners’ sites or apps, see{" "}
+                <a
+                  href="https://policies.google.com/technologies/partner-sites"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-medium text-primary underline-offset-2 hover:underline"
+                >
+                  How Google uses information from sites or apps that use our
+                  services
+                </a>
+                .
               </P>
               <UL>
                 <li>

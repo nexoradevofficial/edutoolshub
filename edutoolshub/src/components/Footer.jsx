@@ -20,8 +20,14 @@ export default function Footer() {
           </div>
 
           <nav className="flex flex-wrap justify-center gap-6 text-sm">
+            <Link href="/tools#students" className="text-text-muted transition-colors hover:text-primary">
+              Student Tools
+            </Link>
+            <Link href="/tools#teachers" className="text-text-muted transition-colors hover:text-primary">
+              Teacher Tools
+            </Link>
             <Link href="/tools" className="text-text-muted transition-colors hover:text-primary">
-              Tools
+              All Tools
             </Link>
             <Link href="/saas" className="text-text-muted transition-colors hover:text-primary">
               SaaS Solutions
@@ -43,6 +49,9 @@ export default function Footer() {
             </Link>
             <Link href="/terms" className="text-text-muted transition-colors hover:text-primary">
               Terms of Service
+            </Link>
+            <Link href="/cookies" className="text-text-muted transition-colors hover:text-primary">
+              Cookie Policy
             </Link>
             <a
               href={`mailto:${CONTACT_EMAIL}`}

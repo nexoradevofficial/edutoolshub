@@ -2,6 +2,7 @@ import { buildPageMetadata } from "@/lib/metadata";
 import { enrichPostsForInsightSlide } from "@/lib/sanity-image";
 import { POSTS_TAG, sanityServerFetch } from "@/lib/sanity-server";
 import { recentPostsQuery } from "@/sanity/queries";
+import { applyBlogRewriteList } from "@/content/blogRewrites";
 import dynamic from "next/dynamic";
 import { Suspense } from "react";
 import Hero from "@/components/Hero";
@@ -12,13 +13,14 @@ const SaasPromoSection = dynamic(() => import("@/components/SaasPromoSection"));
 const HowItWorks = dynamic(() => import("@/components/HowItWorks"));
 const WhyUse = dynamic(() => import("@/components/WhyUse"));
 const LatestInsights = dynamic(() => import("@/components/LatestInsights"));
+const HomeEducationalContent = dynamic(() => import("@/components/HomeEducationalContent"));
 
 const TITLE =
   "Free Education Tools & School Management SaaS | EduToolsHub";
 const DESCRIPTION =
   "Free online tools for students and teachers — GPA calculator, attendance sheets, lesson planner — plus School & College Management System cloud SaaS for institutes. No signup for free tools.";
 const KEYWORDS =
-  "education tools, free tools for students, free tools for teachers, GPA calculator, school management system, college management system, school ERP Pakistan, education SaaS, institute management software, attendance sheet generator, lesson planner, EduToolsHub";
+  "education tools, GPA calculator, attendance sheet, lesson planner, school management system, EduToolsHub";
 
 export const metadata = {
   ...buildPageMetadata({
@@ -90,7 +92,7 @@ async function LatestInsightsSection() {
   let recentPosts = [];
   try {
     const raw = await sanityServerFetch(recentPostsQuery, {}, { tags: [POSTS_TAG] });
-    recentPosts = enrichPostsForInsightSlide(raw);
+    recentPosts = enrichPostsForInsightSlide(applyBlogRewriteList(raw));
   } catch {
     recentPosts = [];
   }
@@ -110,31 +112,7 @@ export default function HomePage() {
       <SaasPromoSection variant="full" />
       <HowItWorks />
       <WhyUse />
-      {/* Crawlable homepage SEO copy */}
-      <section className="border-t border-border bg-white py-14 sm:py-16">
-        <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
-          <h2 className="text-2xl font-bold tracking-tight text-text">
-            Free education tools and enterprise school software in one place
-          </h2>
-          <p className="mt-4 text-sm leading-relaxed text-text-muted sm:text-base">
-            EduToolsHub helps students and teachers with free GPA calculators, college GPA
-            requirement checkers, attendance sheets, lesson planners, and more — no signup
-            required. Institutes that need full automation can upgrade to our{" "}
-            <a
-              href="/saas/school-college-management-system"
-              className="font-medium text-primary underline-offset-2 hover:underline"
-            >
-              School &amp; College Management System
-            </a>
-            , a cloud SaaS ERP for admissions, fees, QR attendance, WhatsApp messaging, exams,
-            and Admin/Teacher portals. Explore the{" "}
-            <a href="/saas" className="font-medium text-primary underline-offset-2 hover:underline">
-              SaaS marketplace
-            </a>{" "}
-            for enterprise solutions built by Nexora Dev.
-          </p>
-        </div>
-      </section>
+      <HomeEducationalContent />
       <Suspense fallback={null}>
         <LatestInsightsSection />
       </Suspense>

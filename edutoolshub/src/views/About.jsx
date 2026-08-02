@@ -118,6 +118,63 @@ export default function About() {
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           <div className="grid gap-10 lg:grid-cols-12 lg:items-start">
             <div className="lg:col-span-5">
+              <p className="text-sm font-semibold uppercase tracking-wider text-primary">
+                Who builds this
+              </p>
+              <h2 className="mt-2 text-3xl font-bold tracking-tight text-text sm:text-4xl">
+                Built by educators-minded developers at Nexora Dev
+              </h2>
+            </div>
+            <div className="space-y-5 text-base leading-relaxed text-text-muted lg:col-span-7">
+              <p>
+                EduToolsHub is designed and maintained by{" "}
+                <a
+                  href="https://nexora-dev-official.vercel.app/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-medium text-primary underline-offset-2 hover:underline"
+                >
+                  Nexora Dev
+                </a>
+                , a software team focused on practical education products. We
+                ship browser-based tools that solve real classroom and student
+                tasks — GPA math, attendance sheets, lesson planning, citations,
+                rubrics — without forcing accounts or paywalls.
+              </p>
+              <p>
+                Our editorial and product standards are straightforward: every
+                public tool must be usable in under a minute, explain how the
+                result is calculated where it matters, and keep personal data on
+                the user’s device whenever possible. Guides on our{" "}
+                <a href="/blog" className="font-medium text-primary underline-offset-2 hover:underline">
+                  blog
+                </a>{" "}
+                are written to support those same workflows, not to pad keyword
+                pages.
+              </p>
+              <p>
+                For questions, feedback, or school software demos, reach us at{" "}
+                <a
+                  href={`mailto:${CONTACT_EMAIL}`}
+                  className="font-medium text-primary underline-offset-2 hover:underline"
+                >
+                  {CONTACT_EMAIL}
+                </a>{" "}
+                or through the{" "}
+                <a href="/contact" className="font-medium text-primary underline-offset-2 hover:underline">
+                  contact form
+                </a>
+                . We reply within 1–2 business days.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-16 sm:py-20">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+          <div className="grid gap-10 lg:grid-cols-12 lg:items-start">
+            <div className="lg:col-span-5">
               <p className="text-sm font-semibold uppercase tracking-wider text-accent">
                 Our mission
               </p>

@@ -17,6 +17,16 @@ export const toolSeoById = {
       "Free GPA calculator for students — compute semester, cumulative, and CGPA on 4.0, 5.0, or custom scales. Learn how to calculate GPA step by step with country presets.",
     schemaDescription:
       "Calculate weighted and unweighted GPA, cumulative GPA, and CGPA with country presets and custom grading scales.",
+    guideSections: [
+      {
+        title: "Understanding weighted GPA before you calculate",
+        paragraphs: [
+          "GPA is a credit-weighted average: each course grade is multiplied by credit hours, then divided by total credits. Skipping credits is the most common reason a spreadsheet GPA differs from an official transcript.",
+          "Weighted scales give extra points for honors or advanced courses. Unweighted scales treat every A the same. Match the mode your school uses before you compare yourself to college admission ranges.",
+          "After you compute semester and cumulative GPA here, convert scales with the GPA percentage tools if an application asks for a different format.",
+        ],
+      },
+    ],
     howToUse: [
       "Our GPA calculator for students lets you add semesters, enter course grades and credit hours, and see your semester GPA, cumulative GPA, and CGPA update instantly. Choose your country preset or set a custom scale to match your school.",
       "To calculate GPA, select your grading system, add courses under each semester, and pick letter grades or point values. The live summary meter shows your standing at a glance, and you can generate a printable report when you are ready.",
@@ -79,6 +89,16 @@ export const toolSeoById = {
       "Convert GPA to percentage instantly on 4.0, 5.0, or 10.0 scales. Free GPA to percentage calculator with letter grades, descriptors, and a visual score ring.",
     schemaDescription:
       "Convert GPA to an equivalent percentage on popular grading scales with letter grades and performance descriptors.",
+    guideSections: [
+      {
+        title: "When applications ask for percentage instead of GPA",
+        paragraphs: [
+          "Some universities and scholarship forms request a percentage even when your transcript shows GPA. A transparent conversion helps you fill those fields consistently.",
+          "Pick the scale printed on your transcript (4.0, 5.0, or 10.0). Institutions may publish their own tables — official charts always override an online estimate.",
+          "If you have course-level grades, calculating GPA first and then converting is more accurate than converting a single overall percentage twice.",
+        ],
+      },
+    ],
     howToUse: [
       "This GPA to percentage calculator converts your grade point average into an equivalent percentage on the 4.0, 5.0, or 10.0 scale. Enter your GPA, pick the scale your school uses, and the result updates immediately with a letter grade and descriptor.",
       "To convert GPA to percentage, type your GPA in the input field and select the correct scale from the options. A visual ring shows your score, and you can copy the full result text for applications or spreadsheets.",
@@ -142,8 +162,18 @@ export const toolSeoById = {
       "Free college GPA requirement checker — compare minimum GPA for college admission across the US, UK, Canada, Australia, and Germany. Enter your GPA to see match results instantly.",
     schemaDescription:
       "Search and compare university GPA admission requirements and see how your GPA matches schools worldwide.",
+    guideSections: [
+      {
+        title: "How to read minimum vs average admitted GPA",
+        paragraphs: [
+          "Minimum GPA is often a floor. Average admitted GPA reflects the middle of a competitive pool and is usually higher. Plan with both numbers, not only the minimum.",
+          "Filter by country and type, enter your GPA, and use Strong Match / Possible Match / Reach labels as planning signals — not admission guarantees. Holistic review still weighs essays, tests, and coursework rigor.",
+          "Always confirm figures on the university admissions site for the year you apply. Published averages change, and campuses within the same system can differ.",
+        ],
+      },
+    ],
     howToUse: [
-      "This college GPA requirement checker helps you find minimum GPA for college programs at hundreds of universities. Filter by country, institution type, and ranking, then enter your GPA to see Strong Match, Possible Match, and Reach results.",
+      "Filter by country, institution type, and ranking, then enter your GPA to see Strong Match, Possible Match, and Reach results across universities in the database.",
       "Start by choosing a country and optional filters, then type your GPA in the banner at the top. Each university card shows the published GPA range and how your score compares, so you can build a realistic shortlist for applications.",
       "High school seniors, transfer students, international applicants, and school counselors use this tool to research admission standards before applying.",
     ],
@@ -204,10 +234,20 @@ export const toolSeoById = {
       "Free attendance sheet generator for teachers — build printable monthly class registers with holidays, roll numbers, and live marking. A simple student attendance tracker for schools.",
     schemaDescription:
       "Generate printable monthly attendance sheets with institute branding, holidays, custom columns, and optional live marking.",
+    guideSections: [
+      {
+        title: "Build a monthly register teachers can actually use",
+        paragraphs: [
+          "A usable attendance sheet needs the right month, readable student rows, holidays that do not count against percentages, and space for present/absent marks without clutter.",
+          "Start with institute and class details, add names or blank rows, mark holidays on the calendar headers, then print a blank grid or use live marking to tap P/A/L in the browser before exporting.",
+          "Keep data local: print or save PDF when finished. Refreshing clears unsaved work, which is intentional for classroom privacy.",
+        ],
+      },
+    ],
     howToUse: [
-      "This attendance sheet generator free tool creates a professional monthly class register in minutes. Add your institute name, logo, class details, and student list, then customize holidays and optional extra columns before printing.",
+      "Add your institute name, logo, class details, and student list, then customize holidays and optional columns before printing.",
       "Pick the month and year, enter student names (or leave blank rows), mark holidays by clicking dates, and preview the sheet. Switch to live marking mode to click cells for Present, Absent, or Leave, then print or export when finished.",
-      "Classroom teachers, homeroom instructors, tuition centers, and school admins use it as a lightweight student attendance tracker without spreadsheets or paid software.",
+      "Classroom teachers, homeroom instructors, tuition centers, and school admins use it as a lightweight attendance register without spreadsheets or paid software.",
     ],
     faqs: [
       {
@@ -266,10 +306,20 @@ export const toolSeoById = {
       "Free lesson plan maker for teachers — build lesson plans, map curriculum units, and create substitute plans online. A lesson planner that saves locally in your browser.",
     schemaDescription:
       "Create lesson plans, schedule units, map curriculum standards, and build substitute teacher handouts — saved locally in the browser.",
+    guideSections: [
+      {
+        title: "Plan lessons, units, and substitute days in one workflow",
+        paragraphs: [
+          "Effective planning links daily lessons to unit goals and standards, then leaves a clear handoff when you are absent. Spreading that across three apps usually means something falls through.",
+          "Use the lesson builder for sectioned plans, the unit calendar for pacing, curriculum mapping for standards tracking, and substitute packets so a cover teacher can run the day without guessing.",
+          "Plans save in your browser on this device. Export PDF when you need a copy for a binder, department review, or another computer.",
+        ],
+      },
+    ],
     howToUse: [
-      "This lesson plan maker for teachers helps you draft structured lesson plans, organize units on a calendar, map curriculum standards, and prepare substitute teacher packets — all in one place.",
+      "Draft structured lesson plans, organize units on a calendar, map curriculum standards, and prepare substitute teacher packets — all in one place.",
       "Start in the Lesson Builder to create a plan from scratch or a template, add sections with drag-and-drop, and save automatically to your browser. Switch to Units, Curriculum, or Substitute modules to schedule topics and attach plans for printing.",
-      "K–12 teachers, college instructors, tutors, and department heads use this free lesson planner online to stay organized without juggling multiple apps.",
+      "K–12 teachers, college instructors, tutors, and department heads use this planner to stay organized without juggling multiple apps.",
     ],
     faqs: [
       {
@@ -328,10 +378,20 @@ export const toolSeoById = {
       "Free final grade calculator — find out what grade you need on your final exam to pass or hit your target percentage. See exactly how many marks you need instantly.",
     schemaDescription:
       "Calculate how many marks you need on a final exam to reach a target overall percentage based on coursework completed so far.",
+    guideSections: [
+      {
+        title: "Turn final-exam stress into a concrete target score",
+        paragraphs: [
+          "Knowing the exact marks you need on a final turns vague anxiety into a study goal. The inputs are simple: points earned so far, points possible so far, final exam weight, and the overall percentage you want.",
+          "If the required score exceeds the final exam total, the goal is not reachable with remaining points alone — talk to your instructor about options or adjust the target.",
+          "Pair the result with a daily study plan so the remaining hours match the difficulty of hitting that score.",
+        ],
+      },
+    ],
     howToUse: [
-      "This final grade calculator answers the question every student asks before finals: what grade do I need to pass? Enter marks earned so far, total marks completed, final exam weight, and your target percentage.",
+      "Enter marks earned so far, total marks completed, final exam weight, and your target percentage to see what you need on the final.",
       "Fill in each field and the result updates instantly. You will see whether your goal is achievable, how many marks you need on the final, and the projected overall percentage if you hit that score.",
-      "High school and college students, parents helping with study planning, and teachers demonstrating grade math all use this tool before exam season.",
+      "High school and college students, parents helping with study planning, and teachers demonstrating grade math all use this before exam season.",
     ],
     faqs: [
       {
@@ -390,10 +450,20 @@ export const toolSeoById = {
       "Free school fee receipt generator for teachers and admins — create subject-wise fee receipts with tax, discounts, and PDF download. A simple fee receipt maker for schools.",
     schemaDescription:
       "Generate professional school fee receipts with subject-wise fees, discounts, tax, payment status, and PDF export.",
+    guideSections: [
+      {
+        title: "Issue clear fee receipts parents can trust",
+        paragraphs: [
+          "A good fee receipt shows who paid, for which student, which line items, any discount or tax, payment method, and whether the balance is paid or due — without looking like a rough draft.",
+          "Add school branding, student and parent details, subject or fee rows, then download PDF or print. Use consistent receipt numbers if your office tracks payments offline.",
+          "This tool is for documentation convenience. It does not replace accounting software for large institutions that need ledgers and audit trails.",
+        ],
+      },
+    ],
     howToUse: [
-      "This school fee receipt generator creates polished receipts for tuition, subject fees, and miscellaneous charges. Add school and student details, line items per subject, optional discounts and tax, then preview and download.",
+      "Create polished receipts for tuition, subject fees, and miscellaneous charges. Add school and student details, line items, optional discounts and tax, then preview and download.",
       "Enter school name and optional logo, fill student and parent information, add fee rows with the Add Subject button, and set currency and payment status. The live preview updates as you type — download a PDF or print when ready.",
-      "Private tutors, coaching centers, school office staff, and small institutions use this fee receipt maker free of charge instead of manual Word templates.",
+      "Private tutors, coaching centers, school office staff, and small institutions use this instead of manual Word templates.",
     ],
     faqs: [
       {
@@ -452,6 +522,16 @@ export const toolSeoById = {
       "Free tracing sheet generator for kindergarten teachers — create printable alphabet, number, and name tracing worksheets with dotted guide lines. No login required.",
     schemaDescription:
       "Generate printable alphabet and number tracing sheets with dotted guide lines, custom words, and multiple practice rows for kindergarten handwriting.",
+    guideSections: [
+      {
+        title: "Print tracing practice matched to early literacy skills",
+        paragraphs: [
+          "Young learners need repeated, correctly formed letter and word practice. Tracing sheets work best when the skill matches the week’s phonics focus — alphabet, CVC, or sight words — not a random printable.",
+          "Browse categories, customize what you need, and print for centers or take-home practice. Keep sessions short and model the stroke order before independent work.",
+          "Teachers and parents can use the same sheets; adjust difficulty rather than mixing unrelated skills on one page.",
+        ],
+      },
+    ],
     howToUse: [
       "This tracing sheet generator helps kindergarten and playgroup teachers create handwriting practice worksheets in seconds. Choose letters A–Z, numbers 0–9, or type a custom name or word, then set uppercase, lowercase, or both.",
       "Adjust how many dotted tracing rows appear under each solid guide letter, add an optional student name and sheet title, and preview the full page before printing. Everything runs in your browser with no account needed.",
@@ -514,6 +594,16 @@ export const toolSeoById = {
       "Free behavior chart generator for kindergarten — create weekly or monthly star charts for up to 30 students with reward icons. Print A4 sheets for stickers and stamps.",
     schemaDescription:
       "Generate printable weekly or monthly behavior reward charts with student names, optional behavior categories, and sticker-sized grid cells.",
+    guideSections: [
+      {
+        title: "Use star charts as feedback, not just decoration",
+        paragraphs: [
+          "Behavior charts work when goals are specific, achievable within the week, and tied to recognition students care about. Vague charts that never get updated train students to ignore them.",
+          "Set the period (weekly or monthly), list students, print A4 sheets for stickers or stamps, and review progress with the class so the chart stays meaningful.",
+          "Pair charts with calm, consistent consequences and praise. The printable is a tool for visibility — not a substitute for relationship and clear expectations.",
+        ],
+      },
+    ],
     howToUse: [
       "This behavior chart generator creates classroom reward trackers teachers can print and hang on the wall. Add up to 30 student names, pick a weekly Mon–Fri chart or a monthly 1–31 day chart, and choose a reward icon like stars or hearts.",
       "Enter your class name and week or month label, optionally add behavior categories such as Listening or Sharing, and watch the live preview update. Your progress saves automatically in the browser so you can return later.",
@@ -576,16 +666,28 @@ export const toolSeoById = {
       "Convert percentage to GPA instantly on 4.0, 5.0, or 10.0 scales. Free percentage to GPA calculator with letter grades and reference tables.",
     schemaDescription:
       "Convert percentage scores to equivalent GPA on popular international grading scales.",
+    guideSections: [
+      {
+        title: "Converting percentages to GPA the right way",
+        paragraphs: [
+          "Many report cards show percentages while university applications ask for GPA on a 4.0 (or other) scale. A transparent conversion helps you fill forms consistently — but official transcripts still override any online estimate.",
+          "On a linear 4.0 mapping, GPA ≈ (percentage ÷ 100) × 4. Some regions use different tables (for example, percentage ÷ 9.5 on a 10-point CGPA system). Always pick the scale your school publishes, not a generic internet rumor.",
+          "After converting, verify standing with the full GPA calculator if you have course-by-course grades and credits — that is more accurate than converting a single overall percentage.",
+        ],
+      },
+    ],
     howToUse: [
-      "Enter your percentage score and select the GPA scale used by your school or university.",
-      "The converter shows equivalent GPA, letter grade, and performance descriptor instantly.",
-      "Use the reference table for common percentage-to-GPA mappings on your selected scale.",
+      "Enter your percentage score (0–100) exactly as shown on your mark sheet or portal.",
+      "Select the GPA scale used by your school or the form you are filling — commonly 4.0, 5.0, or 10.0.",
+      "Read the equivalent GPA, letter grade, and performance descriptor. Compare with the on-page reference table for common bands.",
+      "If an application asks for both percentage and GPA, report the official transcript values first; use this tool only when a conversion is explicitly allowed.",
+      "Switch to the GPA to Percentage Converter when you need the reverse direction with the same scale conventions.",
     ],
     faqs: [
       {
         question: "How do I convert percentage to GPA?",
         answer:
-          "Enter your percentage (0–100) and choose your scale. On a 4.0 scale, GPA = (percentage ÷ 100) × 4. On a 10.0 scale, GPA ≈ percentage ÷ 9.5.",
+          "Enter your percentage (0–100) and choose your scale. On a common 4.0 linear map, GPA = (percentage ÷ 100) × 4. On many 10.0 systems, GPA ≈ percentage ÷ 9.5 — confirm your registrar’s table.",
       },
       {
         question: "Is this the reverse of GPA to percentage?",
@@ -593,8 +695,23 @@ export const toolSeoById = {
           "Yes. Use our GPA to Percentage Converter for the opposite direction. Both tools use the same standard scale mappings.",
       },
       {
+        question: "Will universities accept this conversion?",
+        answer:
+          "Treat it as an estimate. Admissions offices often recalculate from official transcripts. Use their published conversion chart when one exists.",
+      },
+      {
+        question: "What if my school uses plus/minus letter grades?",
+        answer:
+          "A single overall percentage may not capture plus/minus nuances. Prefer course-level GPA calculation when individual grades are available.",
+      },
+      {
         question: "Is this tool free?",
         answer: "Yes. No sign-up required. All calculations run in your browser.",
+      },
+      {
+        question: "Which scale should international students choose?",
+        answer:
+          "Choose the scale named on your transcript or target application. U.S. forms usually expect 4.0; many South Asian universities use 10.0 CGPA.",
       },
     ],
     relatedTools: [
@@ -613,24 +730,52 @@ export const toolSeoById = {
       "Generate APA 7 and MLA 9 citations for websites, books, and journal articles. Copy bibliography entries and in-text citations instantly — no sign-up.",
     schemaDescription:
       "Create formatted APA and MLA citations for academic sources with copy-ready bibliography entries.",
+    guideSections: [
+      {
+        title: "Why accurate citations matter",
+        paragraphs: [
+          "Citations give credit to original authors, help readers locate sources, and protect you from accidental plagiarism. Instructors often mark down papers that mix APA and MLA punctuation, omit DOIs, or invent page numbers.",
+          "APA 7th edition is common in psychology, education, and social sciences. MLA 9th edition is common in literature and language courses. Both expect consistent author names, titles, dates, and container details — a missing publisher or URL can make a reference incomplete.",
+          "Use this generator to draft a correctly ordered entry, then compare it with your syllabus or style handbook before you submit. Treat the output as a high-quality starting point, not a substitute for your school’s official guide.",
+        ],
+      },
+    ],
     howToUse: [
-      "Select APA 7 or MLA 9 and choose your source type: website, book, or journal article.",
-      "Fill in author names, title, and other required fields shown for that source type.",
-      "Copy the formatted citation and in-text reference into your essay or bibliography.",
+      "Choose APA 7 or MLA 9, then pick the source type that matches what you used: website, book, or journal article. The form only shows fields that matter for that combination.",
+      "Enter authors carefully (family name and given name where asked), plus title, publication date, and container details such as site name, publisher, volume, or issue.",
+      "Copy the bibliography entry into your reference list and use the matching in-text citation format beside the claim you support. Keep hanging indents and alphabetization as your style requires.",
+      "If a field is unknown (no DOI, no page range), leave it blank rather than guessing — incomplete but honest citations are safer than fabricated details.",
+      "Re-run the tool for each source so every entry follows the same edition rules. Consistency across the whole list is as important as any single citation.",
     ],
     faqs: [
       {
         question: "Which citation styles are supported?",
-        answer: "APA 7th edition and MLA 9th edition for websites, books, and journal articles.",
+        answer:
+          "APA 7th edition and MLA 9th edition for websites, books, and journal articles. Choose the style your instructor assigned before filling the form.",
+      },
+      {
+        question: "How do in-text citations differ from the bibliography?",
+        answer:
+          "The bibliography (or Works Cited) lists full source details. In-text citations are short pointers in the body — typically author and year (APA) or author and page (MLA). This tool provides both so you can paste the right form in each place.",
+      },
+      {
+        question: "What if my source has multiple authors?",
+        answer:
+          "Enter each author in the order shown on the source. APA and MLA abbreviate long author lists differently in-text; verify the final shortened form against your style guide when there are three or more authors.",
       },
       {
         question: "Do I need an account?",
-        answer: "No. Citations are generated instantly in your browser with no login.",
+        answer:
+          "No. Citations are generated instantly in your browser with no login and no upload of your paper.",
       },
       {
         question: "Should I verify the citation before submitting?",
         answer:
-          "Always double-check against your institution's style guide. This tool follows widely used APA and MLA conventions.",
+          "Yes. Always double-check against your institution’s style guide or librarian resources. Edge cases (translated works, social media, datasets) may need manual tweaks.",
+      },
+      {
+        question: "Is this citation generator free?",
+        answer: "Completely free with unlimited citations and no signup.",
       },
     ],
     relatedTools: [
@@ -648,25 +793,52 @@ export const toolSeoById = {
       "Free study time calculator for students. Enter subjects, hours needed, and days until your exam to get a daily revision schedule.",
     schemaDescription:
       "Plan exam study schedules by subject with daily time breakdowns based on available study hours.",
+    guideSections: [
+      {
+        title: "Build a revision plan that fits real days",
+        paragraphs: [
+          "Effective exam prep starts with constraints: days left, hours you can honestly study each day, and how much each subject still needs. Without those numbers, schedules either over-promise or ignore weak topics.",
+          "A proportional plan assigns more daily time to subjects that need more total hours, while still respecting your daily capacity. If the math says you need more hours than you have, you must either add days, cut scope, or increase daily study — the calculator makes that trade-off visible.",
+          "Pair this schedule with grade targets from the Final Grade Calculator so you know which courses deserve the most remaining effort before exams begin.",
+        ],
+      },
+    ],
     howToUse: [
-      "Enter how many days remain before your exam and how many hours you can study each day.",
-      "Add each subject with the total hours you need to revise.",
-      "Review the daily breakdown and adjust subjects or hours until the plan is feasible.",
+      "Enter how many days remain before your exam (or exam week) and how many focused hours you can study on a typical day — exclude meals, commute, and passive scrolling.",
+      "Add each subject with a realistic total of revision hours still needed. Be honest: a weak topic may need more hours than a strong one with the same credit weight.",
+      "Review the daily breakdown. The tool spreads your daily capacity across subjects in proportion to remaining need so every subject gets attention.",
+      "If the plan shows a shortfall, increase daily hours, reduce lower-priority topics, or start earlier. Adjust inputs until the schedule is achievable.",
+      "Revisit the plan mid-week. After completing sessions, lower remaining hours for finished topics so the remaining days rebalance automatically.",
     ],
     faqs: [
       {
         question: "How does the study plan work?",
         answer:
-          "The tool divides your daily study hours among subjects proportionally based on how many hours each subject needs.",
+          "The calculator divides your daily study hours among subjects proportionally based on how many hours each subject still needs, then shows a day-by-day view you can follow or adjust.",
       },
       {
         question: "What if I don't have enough time?",
         answer:
-          "The calculator shows how many extra hours you need and the recommended daily total so you can adjust your schedule.",
+          "You will see how many extra hours are required and what daily total would close the gap. Use that signal to cut topics, add study days, or raise daily hours.",
+      },
+      {
+        question: "Should I study every subject every day?",
+        answer:
+          "Proportional daily splits keep all subjects warm. If you prefer blocked days (one subject per day), use the totals as a weekly budget and rearrange manually.",
+      },
+      {
+        question: "How do I estimate hours needed per subject?",
+        answer:
+          "Start from past quizzes: topics you scored below target may need 1.5–2× the hours of topics you already know. Include practice tests, not just rereading notes.",
       },
       {
         question: "Is my data saved?",
-        answer: "No. Everything runs in your browser session — no account or server storage.",
+        answer:
+          "No. Everything runs in your browser session — no account or server storage of your study plan.",
+      },
+      {
+        question: "Is the study time calculator free?",
+        answer: "Yes. Free forever with no signup.",
       },
     ],
     relatedTools: [
@@ -685,25 +857,52 @@ export const toolSeoById = {
       "Free report card comment generator for teachers. Create professional comments for academics, behavior, participation, and work habits — copy and edit instantly.",
     schemaDescription:
       "Generate editable report card comments for teachers based on student performance levels.",
+    guideSections: [
+      {
+        title: "Write report comments that sound like the student you teach",
+        paragraphs: [
+          "Strong report-card comments are specific, balanced, and actionable. Parents and students should leave knowing what is going well, what needs work, and what to try next — not a stack of vague praise.",
+          "Start from clear performance levels across academics, behavior, participation, and work habits, then personalize names, pronouns, and one concrete classroom example. Templates save time; your edits make the comment authentic.",
+          "Never paste an unchanged bank comment for every learner. Review tone for younger vs older students, and align language with your school’s reporting policy before you publish.",
+        ],
+      },
+    ],
     howToUse: [
-      "Enter the student's name, pronouns, and subject or learning area.",
-      "Select performance levels for academics, behavior, participation, and work habits.",
-      "Copy the generated comment and personalize it before adding to your report card system.",
+      "Enter the student's preferred name, pronouns, and the subject or learning area so the comment reads naturally in first draft.",
+      "Select performance levels for academics, behavior, participation, and work habits that match your evidence from the term.",
+      "Generate the comment, then edit: add one specific strength, one growth area, and a next step parents can support at home.",
+      "Copy the finalized text into your student information system or printable report. Repeat per student — do not mass-send identical paragraphs.",
+      "If your school requires standard stems or character limits, trim the draft to fit while keeping the individualized details.",
     ],
     faqs: [
       {
         question: "Can I customize the generated comment?",
         answer:
-          "Yes. The comment is a starting point — edit tone and details to match each student before pasting into your report system.",
+          "Yes. The comment is a starting point — edit tone, examples, and goals so each student receives an accurate, individual message.",
       },
       {
         question: "Does this replace professional judgment?",
         answer:
-          "No. Use these comments as templates. Teachers should review and adjust every comment for accuracy and individuality.",
+          "No. Use these comments as templates. Teachers should review and adjust every comment for accuracy, fairness, and school policy.",
+      },
+      {
+        question: "How do I avoid comments that sound AI-generated?",
+        answer:
+          "Add a concrete classroom moment (a project, lab, or discussion) and remove generic adjectives. Specific evidence is what makes comments feel human.",
+      },
+      {
+        question: "Can I use this for progress reports mid-term?",
+        answer:
+          "Yes. Choose levels that reflect current standing and frame next steps as short-cycle goals before the final report.",
       },
       {
         question: "Is this free for teachers?",
         answer: "Yes. Unlimited comments with no login required.",
+      },
+      {
+        question: "Is student data stored?",
+        answer:
+          "Names stay in your browser session for drafting only. We do not require accounts or upload class lists to a server.",
       },
     ],
     relatedTools: [
@@ -722,24 +921,51 @@ export const toolSeoById = {
       "Create printable assessment rubrics with custom criteria and performance levels. Free rubric generator for teachers — no sign-up.",
     schemaDescription:
       "Build and print customizable grading rubrics with criteria rows and performance level columns.",
+    guideSections: [
+      {
+        title: "Design rubrics students can actually use",
+        paragraphs: [
+          "A clear rubric tells learners what quality looks like before they submit work. Each criterion should describe observable performance — not personality — across levels from emerging to exemplary.",
+          "Limit criteria to what you will truly score. Too many rows slow grading and dilute feedback. Four to six well-defined criteria usually beat a dozen vague ones.",
+          "Share the rubric with the assignment brief, then use the same grid when marking so feedback stays aligned with expectations you already published.",
+        ],
+      },
+    ],
     howToUse: [
-      "Name your rubric and customize the performance level column headers.",
-      "Add criteria and describe expectations for each performance level.",
-      "Print a landscape rubric table ready for classroom use.",
+      "Name your rubric after the assignment (for example, “Persuasive Essay — Grade 8”) and set performance level headers such as Beginning, Developing, Proficient, and Advanced.",
+      "Add criteria that match learning goals — organization, evidence, collaboration, safety, accuracy — and write short descriptors for each level.",
+      "Keep language student-friendly. Avoid jargon so learners can self-assess before they turn work in.",
+      "Print the landscape table for folders or project packets, or keep it on-screen while you score digital submissions.",
+      "Reuse the structure for similar tasks next term; swap descriptors instead of rebuilding from scratch.",
     ],
     faqs: [
       {
         question: "Can I add my own criteria?",
-        answer: "Yes. Add, remove, and name as many criteria rows as you need.",
+        answer: "Yes. Add, remove, and rename as many criteria rows as your assignment needs.",
       },
       {
         question: "How do I print the rubric?",
         answer:
-          "Click Print rubric to open a landscape A4 print dialog with a clean table layout.",
+          "Click Print rubric to open a landscape A4 print dialog with a clean table layout suitable for handouts.",
+      },
+      {
+        question: "Analytic vs holistic rubrics — which is this?",
+        answer:
+          "This tool builds analytic rubrics (separate scores per criterion). Holistic rubrics use one overall description; you can approximate that with a single criterion if your school prefers it.",
+      },
+      {
+        question: "Should point values appear on the rubric?",
+        answer:
+          "Many teachers add points in the level headers or criteria names. Keep totals consistent with your gradebook so conversion stays transparent.",
       },
       {
         question: "Is this rubric generator free?",
-        answer: "Yes. No account required.",
+        answer: "Yes. No account required and unlimited rubrics.",
+      },
+      {
+        question: "Can students use this for self-assessment?",
+        answer:
+          "Absolutely. Printing a student copy encourages reflection before final submission and reduces “surprise” grades.",
       },
     ],
     relatedTools: [
@@ -757,23 +983,50 @@ export const toolSeoById = {
       "Design printable student achievement certificates in seconds. Free certificate maker for teachers — custom names, titles, and styles.",
     schemaDescription:
       "Create printable student achievement certificates with customizable fields and styles.",
+    guideSections: [
+      {
+        title: "Recognize students without starting from a blank slide",
+        paragraphs: [
+          "Certificates reinforce effort, improvement, citizenship, and academic milestones. A consistent template with a clear achievement title is more meaningful than a cluttered design students cannot read from the back of the room.",
+          "Include the student name, achievement, school or class, presenter, and date. Leave space to sign by hand — a wet signature still matters for formal recognition ceremonies.",
+          "Print one certificate at a time when names differ, or keep the style locked and only swap the student field for classroom awards night.",
+        ],
+      },
+    ],
     howToUse: [
-      "Enter the student name and achievement title.",
-      "Add optional school name, presenter, and date; choose a certificate style.",
-      "Print the landscape certificate and sign for your student.",
+      "Enter the student name exactly as it should appear on the printed award, plus a concise achievement title (for example, “Most Improved in Science”).",
+      "Optionally add school name, presenter name, and date. Choose a visual style that matches the occasion — classic, gold, or academic green.",
+      "Preview the landscape layout, then print on quality paper if the certificate will be framed or presented on stage.",
+      "Sign in the presenter area after printing. Change the student name and reprint for the next awardee without rebuilding the design.",
+      "For digital recognition, print to PDF and attach to an email or learning platform announcement.",
     ],
     faqs: [
       {
         question: "Can I print multiple certificates?",
-        answer: "Yes. Change the student name and print as many certificates as you need.",
+        answer:
+          "Yes. Change the student name (and title if needed) and print as many certificates as you need — no batch upload required.",
       },
       {
         question: "What styles are available?",
-        answer: "Classic blue, gold achievement, and academic green themes.",
+        answer: "Classic blue, gold achievement, and academic green themes suitable for classroom and assembly use.",
+      },
+      {
+        question: "What paper size should I use?",
+        answer:
+          "Landscape letter or A4 works best. Use heavier paper (120–160 gsm) for ceremonies if your printer supports it.",
       },
       {
         question: "Do I need to create an account?",
         answer: "No. Certificates are generated instantly in your browser.",
+      },
+      {
+        question: "Can I use this for staff or volunteer awards?",
+        answer:
+          "Yes. Adjust the achievement title and presenter fields — the layout works for student and adult recognition.",
+      },
+      {
+        question: "Is the certificate maker free?",
+        answer: "Yes. Unlimited certificates with no watermark from EduToolsHub.",
       },
     ],
     relatedTools: [

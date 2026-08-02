@@ -97,7 +97,8 @@ export const tools = [
   {
     id: "attendance-sheet",
     name: "Attendance Sheet Generator",
-    description: "Create printable class attendance sheets in seconds.",
+    description:
+      "Create printable monthly class registers with holidays, roll numbers, optional live P/A/L marking, and institute branding — ready to print or save as PDF.",
     icon: IconAttendance,
     status: "active",
     audience: "teacher",

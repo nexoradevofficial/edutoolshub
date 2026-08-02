@@ -3,9 +3,27 @@ import Link from "next/link";
 const sectionClass =
   "rounded-2xl border border-border bg-white p-6 shadow-sm sm:p-8";
 
-export default function ToolSeoSection({ name, howToUse, faqs, relatedTools }) {
+export default function ToolSeoSection({
+  name,
+  howToUse,
+  faqs,
+  relatedTools,
+  guideSections = [],
+}) {
   return (
     <div className="mt-12 space-y-8 print:hidden">
+      {guideSections?.length > 0 &&
+        guideSections.map((section) => (
+          <section key={section.title} className={sectionClass}>
+            <h2 className="text-xl font-semibold text-text sm:text-2xl">{section.title}</h2>
+            <div className="mt-4 space-y-4 text-sm leading-relaxed text-text-muted sm:text-base">
+              {section.paragraphs.map((paragraph) => (
+                <p key={paragraph.slice(0, 48)}>{paragraph}</p>
+              ))}
+            </div>
+          </section>
+        ))}
+
       <section className={sectionClass}>
         <h2 className="text-xl font-semibold text-text sm:text-2xl">
           How to Use {name}

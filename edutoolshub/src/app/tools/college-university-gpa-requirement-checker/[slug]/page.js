@@ -50,6 +50,8 @@ export async function generateMetadata({ params }) {
   return {
     title: seoTitle,
     description: seoDescription,
+    // Individual school pages are data cards, not unique articles — noindex for quality
+    robots: { index: false, follow: true },
     alternates: { canonical: `${SITE_URL}${path}` },
     openGraph: {
       title: seoTitle,

@@ -67,6 +67,13 @@ export default function BlogPostView({ post }) {
             </p>
           )}
           <div className="mt-6 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-sm text-text-muted">
+            <span className="font-medium text-text">
+              By{" "}
+              <Link href="/about" className="text-primary underline-offset-2 hover:underline">
+                EduToolsHub Editorial
+              </Link>
+            </span>
+            <span aria-hidden>·</span>
             {post.publishedAt && (
               <time dateTime={post.publishedAt} className="font-medium">
                 {formattedDate}

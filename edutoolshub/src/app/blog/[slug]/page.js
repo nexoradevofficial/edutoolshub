@@ -1,5 +1,9 @@
 import { notFound, redirect } from "next/navigation";
 import BlogPostView from "@/components/blog/BlogPostView";
+import {
+  applyBlogRewrite,
+  getBlogRewriteRedirect,
+} from "@/content/blogRewrites";
 import { SITE_NAME, SITE_URL } from "@/constants/site";
 import { POSTS_TAG, postTag, sanityServerFetch } from "@/lib/sanity-server";
 import { buildPostOgImageUrl, enrichPostForBlogView } from "@/lib/sanity-image";
@@ -13,7 +17,7 @@ export async function generateStaticParams() {
     const slugs = await sanityServerFetch(allPostSlugsQuery, {}, { tags: [POSTS_TAG] });
     return (Array.isArray(slugs) ? slugs : [])
       .map((slug) => normalizePostSlug(slug))
-      .filter(Boolean)
+      .filter((slug) => slug && !getBlogRewriteRedirect(slug))
       .map((slug) => ({ slug }));
   } catch {
     return [];
@@ -25,13 +29,18 @@ export async function generateMetadata({ params }) {
   const slug = normalizePostSlug(rawSlug);
   if (!slug || slug === "null") return { title: `Blog | ${SITE_NAME}` };
 
+  const redirectTo = getBlogRewriteRedirect(slug);
+  if (redirectTo) {
+    return { alternates: { canonical: `${SITE_URL}/blog/${redirectTo}` } };
+  }
+
   try {
     const rawPost = await sanityServerFetch(
       postBySlugQuery,
       { slug },
       { tags: [POSTS_TAG, postTag(slug)] }
     );
-    const post = normalizePost(rawPost);
+    const post = applyBlogRewrite(normalizePost(rawPost));
     if (!post) return { title: `Article not found | ${SITE_NAME}` };
 
     const seoTitle = post.seoTitle || post.title;
@@ -72,12 +81,17 @@ export default async function BlogPostPage({ params }) {
     redirect("/blog");
   }
 
+  const redirectTo = getBlogRewriteRedirect(slug);
+  if (redirectTo) {
+    redirect(`/blog/${redirectTo}`);
+  }
+
   const rawPost = await sanityServerFetch(
     postBySlugQuery,
     { slug },
     { tags: [POSTS_TAG, postTag(slug)] }
   );
-  const post = enrichPostForBlogView(normalizePost(rawPost));
+  const post = applyBlogRewrite(enrichPostForBlogView(normalizePost(rawPost)));
 
   if (!post) {
     notFound();
@@ -98,7 +112,7 @@ export default async function BlogPostPage({ params }) {
     description: seoDescription,
     image: ogImage ? [ogImage] : undefined,
     datePublished: post.publishedAt,
-    dateModified: post.publishedAt,
+    dateModified: new Date().toISOString(),
     mainEntityOfPage: { "@type": "WebPage", "@id": canonicalUrl },
     author: { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
     publisher: { "@type": "Organization", name: SITE_NAME, url: SITE_URL },

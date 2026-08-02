@@ -1,6 +1,7 @@
 import { normalizePostSlug } from "@/sanity/normalizeSlug";
 import { handlePostsRequest } from "@/lib/posts-handler";
 import { SITE_URL, NAV_PAGES, TOOL_PAGES, getSaasSitemapPages } from "@/lib/sitemap-data";
+import { getBlogRewriteRedirect } from "@/content/blogRewrites";
 
 /** Blog entries are cached under the shared `posts` tag, so publishing a post
  *  busts this sitemap instantly. This time-based value is only a fallback. */
@@ -33,7 +34,6 @@ export default async function sitemap() {
     priority: Number(page.priority),
   }));
 
-  // Auto-includes every active product from src/data/saasSolutions.js
   const saasEntries = getSaasSitemapPages().map((page) => ({
     url: `${siteUrl}${page.path}`,
     lastModified: today,
@@ -47,7 +47,7 @@ export default async function sitemap() {
     blogEntries = (Array.isArray(posts) ? posts : [])
       .map((post) => {
         const slug = normalizePostSlug(post.slug);
-        if (!slug) return null;
+        if (!slug || getBlogRewriteRedirect(slug)) return null;
         return {
           url: `${siteUrl}/blog/${slug}`,
           lastModified: formatLastmod(post.publishedAt),

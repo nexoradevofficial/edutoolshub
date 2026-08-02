@@ -7,7 +7,12 @@ export default function robots() {
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/admin/", "/api/"],
+        disallow: [
+          "/admin/",
+          "/api/",
+          // Thin templated university detail URLs — keep hub indexable
+          "/tools/college-university-gpa-requirement-checker/",
+        ],
       },
     ],
     sitemap: `${siteUrl}/sitemap.xml`,

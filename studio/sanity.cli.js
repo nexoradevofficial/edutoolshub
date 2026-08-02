@@ -9,5 +9,6 @@ export default defineCliConfig({
     dataset,
   },
   studioHost: 'edutoolshub',
-  autoUpdates: true,
+  // Keep local package versions; avoids v3/v4 mismatch prompts and schema surprises.
+  autoUpdates: false,
 })

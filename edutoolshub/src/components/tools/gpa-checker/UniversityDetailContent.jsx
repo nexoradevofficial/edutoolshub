@@ -213,6 +213,38 @@ export default function UniversityDetailContent({ university, similar = [] }) {
           ← Back to College / University GPA Requirement Checker
         </Link>
       </div>
+
+      <section className="rounded-2xl border border-border bg-white p-6 shadow-sm sm:p-8 print:hidden">
+        <h2 className="text-lg font-semibold text-text">How to use this GPA snapshot</h2>
+        <div className="mt-3 space-y-3 text-sm leading-relaxed text-text-muted">
+          <p>
+            This page summarizes published GPA-related admissions indicators for{" "}
+            {university.name} on a {Number(university.gpa_scale).toFixed(1)} scale.
+            Minimum GPA is a floor many applicants should clear; average admitted GPA
+            reflects the middle of a competitive pool and is usually higher.
+          </p>
+          <p>
+            GPA is only one part of holistic review. Test scores (where used), essays,
+            recommendations, coursework rigor, and program capacity also matter. Always
+            confirm requirements on the school’s official admissions site before applying —
+            published averages change by year and campus.
+          </p>
+          <p>
+            Compare your standing here, then model semester or cumulative GPA with our{" "}
+            <Link href="/tools/gpa-calculator" className="font-medium text-primary hover:underline">
+              GPA calculator
+            </Link>{" "}
+            and browse more schools in the{" "}
+            <Link
+              href="/tools/college-university-gpa-requirement-checker"
+              className="font-medium text-primary hover:underline"
+            >
+              full GPA requirement checker
+            </Link>
+            .
+          </p>
+        </div>
+      </section>
     </div>
   );
 }
