@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import UniversityDetailContent from "@/components/tools/gpa-checker/UniversityDetailContent";
-import { SITE_URL } from "@/constants/site";
+import { SITE_NAME, SITE_URL } from "@/constants/site";
 import { getSupabaseServer } from "@/lib/supabase-server";
 import { fetchSimilarUniversities } from "@/services/universities";
 
@@ -50,13 +50,14 @@ export async function generateMetadata({ params }) {
   return {
     title: seoTitle,
     description: seoDescription,
-    // Individual school pages are data cards, not unique articles — noindex for quality
-    robots: { index: false, follow: true },
+    robots: { index: true, follow: true, googleBot: { index: true, follow: true } },
     alternates: { canonical: `${SITE_URL}${path}` },
     openGraph: {
       title: seoTitle,
       description: seoDescription,
       url: `${SITE_URL}${path}`,
+      type: "website",
+      siteName: SITE_NAME,
     },
   };
 }
